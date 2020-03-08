@@ -20,7 +20,7 @@ EXTERN_C DLLEXPORT int demo_I_I(WolframLibraryData libData, mint Argc, MArgument
 EXTERN_C DLLEXPORT int getLibraryInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument Res)
 {
     string s = CLibraryInfo::GetAllInfoAsJSON();
-    g_stringReturnHelper.StoreString(libData, s);
+    g_stringReturnHelper.StoreString(s);
     MArgument_setUTF8String(Res, g_stringReturnHelper.GetStoredString());
 
     return LIBRARY_NO_ERROR;

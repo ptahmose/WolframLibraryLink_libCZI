@@ -4,13 +4,8 @@
 
 CStringReturnHelper g_stringReturnHelper;
 
-void CStringReturnHelper::StoreString(WolframLibraryData libData, const char* sz)
+void CStringReturnHelper::StoreString(const char* sz)
 {
-    if (this->returnedString != nullptr)
-    {
-        libData->UTF8String_disown(this->returnedString);
-    }
-
     size_t size = strlen(sz) + 1;
     if (size > this->sizeOfString)
     {
@@ -28,14 +23,8 @@ char* CStringReturnHelper::GetStoredString()
     return this->returnedString;
 }
 
-void CStringReturnHelper::Clear(WolframLibraryData libData)
+void CStringReturnHelper::Clear()
 {
-    if (this->returnedString != nullptr)
-    {
-        libData->UTF8String_disown(this->returnedString);
-        free(this->returnedString);
-    }
-
     this->returnedString = nullptr;
     this->sizeOfString = 0;
 }

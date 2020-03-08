@@ -8,10 +8,11 @@ EXTERN_C DLLEXPORT mint WolframLibrary_getVersion( )
 
 EXTERN_C DLLEXPORT int WolframLibrary_initialize( WolframLibraryData libData)
 {
-    return 0;
+    int r = libData->registerLibraryExpressionManager("CZI", manage_instance);
+    return r;
 }
 
 DLLEXPORT void WolframLibrary_uninitialize(WolframLibraryData libData)
 {
-    g_stringReturnHelper.Clear(libData);
+    g_stringReturnHelper.Clear();
 }
