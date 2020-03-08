@@ -9,6 +9,9 @@ add_library (wllczi SHARED
 						src/WLLFunctions.cpp)
 
 target_link_libraries(wllczi PRIVATE libCZIStatic JxrDecodeStatic)
+
+target_link_libraries(wllczi PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
+
 #set_target_properties(SqliteImgDoc PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
 set_target_properties(wllczi PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF)
 

@@ -8,6 +8,7 @@ cmake_minimum_required (VERSION 3.7)
 project ("WolframLibraryLink_libCZI")
 
 include_directories("C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/IncludeFiles/C")
+include_directories("C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions")
 
 
 set(LIBCZI_BUILD_CZICMD OFF CACHE BOOL "" FORCE)
