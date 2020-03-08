@@ -1,5 +1,6 @@
 #pragma once
 
+#include "WolframLibrary.h"
 #include <string>
 
 class CStringReturnHelper
@@ -11,15 +12,15 @@ public:
     CStringReturnHelper() :returnedString(nullptr), sizeOfString(0)
     {}
 
-    void  StoreString(const char* sz);
-    void  StoreString(const std::string& str) 
+    void  StoreString(WolframLibraryData libData,const char* sz);
+    void  StoreString(WolframLibraryData libData, const std::string& str)
     {
-        this->StoreString(str.c_str());
+        this->StoreString(libData,str.c_str());
     }
 
     char* GetStoredString();
 
-    void Clear();
+    void Clear(WolframLibraryData libData);
 };
 
 extern CStringReturnHelper g_stringReturnHelper;

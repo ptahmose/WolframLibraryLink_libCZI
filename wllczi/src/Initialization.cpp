@@ -13,5 +13,5 @@ EXTERN_C DLLEXPORT int WolframLibrary_initialize( WolframLibraryData libData)
 
 DLLEXPORT void WolframLibrary_uninitialize(WolframLibraryData libData)
 {
-    g_stringReturnHelper.Clear();
+    g_stringReturnHelper.Clear(libData);
 }
