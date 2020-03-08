@@ -6,7 +6,13 @@
 # Add source to this project's executable.
 add_library (wllczi SHARED
 						src/Initialization.cpp
-						src/WLLFunctions.cpp)
+						src/WLLFunctions.cpp
+						src/getLibInfo.h
+						src/getLibInfo.cpp
+						src/stringReturnHelper.cpp
+						src/stringReturnHelper.h)
+
+add_dependencies(wllczi rapidjson)
 
 target_link_libraries(wllczi PRIVATE libCZIStatic JxrDecodeStatic)
 
