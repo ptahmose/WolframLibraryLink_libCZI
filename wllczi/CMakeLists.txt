@@ -10,7 +10,12 @@ add_library (wllczi SHARED
 						src/getLibInfo.h
 						src/getLibInfo.cpp
 						src/stringReturnHelper.cpp
-						src/stringReturnHelper.h)
+						src/stringReturnHelper.h
+						src/CziInstanceManager.cpp
+						src/CziInstanceManager.h
+						src/CziReader.cpp
+						src/CziReader.h
+						src/inc_libCzi.h)
 
 add_dependencies(wllczi rapidjson)
 
