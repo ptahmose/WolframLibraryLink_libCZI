@@ -11,5 +11,5 @@ public:
     {
     }
 
-    void Open(const std::string& filename);
+    void Open(const std::string& utf8_filename);
 };

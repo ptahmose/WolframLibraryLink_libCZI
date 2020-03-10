@@ -46,7 +46,7 @@ EXTERN_C DLLEXPORT int CZIReader_Open(WolframLibraryData libData, mint Argc, MAr
     //libData->Message("rankerror");
     
 
-
+    reader->Open(filename);
 
     libData->UTF8String_disown(filename);
     return LIBRARY_NO_ERROR;
