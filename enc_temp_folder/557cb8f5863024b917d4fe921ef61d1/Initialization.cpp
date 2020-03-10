@@ -44,10 +44,6 @@ EXTERN_C DLLEXPORT int CZIReader_Open(WolframLibraryData libData, mint Argc, MAr
     auto reader = CziReaderManager::Instance.GetInstance(id);
     char* filename = MArgument_getUTF8String(Args[1]);
     //libData->Message("rankerror");
-    
-
-
-
     libData->UTF8String_disown(filename);
     return LIBRARY_NO_ERROR;
 }
