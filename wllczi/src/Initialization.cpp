@@ -1,6 +1,9 @@
 #include "WolframLibrary.h"
 #include "stringReturnHelper.h"
 #include "CziInstanceManager.h"
+#include "stringReturnHelper.h"
+
+using namespace std;
 
 static const char* LibraryExpressionNameCziReader = "CZIReader";
 
@@ -49,5 +52,23 @@ EXTERN_C DLLEXPORT int CZIReader_Open(WolframLibraryData libData, mint Argc, MAr
     reader->Open(filename);
 
     libData->UTF8String_disown(filename);
+    return LIBRARY_NO_ERROR;
+}
+
+EXTERN_C DLLEXPORT int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 1)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    mint id = MArgument_getInteger(Args[0]);
+
+    auto reader = CziReaderManager::Instance.GetInstance(id);
+    string s = reader->GetInfo();
+
+    g_stringReturnHelper.StoreString(s);
+    MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
+
     return LIBRARY_NO_ERROR;
 }

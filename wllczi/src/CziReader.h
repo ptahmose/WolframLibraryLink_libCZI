@@ -8,8 +8,12 @@ private:
     std::shared_ptr<libCZI::ICZIReader> reader;
 public:
     CziReader() : reader(libCZI::CreateCZIReader())
-    {
-    }
+    {}
 
     void Open(const std::string& utf8_filename);
+
+    std::string GetInfo();
+
+private:
+    std::string StatisticsToJson(const libCZI::SubBlockStatistics& statistics);
 };
