@@ -72,3 +72,21 @@ EXTERN_C DLLEXPORT int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, 
 
     return LIBRARY_NO_ERROR;
 }
+
+EXTERN_C DLLEXPORT int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 2)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    mint id = MArgument_getInteger(Args[0]);
+    mint blockNo = MArgument_getInteger(Args[1]);
+
+    auto reader = CziReaderManager::Instance.GetInstance(id);
+    
+    auto out = reader->GetSubBlockImage(libData, blockNo);
+    MArgument_setMImage(res, out);
+
+    return LIBRARY_NO_ERROR;
+}

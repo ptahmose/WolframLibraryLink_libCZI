@@ -126,32 +126,15 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
     switch (bitmapData->GetPixelType())
     {
     case PixelType::Gray8:
-        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Bit8, MImage_CS_Gray, False, &mimg);
+        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Bit8, MImage_CS_Gray, false, &mimg);
         pDst = imgLibFunctions->MImage_getRawData(mimg);
         CopyStrided(bitmapData, pDst);
         break;
     case PixelType::Gray16:
-        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Bit16, MImage_CS_Gray, False, &mimg);
+        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Bit16, MImage_CS_Gray, false, &mimg);
         pDst = imgLibFunctions->MImage_getRawData(mimg);
         CopyStrided(bitmapData, pDst);
         break;
-    case PixelType::Bgr24:
-        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Bit8, MImage_CS_RGB, True, &mimg);
-        pDst = imgLibFunctions->MImage_getRawData(mimg);
-        CopyStrided(bitmapData, pDst);
-        break;
-    case PixelType::Bgr48:
-        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Bit16, MImage_CS_RGB, True, &mimg);
-        pDst = imgLibFunctions->MImage_getRawData(mimg);
-        CopyStrided(bitmapData, pDst);
-        break;
-    case PixelType::Gray32Float:
-        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Real32, MImage_CS_Gray, False, &mimg);
-        pDst = imgLibFunctions->MImage_getRawData(mimg);
-        CopyStrided(bitmapData, pDst);
-        break;
-    default:
-        throw std::invalid_argument("unsupported pixeltype");
     }
 
     return mimg;
