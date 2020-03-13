@@ -176,17 +176,18 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
 {
     switch (pixelType)
     {
-    case PixelType::Gray8: return 1;
-    case PixelType::Gray16:return 2;
-    case PixelType::Gray32Float:return 4;
-    case PixelType::Bgr24:return 3;
-    case PixelType::Bgr48: return 6;
-    case PixelType::Bgr96Float: return 12;
-    case PixelType::Bgra32:return 4;
+    case PixelType::Gray8:              return 1;
+    case PixelType::Gray16:             return 2;
+    case PixelType::Gray32Float:        return 4;
+    case PixelType::Bgr24:              return 3;
+    case PixelType::Bgr48:              return 6;
+    case PixelType::Bgr96Float:         return 12;
+    case PixelType::Bgra32:             return 4;
     case PixelType::Gray64ComplexFloat: return 16;
     case PixelType::Bgr192ComplexFloat: return 48;
-    case PixelType::Gray32: return 4;
-    case PixelType::Gray64Float:return 8;
-    default:throw std::invalid_argument("illegal pixeltype");
+    case PixelType::Gray32:             return 4;
+    case PixelType::Gray64Float:        return 8;
+    default:
+        throw std::invalid_argument("illegal pixeltype");
     }
 }

@@ -86,6 +86,8 @@ endif()
 message(STATUS "XYZ")
 message(STATUS ${GTEST_INCLUDE_DIRS} )
 
+add_subdirectory("wllcziTests")
+
 #include_directories(${GTEST_INCLUDE_DIRS})
 
 # add_subdirectory ("SqliteImgDocTests")

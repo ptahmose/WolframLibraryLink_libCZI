@@ -1,4 +1,5 @@
 #include <WolframLibrary.h>
+#include "../inc/exportedFunctions.h"
 #include "stringReturnHelper.h"
 #include "CziInstanceManager.h"
 #include "stringReturnHelper.h"
@@ -20,24 +21,24 @@ static void manage_czi_instance(WolframLibraryData libData, mbool mode, mint id)
     }
 }
 
-EXTERN_C DLLEXPORT mint WolframLibrary_getVersion( )
+mint WolframLibrary_getVersion( )
 {
     return (WolframLibraryVersion);
 }
 
-EXTERN_C DLLEXPORT int WolframLibrary_initialize( WolframLibraryData libData)
+int WolframLibrary_initialize( WolframLibraryData libData)
 {
     int r = libData->registerLibraryExpressionManager(LibraryExpressionNameCziReader, manage_czi_instance);
     return r;
 }
 
-EXTERN_C DLLEXPORT void WolframLibrary_uninitialize(WolframLibraryData libData)
+void WolframLibrary_uninitialize(WolframLibraryData libData)
 {
     g_stringReturnHelper.Clear();
     int r = libData->unregisterLibraryExpressionManager(LibraryExpressionNameCziReader);
 }
 
-EXTERN_C DLLEXPORT int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
     if (Argc != 2) 
     {
@@ -67,7 +68,7 @@ EXTERN_C DLLEXPORT int CZIReader_Open(WolframLibraryData libData, mint Argc, MAr
     return LIBRARY_NO_ERROR;
 }
 
-EXTERN_C DLLEXPORT int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
     if (Argc != 1)
     {
@@ -95,7 +96,7 @@ EXTERN_C DLLEXPORT int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, 
     return LIBRARY_NO_ERROR;
 }
 
-EXTERN_C DLLEXPORT int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
     if (Argc != 2)
     {

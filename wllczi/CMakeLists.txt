@@ -25,9 +25,37 @@ target_link_libraries(wllczi PRIVATE libCZIStatic JxrDecodeStatic)
 
 target_link_libraries(wllczi PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
 
-#set_target_properties(SqliteImgDoc PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
-set_target_properties(wllczi PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF)
+target_compile_definitions(wllczi PRIVATE WLLCZI_EXPORTS)
 
+#set_target_properties(SqliteImgDoc PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+#set_target_properties(wllczi PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF)
+
+#########################################################################################
+# The static wllczi-library is intended to facilitate unit-tests
+#########################################################################################
+
+add_library (wllczi_static STATIC
+						src/Initialization.cpp
+						src/WLLFunctions.cpp
+						src/getLibInfo.h
+						src/getLibInfo.cpp
+						src/stringReturnHelper.cpp
+						src/stringReturnHelper.h
+						src/CziInstanceManager.cpp
+						src/CziInstanceManager.h
+						src/CziReader.cpp
+						src/CziReader.h
+						src/inc_libCzi.h
+						src/errorhelper.h
+						src/errorhelper.cpp)
+
+add_dependencies(wllczi_static rapidjson)
+
+target_link_libraries(wllczi_static PRIVATE libCZIStatic JxrDecodeStatic)
+
+target_link_libraries(wllczi_static PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
+
+target_compile_definitions(wllczi_static PRIVATE _WLLCZISTATICLIB)
 
 
 # TODO: Add tests and install targets if needed.
