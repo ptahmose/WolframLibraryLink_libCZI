@@ -162,7 +162,7 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
     size_t lengthOfLine = size_t(bitmapData->GetWidth()) * GetBytesPerPel(bitmapData->GetPixelType());
     auto height = bitmapData->GetHeight();
     ScopedBitmapLocker<IBitmapData*> lckBm{ bitmapData };
-    for (auto y = 0; y < height; ++y)
+    for (decltype(height) y = 0; y < height; ++y)
     {
         memcpy(
             ((char*)pDst) + y * lengthOfLine,

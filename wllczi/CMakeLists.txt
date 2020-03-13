@@ -15,7 +15,9 @@ add_library (wllczi SHARED
 						src/CziInstanceManager.h
 						src/CziReader.cpp
 						src/CziReader.h
-						src/inc_libCzi.h)
+						src/inc_libCzi.h
+						src/errorhelper.h
+						src/errorhelper.cpp)
 
 add_dependencies(wllczi rapidjson)
 

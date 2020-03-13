@@ -343,3 +343,4 @@ healthchecksdb
 
 build/
 out/
+enc_temp_folder/
