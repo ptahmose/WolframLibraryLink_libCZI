@@ -242,9 +242,9 @@ endmacro()
 macro (_get_program_names _outProgramNames)
 	set (${_outProgramNames} "")
 	# Mathematica products in order of preference
-	set (_MathematicaApps "Mathematica" "gridMathematica Server")
+	set (_MathematicaApps "Mathematica" "gridMathematica Server" "WolframEngine") 
 	# Mathematica product versions in order of preference
-	set (_MathematicaVersions "11.0" "10.4" "10.3" "10.2" "10.1" "10.0" "9.0" "8.0" "7.0" "6.0" "5.2")
+	set (_MathematicaVersions "12.0" "11.0" "10.4" "10.3" "10.2" "10.1" "10.0" "9.0" "8.0" "7.0" "6.0" "5.2")
 	# search for explicitly requested application version first
 	if (Mathematica_FIND_VERSION AND Mathematica_FIND_VERSION_EXACT)
 		foreach (_product IN LISTS _MathematicaApps)
@@ -1479,6 +1479,8 @@ macro (_find_mathematica)
 		DOC "Mathematica front end executable."
 		NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
 	)
+	message(STATUS "*********** I AM HERE **********")
+	message(STATUS "****" ${Mathematica_ROOT_DIR} "****")
 	find_path (Mathematica_INCLUDE_DIR
 		NAMES "mdefs.h"
 		HINTS

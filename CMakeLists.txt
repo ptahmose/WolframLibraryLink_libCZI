@@ -19,6 +19,7 @@ include_directories(${RAPIDJSON_INCLUDE_DIR})
 message(STATUS ${CMAKE_MODULE_PATH} )
 ##FIND_PACKAGE(Mathematica 11.0.0 REQUIRED) 
 #include("${CMAKE_SOURCE_DIR}/modules/FindMathematica.cmake")
+#set(Mathematica_DEBUG 1)
 find_package(Mathematica)
 
 message(STATUS "Mathematica_INCLUDE_DIR")
