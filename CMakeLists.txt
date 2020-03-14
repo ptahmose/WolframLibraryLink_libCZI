@@ -10,7 +10,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/" "${CMA
 project ("WolframLibraryLink_libCZI")
 
 # include RapidJSON -> https://www.jibbow.com/posts/rapidjson-cmake/
-include("${CMAKE_SOURCE_DIR}/modules/rapidjson.cmake")
+include("${CMAKE_SOURCE_DIR}/modules/rapidJSON.cmake")
 include_directories(${RAPIDJSON_INCLUDE_DIR})
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
