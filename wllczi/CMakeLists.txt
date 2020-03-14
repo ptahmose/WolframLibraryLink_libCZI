@@ -31,6 +31,14 @@ target_include_directories(wllczi PRIVATE ${Mathematica_INCLUDE_DIR})
 
 target_compile_definitions(wllczi PRIVATE WLLCZI_EXPORTS)
 
+if(UNIX AND NOT APPLE)
+   # Linux
+   target_link_libraries(wllczi pthread dl)
+elseif(UNIX AND APPLE)
+   # Mac OS
+   target_link_libraries(SqliteImgDocTests pthread)
+endif()
+
 #set_target_properties(SqliteImgDoc PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
 #set_target_properties(wllczi PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF)
 

@@ -19,15 +19,14 @@ target_link_libraries(wllcziTests  ${GTEST_BOTH_LIBRARIES} wllczi_static)
 
 target_compile_definitions(wllcziTests PRIVATE WLLCZITESTSAMPLEFILEDIR=${CMAKE_CURRENT_SOURCE_DIR}/samples)
 
-#[[
 if(UNIX AND NOT APPLE)
    # Linux
-   target_link_libraries(SqliteImgDocTests SQLiteCpp pthread dl)
+   target_link_libraries(wllcziTests pthread dl)
 elseif(UNIX AND APPLE)
    # Mac OS
-   target_link_libraries(SqliteImgDocTests SQLiteCpp pthread)
+   target_link_libraries(wllcziTests pthread)
 endif()
-]]
+
 
 
 ##target_link_libraries(SqliteImgDocTests PRIVATE SQLiteCpp)
