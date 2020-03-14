@@ -21,10 +21,10 @@ target_compile_definitions(wllcziTests PRIVATE WLLCZITESTSAMPLEFILEDIR=${CMAKE_C
 
 if(UNIX AND NOT APPLE)
    # Linux
-   target_link_libraries(wllcziTests pthread dl)
+   target_link_libraries(wllcziTests PRIVATE pthread dl)
 elseif(UNIX AND APPLE)
    # Mac OS
-   target_link_libraries(wllcziTests pthread)
+   target_link_libraries(wllcziTests PRIVATE pthread)
 endif()
 
 

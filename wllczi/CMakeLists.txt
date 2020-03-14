@@ -33,10 +33,10 @@ target_compile_definitions(wllczi PRIVATE WLLCZI_EXPORTS)
 
 if(UNIX AND NOT APPLE)
    # Linux
-   target_link_libraries(wllczi pthread dl)
+   target_link_libraries(wllczi PRIVATE pthread dl)
 elseif(UNIX AND APPLE)
    # Mac OS
-   target_link_libraries(SqliteImgDocTests pthread)
+   target_link_libraries(wllczi PRIVATE pthread)
 endif()
 
 #set_target_properties(SqliteImgDoc PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
