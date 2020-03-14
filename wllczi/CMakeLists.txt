@@ -23,7 +23,9 @@ add_dependencies(wllczi rapidjson)
 
 target_link_libraries(wllczi PRIVATE libCZIStatic JxrDecodeStatic)
 
-target_link_libraries(wllczi PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
+target_include_directories(wllczi PRIVATE ${Mathematica_INCLUDE_DIR})
+
+#target_link_libraries(wllczi PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
 
 target_compile_definitions(wllczi PRIVATE WLLCZI_EXPORTS)
 
@@ -51,9 +53,11 @@ add_library (wllczi_static STATIC
 
 add_dependencies(wllczi_static rapidjson)
 
+target_include_directories(wllczi_static PRIVATE ${Mathematica_INCLUDE_DIR})
+
 target_link_libraries(wllczi_static PRIVATE libCZIStatic JxrDecodeStatic)
 
-target_link_libraries(wllczi_static PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
+#target_link_libraries(wllczi_static PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
 
 target_compile_definitions(wllczi_static PRIVATE _WLLCZISTATICLIB)
 
