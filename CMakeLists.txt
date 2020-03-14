@@ -4,8 +4,9 @@
 cmake_minimum_required (VERSION 3.7)
 
 #set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules" ${CMAKE_MODULE_PATH})
 
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/modules/")
+#SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/modules/")
 
 project ("WolframLibraryLink_libCZI")
 
@@ -17,7 +18,8 @@ include_directories(${RAPIDJSON_INCLUDE_DIR})
 
 message(STATUS ${CMAKE_MODULE_PATH} )
 ##FIND_PACKAGE(Mathematica 11.0.0 REQUIRED) 
-include("${CMAKE_SOURCE_DIR}/modules/FindMathematica.cmake")
+#include("${CMAKE_SOURCE_DIR}/modules/FindMathematica.cmake")
+find_package(Mathematica)
 
 message(STATUS "Mathematica_INCLUDE_DIR")
 message(STATUS ${Mathematica_INCLUDE_DIR})
