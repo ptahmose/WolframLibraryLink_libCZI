@@ -1479,8 +1479,6 @@ macro (_find_mathematica)
 		DOC "Mathematica front end executable."
 		NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
 	)
-	message(STATUS "*********** I AM HERE **********")
-	message(STATUS "****" ${Mathematica_ROOT_DIR} "****")
 	find_path (Mathematica_INCLUDE_DIR
 		NAMES "mdefs.h"
 		HINTS
