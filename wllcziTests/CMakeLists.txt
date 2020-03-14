@@ -15,7 +15,7 @@ target_include_directories(wllcziTests PRIVATE ${Mathematica_INCLUDE_DIR})
 
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(wllcziTests  ${GTEST_BOTH_LIBRARIES} wllczi_static)
+target_link_libraries(wllcziTests PRIVATE ${GTEST_BOTH_LIBRARIES} wllczi_static)
 
 target_compile_definitions(wllcziTests PRIVATE WLLCZITESTSAMPLEFILEDIR=${CMAKE_CURRENT_SOURCE_DIR}/samples)
 
