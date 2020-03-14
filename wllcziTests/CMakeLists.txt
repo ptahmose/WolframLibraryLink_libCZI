@@ -27,6 +27,9 @@ elseif(UNIX AND APPLE)
    target_link_libraries(wllcziTests PRIVATE pthread)
 endif()
 
+if(WOLFRAMLIBRARYLINK_MINT32)	
+	target_compile_definitions(wllcziTests PRIVATE MINT_32=1)
+endif()
 
 
 ##target_link_libraries(SqliteImgDocTests PRIVATE SQLiteCpp)

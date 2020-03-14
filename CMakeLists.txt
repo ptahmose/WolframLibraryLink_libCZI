@@ -37,6 +37,11 @@ set(LIBCZI_BUILD_DYNLIB OFF CACHE BOOL "" FORCE)
 add_subdirectory(extlibs/libCZI)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/libCZI/Src/libCZI)
 
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    option(WOLFRAMLIBRARYLINK_MINT32 "Use 32-bit integer as 'mint'" OFF) 
+else()
+    option(WOLFRAMLIBRARYLINK_MINT32 "Use 32-bit integer as 'mint'" ON) 
+endif()
 
 add_subdirectory ("wllczi")
 

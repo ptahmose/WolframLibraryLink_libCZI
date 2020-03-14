@@ -39,6 +39,10 @@ elseif(UNIX AND APPLE)
    target_link_libraries(wllczi PRIVATE pthread)
 endif()
 
+if(WOLFRAMLIBRARYLINK_MINT32)	
+	target_compile_definitions(wllczi PRIVATE MINT_32=1)
+endif()
+
 #set_target_properties(SqliteImgDoc PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
 #set_target_properties(wllczi PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF)
 
@@ -72,6 +76,11 @@ target_link_libraries(wllczi_static PRIVATE libCZIStatic JxrDecodeStatic)
 #target_link_libraries(wllczi_static PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
 
 target_compile_definitions(wllczi_static PRIVATE _WLLCZISTATICLIB)
+
+if(WOLFRAMLIBRARYLINK_MINT32)	
+	target_compile_definitions(wllczi_static PRIVATE MINT_32=1)
+endif()
+
 
 
 # TODO: Add tests and install targets if needed.
