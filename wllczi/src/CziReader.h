@@ -23,5 +23,7 @@ private:
 
     MImage ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions, libCZI::IBitmapData* bitmapData);
     static void CopyStrided(libCZI::IBitmapData* bitmapData, void* pDst);
+    static void CopyStrided_RGB24_to_BGR24(libCZI::IBitmapData* bitmapData, void* pDst);
+    static void CopyStrided_RGB48_to_BGR48(libCZI::IBitmapData* bitmapData, void* pDst);
     static int GetBytesPerPel(libCZI::PixelType pixelType);
 };

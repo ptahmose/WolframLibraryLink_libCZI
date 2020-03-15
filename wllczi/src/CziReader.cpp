@@ -137,14 +137,14 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
         CopyStrided(bitmapData, pDst);
         break;
     case PixelType::Bgr24:
-        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Bit8, MImage_CS_RGB, True, &mimg);
+        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 3, MImage_Type_Bit8, MImage_CS_RGB, True, &mimg);
         pDst = imgLibFunctions->MImage_getRawData(mimg);
-        CopyStrided(bitmapData, pDst);
+        CopyStrided_RGB24_to_BGR24(bitmapData, pDst);
         break;
     case PixelType::Bgr48:
-        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Bit16, MImage_CS_RGB, True, &mimg);
+        r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 3, MImage_Type_Bit16, MImage_CS_RGB, True, &mimg);
         pDst = imgLibFunctions->MImage_getRawData(mimg);
-        CopyStrided(bitmapData, pDst);
+        CopyStrided_RGB48_to_BGR48(bitmapData, pDst);
         break;
     case PixelType::Gray32Float:
         r = (imgLibFunctions->MImage_new2D)(bitmapData->GetWidth(), bitmapData->GetHeight(), 1, MImage_Type_Real32, MImage_CS_Gray, False, &mimg);
@@ -167,11 +167,54 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
     {
         memcpy(
             ((char*)pDst) + y * lengthOfLine,
-            ((const char*)lckBm.ptrDataRoi) + y * lckBm.stride,
+            ((const char*)lckBm.ptrDataRoi) + y * (size_t)lckBm.stride,
             lengthOfLine);
     }
 }
 
+/*static*/void CziReader::CopyStrided_RGB24_to_BGR24(libCZI::IBitmapData* bitmapData, void* pDst)
+{
+    size_t lengthOfLine = size_t(bitmapData->GetWidth()) * GetBytesPerPel(bitmapData->GetPixelType());
+    auto height = bitmapData->GetHeight();
+    auto width = bitmapData->GetWidth();
+    ScopedBitmapLocker<IBitmapData*> lckBm{ bitmapData };
+    for (decltype(height) y = 0; y < height; ++y)
+    {
+        const uint8_t* ptrSrc = ((const uint8_t*)lckBm.ptrDataRoi) + y * (size_t)lckBm.stride;
+        uint8_t* ptrDst = ((uint8_t*)pDst) + y * lengthOfLine;
+        for (decltype(width) x = 0; x < width; ++x)
+        {
+            uint8_t b = *ptrSrc++;
+            uint8_t g = *ptrSrc++;
+            uint8_t r = *ptrSrc++;
+            *ptrDst++ = r;
+            *ptrDst++ = g;
+            *ptrDst++ = b;
+        }
+    }
+}
+
+/*static*/void CziReader::CopyStrided_RGB48_to_BGR48(libCZI::IBitmapData* bitmapData, void* pDst)
+{
+    size_t lengthOfLine = size_t(bitmapData->GetWidth()) * GetBytesPerPel(bitmapData->GetPixelType());
+    auto height = bitmapData->GetHeight();
+    auto width = bitmapData->GetWidth();
+    ScopedBitmapLocker<IBitmapData*> lckBm{ bitmapData };
+    for (decltype(height) y = 0; y < height; ++y)
+    {
+        const uint16_t* ptrSrc = (const uint16_t*)(((const uint8_t*)lckBm.ptrDataRoi) + y * (size_t)lckBm.stride);
+        uint16_t* ptrDst = (uint16_t*)(((uint8_t*)pDst) + y * lengthOfLine);
+        for (decltype(width) x = 0; x < width; ++x)
+        {
+            uint16_t b = *ptrSrc++;
+            uint16_t g = *ptrSrc++;
+            uint16_t r = *ptrSrc++;
+            *ptrDst++ = r;
+            *ptrDst++ = g;
+            *ptrDst++ = b;
+        }
+    }
+}
 
 /*static*/int CziReader::GetBytesPerPel(libCZI::PixelType pixelType)
 {
