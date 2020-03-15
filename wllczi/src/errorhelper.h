@@ -10,4 +10,5 @@ public:
     static std::string GetErrorText_CziReaderInstanceNotExisting(mint id);
     static std::string GetErrorText_CziReaderOpenException(std::exception& excp);
     static std::string GetErrorText_CziReaderOpenException(libCZI::LibCZIException& excp);
+    static std::string GetErrorText_CziReaderGetSubBlockBitmapException(std::exception& excp);
 };

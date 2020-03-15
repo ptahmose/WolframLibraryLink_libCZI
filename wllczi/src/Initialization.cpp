@@ -117,8 +117,16 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
         return LIBRARY_FUNCTION_ERROR;
     }
     
-    auto out = reader->GetSubBlockImage(libData, blockNo);
-    MArgument_setMImage(res, out);
-
+    try
+    {
+        auto out = reader->GetSubBlockImage(libData, blockNo);
+        MArgument_setMImage(res, out);
+    }
+    catch (exception& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+    
     return LIBRARY_NO_ERROR;
 }

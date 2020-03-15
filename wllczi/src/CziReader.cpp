@@ -4,6 +4,7 @@
 #include "rapidjson/stringbuffer.h"
 #include <locale>
 #include <codecvt>
+#include <sstream>
 #include <WolframImageLibrary.h>
 
 using namespace std;
@@ -12,11 +13,9 @@ using namespace libCZI;
 
 void CziReader::Open(const std::string& utf8_filename)
 {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> ucs2conv;
-    std::wstring wstr = ucs2conv.from_bytes(utf8_filename);
-
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> wcsconv;
+    std::wstring wstr = wcsconv.from_bytes(utf8_filename);
     auto stream = libCZI::CreateStreamFromFile(wstr.c_str());
-
     this->reader->Open(stream);
 }
 
@@ -112,11 +111,15 @@ std::string CziReader::StatisticsToJson(const libCZI::SubBlockStatistics& statis
 
 MImage CziReader::GetSubBlockImage(WolframLibraryData libData, int no)
 {
-    WolframImageLibrary_Functions imgFuns = libData->imageLibraryFunctions;
-
     auto sbBlk = this->reader->ReadSubBlock(no);
-    auto bm = sbBlk->CreateBitmap();
+    if (!sbBlk)
+    {
+        std::stringstream ss;
+        ss << "SubBlock for id=" << no << " was not found.";
+        throw invalid_argument(ss.str());
+    }
 
+    auto bm = sbBlk->CreateBitmap();
     return ConvertToMImage(libData->imageLibraryFunctions, bm.get());
 }
 

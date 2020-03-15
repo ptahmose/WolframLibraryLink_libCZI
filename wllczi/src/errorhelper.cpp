@@ -23,3 +23,10 @@ using namespace std;
     ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
     return ss.str();
 }
+
+/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetSubBlockBitmap': \"" << excp.what() << "\"";
+    return ss.str();
+}
