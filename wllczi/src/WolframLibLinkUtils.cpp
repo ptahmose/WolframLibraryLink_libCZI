@@ -93,7 +93,7 @@
     }
     case MNumericArray_Type_Bit64:
     {
-        const std::int64_t* p = (const std::uint64_t*)naFuns->MNumericArray_getData(numArray);
+        const std::uint64_t* p = (const std::uint64_t*)naFuns->MNumericArray_getData(numArray);
         for (size_t i = 0; i < outCount; ++i)
         {
             auto v = p[i];
@@ -102,7 +102,7 @@
                 return false;
             }
 
-            out[i] = p[i];
+            out[i] = (int)p[i];
         }
 
         break;
@@ -118,13 +118,43 @@
                 return false;
             }
 
-            out[i] = p[i];
+            out[i] = (int)p[i];
         }
 
         break;
     }
     case MNumericArray_Type_Real32:
+    {
+        const float* p = (const float*)naFuns->MNumericArray_getData(numArray);
+        for (size_t i = 0; i < outCount; ++i)
+        {
+            auto v = nearbyint(p[i]);
+            if (v > std::numeric_limits<int32_t>::max() || v < std::numeric_limits<int32_t>::min())
+            {
+                return false;
+            }
+
+            out[i] = (int)p[i];
+        }
+
+        break;
+    }
     case MNumericArray_Type_Real64:
+    {
+        const double* p = (const double*)naFuns->MNumericArray_getData(numArray);
+        for (size_t i = 0; i < outCount; ++i)
+        {
+            auto v = nearbyint(p[i]);
+            if (v > std::numeric_limits<int32_t>::max() || v < std::numeric_limits<int32_t>::min())
+            {
+                return false;
+            }
+
+            out[i] = (int)p[i];
+        }
+
+        break;
+    }
     default:
         return false;
     }

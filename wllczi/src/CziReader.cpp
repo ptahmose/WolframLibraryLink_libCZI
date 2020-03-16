@@ -2,6 +2,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include "MImageHelper.h"
 #include <locale>
 #include <codecvt>
 #include <sstream>
@@ -10,6 +11,7 @@
 using namespace std;
 using namespace rapidjson;
 using namespace libCZI;
+
 
 void CziReader::Open(const std::string& utf8_filename)
 {
@@ -123,6 +125,22 @@ MImage CziReader::GetSubBlockImage(WolframLibraryData libData, int no)
     return ConvertToMImage(libData->imageLibraryFunctions, bm.get());
 }
 
+MImage CziReader::GetSingleChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom)
+{
+    auto scsta = this->reader->CreateSingleChannelScalingTileAccessor();
+    libCZI::IntSize size = scsta->CalcSize(roi, zoom);
+
+    int c = (numeric_limits<int>::min)();
+    planeCoordinate->TryGetPosition(libCZI::DimensionIndex::C, &c);
+    // the idea is: for the cornerstone-case where we do not have a C-index, the call to "TryGetSubBlockInfoOfArbitrarySubBlockInChannel"
+    // will ignore the specified index _if_ there are no C-indices at all
+    libCZI::PixelType pixeltype = Utils::TryDeterminePixelTypeForChannel(this->reader.get(), c);
+
+    MImage mimg = MImageHelper::CreateMImage(libData->imageLibraryFunctions,size, pixeltype);
+
+    return mimg;
+}
+
 MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions, libCZI::IBitmapData* bitmapData)
 {
     MImage mimg;
@@ -163,7 +181,7 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
 
 /*static*/void CziReader::CopyStrided(libCZI::IBitmapData* bitmapData, void* pDst)
 {
-    size_t lengthOfLine = size_t(bitmapData->GetWidth()) * GetBytesPerPel(bitmapData->GetPixelType());
+    size_t lengthOfLine = size_t(bitmapData->GetWidth()) * MImageHelper::GetBytesPerPel(bitmapData->GetPixelType());
     auto height = bitmapData->GetHeight();
     ScopedBitmapLocker<IBitmapData*> lckBm{ bitmapData };
     for (decltype(height) y = 0; y < height; ++y)
@@ -177,7 +195,7 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
 
 /*static*/void CziReader::CopyStrided_RGB24_to_BGR24(libCZI::IBitmapData* bitmapData, void* pDst)
 {
-    size_t lengthOfLine = size_t(bitmapData->GetWidth()) * GetBytesPerPel(bitmapData->GetPixelType());
+    size_t lengthOfLine = size_t(bitmapData->GetWidth()) * MImageHelper::GetBytesPerPel(bitmapData->GetPixelType());
     auto height = bitmapData->GetHeight();
     auto width = bitmapData->GetWidth();
     ScopedBitmapLocker<IBitmapData*> lckBm{ bitmapData };
@@ -199,7 +217,7 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
 
 /*static*/void CziReader::CopyStrided_RGB48_to_BGR48(libCZI::IBitmapData* bitmapData, void* pDst)
 {
-    size_t lengthOfLine = size_t(bitmapData->GetWidth()) * GetBytesPerPel(bitmapData->GetPixelType());
+    size_t lengthOfLine = size_t(bitmapData->GetWidth()) * MImageHelper::GetBytesPerPel(bitmapData->GetPixelType());
     auto height = bitmapData->GetHeight();
     auto width = bitmapData->GetWidth();
     ScopedBitmapLocker<IBitmapData*> lckBm{ bitmapData };
@@ -219,22 +237,3 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
     }
 }
 
-/*static*/int CziReader::GetBytesPerPel(libCZI::PixelType pixelType)
-{
-    switch (pixelType)
-    {
-    case PixelType::Gray8:              return 1;
-    case PixelType::Gray16:             return 2;
-    case PixelType::Gray32Float:        return 4;
-    case PixelType::Bgr24:              return 3;
-    case PixelType::Bgr48:              return 6;
-    case PixelType::Bgr96Float:         return 12;
-    case PixelType::Bgra32:             return 4;
-    case PixelType::Gray64ComplexFloat: return 16;
-    case PixelType::Bgr192ComplexFloat: return 48;
-    case PixelType::Gray32:             return 4;
-    case PixelType::Gray64Float:        return 8;
-    default:
-        throw std::invalid_argument("illegal pixeltype");
-    }
-}

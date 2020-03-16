@@ -8,8 +8,10 @@
 #include "stringReturnHelper.h"
 #include "errorhelper.h"
 #include "WolframLibLinkUtils.h"
+#include "inc_libCzi.h"
 
 using namespace std;
+using namespace libCZI;
 
 int getLibraryInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument Res)
 {
@@ -101,6 +103,7 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
 
     try
     {
+        // check whether "blockNo" is a valid "int"
         auto out = reader->GetSubBlockImage(libData, blockNo);
         MArgument_setMImage(res, out);
     }
@@ -116,9 +119,9 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
 int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
     // arguments:
-    // 1st: ROI
-    // 2nd: plane-coordinate
-    // 3rd: zoom
+    // 1st: ROI               -> NumericArray of size 4
+    // 2nd: plane-coordinate  -> a string (of form "T3C2Z32")
+    // 3rd: zoom              -> A float number
     if (Argc != 4)
     {
         return LIBRARY_FUNCTION_ERROR;
@@ -140,7 +143,34 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     WolframNumericArrayLibrary_Functions naFuncs = libData->numericarrayLibraryFunctions;
     MNumericArray numArrayRegionOfInterest = MArgument_getMNumericArray(Args[1]);
     WolframLibLinkUtils::TryGetAsInt32(roiValues, sizeof(roiValues) / sizeof(roiValues[0]), numArrayRegionOfInterest, naFuncs);
-    WolframNumericArrayLibrary_Functions naFuns = libData->numericarrayLibraryFunctions;
+
+    char* coordinateString = MArgument_getUTF8String(Args[2]);
+    CDimCoordinate planeCoordinate;
+    try
+    {
+        planeCoordinate = CDimCoordinate::Parse(coordinateString);
+    }
+    catch (exception & excp)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    mreal zoom = MArgument_getReal(Args[3]);
+
+    try
+    {
+        auto out = reader->GetSingleChannelScalingTileComposite(
+            libData, 
+            IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
+            &planeCoordinate,
+            (float)zoom);
+        MArgument_setMImage(res, out);
+    }
+    catch (exception & excp)
+    {
+        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
 
     return LIBRARY_FUNCTION_ERROR;
 }

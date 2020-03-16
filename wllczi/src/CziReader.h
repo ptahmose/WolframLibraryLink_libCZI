@@ -17,7 +17,7 @@ public:
     std::string GetInfo();
 
     MImage GetSubBlockImage(WolframLibraryData libData,int no);
-
+    MImage GetSingleChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom);
 private:
     std::string StatisticsToJson(const libCZI::SubBlockStatistics& statistics);
 
@@ -25,5 +25,4 @@ private:
     static void CopyStrided(libCZI::IBitmapData* bitmapData, void* pDst);
     static void CopyStrided_RGB24_to_BGR24(libCZI::IBitmapData* bitmapData, void* pDst);
     static void CopyStrided_RGB48_to_BGR48(libCZI::IBitmapData* bitmapData, void* pDst);
-    static int GetBytesPerPel(libCZI::PixelType pixelType);
 };
