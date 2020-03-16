@@ -17,7 +17,9 @@ add_library (wllczi SHARED
 						src/CziReader.h
 						src/inc_libCzi.h
 						src/errorhelper.h
-						src/errorhelper.cpp)
+						src/errorhelper.cpp
+						src/WolframLibLinkUtils.h
+						src/WolframLibLinkUtils.cpp)
 
 set_target_properties(wllczi PROPERTIES CXX_STANDARD 11)
 
@@ -63,7 +65,9 @@ add_library (wllczi_static STATIC
 						src/CziReader.h
 						src/inc_libCzi.h
 						src/errorhelper.h
-						src/errorhelper.cpp)
+						src/errorhelper.cpp
+						src/WolframLibLinkUtils.h
+						src/WolframLibLinkUtils.cpp)
 
 set_target_properties(wllczi_static PROPERTIES CXX_STANDARD 11)
 
