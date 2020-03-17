@@ -1,6 +1,9 @@
 #include "WolframLibLinkUtils.h"
 #include <cstdint>
+#include <cmath>
 #include <limits>
+
+using namespace std;
 
 /*static*/bool WolframLibLinkUtils::TryGetAsInt32(int* out, size_t outCount, MNumericArray numArray, WolframNumericArrayLibrary_Functions naFuns)
 {
