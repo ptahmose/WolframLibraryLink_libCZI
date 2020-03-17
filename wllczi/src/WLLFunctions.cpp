@@ -37,12 +37,12 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
     {
         reader->Open(filename);
     }
-    catch (libCZI::LibCZIException & excp)
+    catch (libCZI::LibCZIException& excp)
     {
         libData->Message(ErrHelper::GetErrorText_CziReaderOpenException(excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
-    catch (exception & excp)
+    catch (exception& excp)
     {
         libData->Message(ErrHelper::GetErrorText_CziReaderOpenException(excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
@@ -107,7 +107,7 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
         auto out = reader->GetSubBlockImage(libData, blockNo);
         MArgument_setMImage(res, out);
     }
-    catch (exception & excp)
+    catch (exception& excp)
     {
         libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
@@ -150,7 +150,12 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     {
         planeCoordinate = CDimCoordinate::Parse(coordinateString);
     }
-    catch (exception & excp)
+    catch (libCZI::LibCZIStringParseException& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+    catch (exception& excp)
     {
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -160,15 +165,20 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     try
     {
         auto out = reader->GetSingleChannelScalingTileComposite(
-            libData, 
+            libData,
             IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
             &planeCoordinate,
             (float)zoom);
         MArgument_setMImage(res, out);
     }
-    catch (exception & excp)
+    catch (libCZI::LibCZIException& excp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+    catch (exception& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
 

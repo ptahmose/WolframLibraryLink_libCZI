@@ -44,6 +44,15 @@ using namespace libCZI;
     case PixelType::Gray32Float:
         r = (imgLibFunctions->MImage_new2D)(size.w, size.h, 1, MImage_Type_Real32, MImage_CS_Gray, False, &mimg);
         break;
+    default:
+        throw std::invalid_argument("Unsupported pixeltype.");
+    }
+
+    if (r != 0)
+    {
+        std::stringstream ss;
+        ss << "Error allocating an MImage with width=" << size.w << ", height=" << size.h << ".";
+        throw std::runtime_error(ss.str());
     }
 
     return mimg;

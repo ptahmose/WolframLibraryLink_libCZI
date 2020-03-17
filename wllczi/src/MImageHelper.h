@@ -11,6 +11,10 @@ public:
     static MImage CreateMImage(WolframImageLibrary_Functions imgLibFunctions, const libCZI::IntSize& size, libCZI::PixelType pixeltype);
     static bool TryGetPixelType(WolframImageLibrary_Functions imgLibFunctions, MImage mimg, libCZI::PixelType* pixelType);
     static int GetBytesPerPel(libCZI::PixelType pixelType);
+
+    /// If the specified bitmap is of type RGB24 or RGB48, then they will be converted (in-place) to BGR24 or BGR48.
+    /// For other pixel types, this is a no-op.
+    /// \param [in] bd The bitmap.
     static void SwapRgb(libCZI::IBitmapData* bd);
 
     static void ConvertInplace_RGB24_to_BGR24(std::uint32_t w, std::uint32_t h, uint32_t stride, void* ptr);
