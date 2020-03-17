@@ -136,9 +136,18 @@ MImage CziReader::GetSingleChannelScalingTileComposite(WolframLibraryData libDat
     // will ignore the specified index _if_ there are no C-indices at all
     libCZI::PixelType pixeltype = Utils::TryDeterminePixelTypeForChannel(this->reader.get(), c);
 
-    MImage mimg = MImageHelper::CreateMImage(libData->imageLibraryFunctions,size, pixeltype);
+    auto mimagedeleter = std::bind(
+        [](WolframImageLibrary_Functions imgLibFuncs, MImage mimg)->void {imgLibFuncs->MImage_free(mimg); },
+        libData->imageLibraryFunctions, std::placeholders::_1);
+    std::unique_ptr<IMAGEOBJ_ENTRY, decltype(mimagedeleter)> spMimg(
+        MImageHelper::CreateMImage(libData->imageLibraryFunctions, size, pixeltype),
+        mimagedeleter);
 
-    return mimg;
+    CMImageWrapper mimgWrapper(libData->imageLibraryFunctions, spMimg.get());
+    scsta->Get(&mimgWrapper, roi, planeCoordinate, zoom, nullptr);
+    MImageHelper::SwapRgb(&mimgWrapper);
+
+    return spMimg.release();
 }
 
 MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions, libCZI::IBitmapData* bitmapData)
@@ -187,7 +196,7 @@ MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions,
     for (decltype(height) y = 0; y < height; ++y)
     {
         memcpy(
-            ((char*)pDst) + y * lengthOfLine,
+        ((char*)pDst) + y * lengthOfLine,
             ((const char*)lckBm.ptrDataRoi) + y * (size_t)lckBm.stride,
             lengthOfLine);
     }

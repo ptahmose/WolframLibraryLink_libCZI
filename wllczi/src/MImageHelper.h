@@ -11,6 +11,10 @@ public:
     static MImage CreateMImage(WolframImageLibrary_Functions imgLibFunctions, const libCZI::IntSize& size, libCZI::PixelType pixeltype);
     static bool TryGetPixelType(WolframImageLibrary_Functions imgLibFunctions, MImage mimg, libCZI::PixelType* pixelType);
     static int GetBytesPerPel(libCZI::PixelType pixelType);
+    static void SwapRgb(libCZI::IBitmapData* bd);
+
+    static void ConvertInplace_RGB24_to_BGR24(std::uint32_t w, std::uint32_t h, uint32_t stride, void* ptr);
+    static void ConvertInplace_RGB48_to_BGR48(std::uint32_t w, std::uint32_t h, uint32_t stride, void* ptr);
 };
 
 
@@ -29,7 +33,7 @@ public:
     /// Gets pixel type.
     ///
     /// \return The pixel type.
-    virtual libCZI::PixelType		GetPixelType() const
+    virtual libCZI::PixelType GetPixelType() const
     {
         return this->pixelType;
     }
@@ -50,7 +54,7 @@ public:
     /// fatal error if the object is destroyed when it is locked.
     ///
     /// \return The BitmapLockInfo allowing to directly access the data representing the bitmap.
-    virtual libCZI::BitmapLockInfo	Lock()
+    virtual libCZI::BitmapLockInfo Lock()
     {
         libCZI::BitmapLockInfo lockInfo;
         lockInfo.ptrData = lockInfo.ptrDataRoi = this->imgLibFunctions->MImage_getRawData(this->mimg);
@@ -63,6 +67,6 @@ public:
     /// is not longer used.
     /// 
     /// The BitmapLockInfo returned must only considered to be valid until Unlock is called.
-    virtual void			Unlock()
+    virtual void Unlock()
     {}
 };

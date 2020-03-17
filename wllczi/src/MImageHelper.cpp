@@ -33,20 +33,41 @@ using namespace libCZI;
         r = (imgLibFunctions->MImage_new2D)(size.w, size.h, 1, MImage_Type_Bit8, MImage_CS_Gray, False, &mimg);
         break;
     case PixelType::Gray16:
-        r = (imgLibFunctions->MImage_new2D)(size.w, size.h,  1, MImage_Type_Bit16, MImage_CS_Gray, False, &mimg);
+        r = (imgLibFunctions->MImage_new2D)(size.w, size.h, 1, MImage_Type_Bit16, MImage_CS_Gray, False, &mimg);
         break;
     case PixelType::Bgr24:
-        r = (imgLibFunctions->MImage_new2D)(size.w, size.h,  3, MImage_Type_Bit8, MImage_CS_RGB, True, &mimg);
+        r = (imgLibFunctions->MImage_new2D)(size.w, size.h, 3, MImage_Type_Bit8, MImage_CS_RGB, True, &mimg);
         break;
     case PixelType::Bgr48:
-        r = (imgLibFunctions->MImage_new2D)(size.w, size.h,  3, MImage_Type_Bit16, MImage_CS_RGB, True, &mimg);
+        r = (imgLibFunctions->MImage_new2D)(size.w, size.h, 3, MImage_Type_Bit16, MImage_CS_RGB, True, &mimg);
         break;
     case PixelType::Gray32Float:
-        r = (imgLibFunctions->MImage_new2D)(size.w, size.h,  1, MImage_Type_Real32, MImage_CS_Gray, False, &mimg);
+        r = (imgLibFunctions->MImage_new2D)(size.w, size.h, 1, MImage_Type_Real32, MImage_CS_Gray, False, &mimg);
         break;
     }
 
     return mimg;
+}
+
+/*static*/void MImageHelper::SwapRgb(libCZI::IBitmapData* bd)
+{
+    switch (bd->GetPixelType())
+    {
+    case PixelType::Bgr24:
+    {
+        ScopedBitmapLocker<IBitmapData*> lckBm{ bd };
+        MImageHelper::ConvertInplace_RGB24_to_BGR24(bd->GetWidth(), bd->GetHeight(), lckBm.stride, lckBm.ptrDataRoi);
+    }
+
+    break;
+    case PixelType::Bgr48:
+    {
+        ScopedBitmapLocker<IBitmapData*> lckBm{ bd };
+        MImageHelper::ConvertInplace_RGB48_to_BGR48(bd->GetWidth(), bd->GetHeight(), lckBm.stride, lckBm.ptrDataRoi);
+    }
+
+    break;
+    }
 }
 
 /*static*/bool MImageHelper::TryGetPixelType(WolframImageLibrary_Functions imgLibFunctions, MImage mimg, libCZI::PixelType* pixelType)
@@ -110,4 +131,34 @@ using namespace libCZI;
     }
 
     return false;
+}
+
+/*static*/void MImageHelper::ConvertInplace_RGB24_to_BGR24(std::uint32_t w, std::uint32_t h, uint32_t stride, void* ptr)
+{
+    for (decltype(h) y = 0; y < h; ++y)
+    {
+        uint8_t* ptrLine = ((uint8_t*)ptr) + y * (size_t)stride;
+        for (decltype(w) x = 0; x < w; ++x)
+        {
+            uint8_t t = ptrLine[0];
+            ptrLine[0] = ptrLine[2];
+            ptrLine[2] = t;
+            ptrLine += 3;
+        }
+    }
+}
+
+/*static*/void MImageHelper::ConvertInplace_RGB48_to_BGR48(std::uint32_t w, std::uint32_t h, uint32_t stride, void* ptr)
+{
+    for (decltype(h) y = 0; y < h; ++y)
+    {
+        uint16_t* ptrLine = ((uint16_t*)ptr) + y * (size_t)stride;
+        for (decltype(w) x = 0; x < w; ++x)
+        {
+            uint16_t t = ptrLine[0];
+            ptrLine[0] = ptrLine[2];
+            ptrLine[2] = t;
+            ptrLine += 3;
+        }
+    }
 }

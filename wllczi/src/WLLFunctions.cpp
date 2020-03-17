@@ -103,7 +103,7 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
 
     try
     {
-        // check whether "blockNo" is a valid "int"
+        // TODO: check whether "blockNo" is a valid "int"
         auto out = reader->GetSubBlockImage(libData, blockNo);
         MArgument_setMImage(res, out);
     }
@@ -172,5 +172,5 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
         return LIBRARY_FUNCTION_ERROR;
     }
 
-    return LIBRARY_FUNCTION_ERROR;
+    return LIBRARY_NO_ERROR;
 }
