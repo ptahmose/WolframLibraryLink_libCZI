@@ -21,7 +21,9 @@ add_library (wllczi SHARED
 						src/WolframLibLinkUtils.h
 						src/WolframLibLinkUtils.cpp
 						src/MImageHelper.cpp
-						src/MImageHelper.h)
+						src/MImageHelper.h
+						src/CziUtilities.cpp
+						src/CziUtilities.h)
 
 set_target_properties(wllczi PROPERTIES CXX_STANDARD 11)
 
@@ -71,7 +73,9 @@ add_library (wllczi_static STATIC
 						src/WolframLibLinkUtils.h
 						src/WolframLibLinkUtils.cpp
 						src/MImageHelper.cpp
-						src/MImageHelper.h)
+						src/MImageHelper.h
+						src/CziUtilities.cpp
+						src/CziUtilities.h)
 
 
 set_target_properties(wllczi_static PROPERTIES CXX_STANDARD 11)

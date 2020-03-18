@@ -7,6 +7,7 @@
 #include <codecvt>
 #include <sstream>
 #include <WolframImageLibrary.h>
+#include "CziUtilities.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -150,7 +151,85 @@ MImage CziReader::GetSingleChannelScalingTileComposite(WolframLibraryData libDat
     return spMimg.release();
 }
 
-MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions, libCZI::IBitmapData* bitmapData)
+MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom)
+{
+    auto displaySettings = this->GetDispaySettingsFromCzi();
+
+    std::vector<int> activeChannels = libCZI::CDisplaySettingsHelper::GetActiveChannels(displaySettings.get());
+    std::vector<shared_ptr<IBitmapData>> channelBitmaps;
+    IntSize sizeResult;
+    try
+    {
+        channelBitmaps = CziUtilities::GetBitmapsFromSpecifiedChannels(
+            this->reader.get(),
+            planeCoordinate,
+            roi,
+            zoom,
+            [&](int idx, int& chNo)->bool
+        {
+            if (idx < (int)activeChannels.size())
+            {
+                chNo = activeChannels.at(idx);
+                return true;
+            }
+
+            return false;
+        },
+            &sizeResult);
+    }
+    catch (LibCZIInvalidPlaneCoordinateException& /*invalidCoordExcp*/)
+    {
+        return nullptr;
+    }
+
+    libCZI::CDisplaySettingsHelper dsplHlp;
+    dsplHlp.Initialize(displaySettings.get(), [&](int chIndx)->libCZI::PixelType
+    {
+        int idx = (int)std::distance(activeChannels.cbegin(), std::find(activeChannels.cbegin(), activeChannels.cend(), chIndx));
+        return channelBitmaps[idx]->GetPixelType();
+    });
+
+    std::vector<IBitmapData*> vecBm; vecBm.reserve(channelBitmaps.size());
+    for (int i = 0; i < channelBitmaps.size(); ++i)
+    {
+        vecBm.emplace_back(channelBitmaps[i].get());
+    }
+
+    auto mimagedeleter = std::bind(
+        [](WolframImageLibrary_Functions imgLibFuncs, MImage mimg)->void {imgLibFuncs->MImage_free(mimg); },
+        libData->imageLibraryFunctions, std::placeholders::_1);
+    std::unique_ptr<IMAGEOBJ_ENTRY, decltype(mimagedeleter)> spMimg(
+        MImageHelper::CreateMImage(libData->imageLibraryFunctions, sizeResult, libCZI::PixelType::Bgr24),
+        mimagedeleter);
+
+    CMImageWrapper mimgWrapper(libData->imageLibraryFunctions, spMimg.get());
+    libCZI::Compositors::ComposeMultiChannel_Bgr24(
+        &mimgWrapper,
+        (int)channelBitmaps.size(),
+        &vecBm[0],
+        dsplHlp.GetChannelInfosArray());
+
+    MImageHelper::SwapRgb(&mimgWrapper);
+
+    return spMimg.release();
+}
+
+std::shared_ptr<libCZI::IDisplaySettings> CziReader::GetDispaySettingsFromCzi()
+{
+    std::call_once(
+        this->flagDispaySettingsFromCzi,
+        [this]()
+    {
+        auto mds = this->reader->ReadMetadataSegment();
+        auto md = mds->CreateMetaFromMetadataSegment();
+        const auto docInfo = md->GetDocumentInfo();
+        this->displaySettingsFromCzi = docInfo->GetDisplaySettings();
+    });
+
+    return this->displaySettingsFromCzi;
+}
+
+/*static*/MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions, libCZI::IBitmapData* bitmapData)
 {
     MImage mimg;
     int r; void* pDst;
