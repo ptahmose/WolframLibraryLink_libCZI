@@ -133,9 +133,16 @@ MImage CziReader::GetSingleChannelScalingTileComposite(WolframLibraryData libDat
 
     int c = (numeric_limits<int>::min)();
     planeCoordinate->TryGetPosition(libCZI::DimensionIndex::C, &c);
+
     // the idea is: for the cornerstone-case where we do not have a C-index, the call to "TryGetSubBlockInfoOfArbitrarySubBlockInChannel"
     // will ignore the specified index _if_ there are no C-indices at all
     libCZI::PixelType pixeltype = Utils::TryDeterminePixelTypeForChannel(this->reader.get(), c);
+
+    // however - if we get here with an invalid pixeltype, then we need to give up
+    if (pixeltype == PixelType::Invalid)
+    {
+        throw invalid_argument("Unable to determine pixeltype.");
+    }
 
     auto mimagedeleter = std::bind(
         [](WolframImageLibrary_Functions imgLibFuncs, MImage mimg)->void {imgLibFuncs->MImage_free(mimg); },
