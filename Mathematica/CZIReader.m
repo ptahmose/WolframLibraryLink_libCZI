@@ -1,5 +1,11 @@
 BeginPackage[ "CZIReader`"]
 
+(* Export section *)
+
+(* Every function that the package provides will have a usage message here. *)
+(* There will be no function definitions in this section, only usage messages. *)
+(* Public functions will have names starting with capitals, by convention. *)
+
  OpenCZI::usage = 
 	"OpenCZI[ x] opens a CZI file.";
 
@@ -11,8 +17,13 @@ BeginPackage[ "CZIReader`"]
 
  CZISingleChannelScaledComposite::usage = 
     "CZISingleChannelScaledComposite[c,x,y,w,h,zoom,coord]";
+
+ CZIMultiChannelScaledComposite::usage = 
+    "CZIMultiChannelScaledComposite[c,x,y,w,h,zoom,coord]";
 	
-Begin[ "Private`"]
+Begin["`Private`"]
+
+(* Implementation section *)
 
 $wllczilibrary = "D:\\Dev\\GitHub\\WolframLibraryLink_libCZI\\out\\build\\x64-Debug\\wllczi\\wllczi.dll";
 
@@ -63,6 +74,7 @@ CZIGetSubBlock[c_,n_] :=
       Return[bitmap];
     ]
 
+
 CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
 	Module[{roi,img,coordstr},
       roi = NumericArray[{x,y,w,h},"Integer32"];
@@ -84,7 +96,33 @@ CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
       Return[img];
     ]
 
+  CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
+    Module[{roi,img,coordstr},
+      roi = NumericArray[{x,y,w,h},"Integer32"];
+      coordstr = coordArgumentToString[coord];
 
+      img = CziGetMultiChannelScalingTileCompositeBitmap[
+        ManagedLibraryExpressionID[c],
+        roi,
+        coordstr,
+        zoom];
+      Return[img];
+    ]
+
+  (* All functions which are not public, and are only used in the 
+   internal implementation of the package, go into this section.
+   These have non-capital names by convention. *)
+
+coordArgumentToString[coord_] :=
+    If[ 
+        StringQ[coord],
+        coord,
+        If[
+            ListQ[coord],
+            StringJoin[Map[StringJoin[Part[#, 1], ToString[Part[#, 2]]] &, coord, 1]],
+            ""
+        ]
+      ];    
 
   End[]
 
