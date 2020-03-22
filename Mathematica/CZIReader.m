@@ -1,10 +1,16 @@
 BeginPackage[ "CZIReader`"]
 
  OpenCZI::usage = 
-	"OpenCZI[ x] opems a CZI file.";
+	"OpenCZI[ x] opens a CZI file.";
+
+ CZIGetInfo::usage =
+  "Get statistics.";
 	
  CZIGetSubBlock::usage =
-    "CZIGetSubBlock[ x , n]";
+    "CZIGetSubBlock[ c , n]";
+
+ CZISingleChannelScaledComposite::usage = 
+    "CZISingleChannelScaledComposite[c,x,y,w,h,zoom,coord]";
 	
 Begin[ "Private`"]
 
@@ -15,12 +21,12 @@ CziReaderOpen = LibraryFunctionLoad[
   "CZIReader_Open",
   {Integer, {UTF8String}}, Integer];
   
-  CziReaderInfo = LibraryFunctionLoad[
+CziReaderInfo = LibraryFunctionLoad[
   $wllczilibrary,
   "CZIReader_GetInfo",
   {Integer}, UTF8String];
 
-	CziGetSubBlockBitmap = LibraryFunctionLoad[
+CziGetSubBlockBitmap = LibraryFunctionLoad[
   $wllczilibrary,
   "CZIReader_GetSubBlockBitmap",
   {Integer, Integer}, LibraryDataType[Image]];
@@ -37,20 +43,46 @@ CziGetMultiChannelScalingTileCompositeBitmap = LibraryFunctionLoad[
   {Integer, LibraryDataType[MNumericArray], UTF8String, 
    LibraryDataType[Real]}, LibraryDataType[Image]];
 
-  OpenCZI[ x_] :=
+OpenCZI[ x_] :=
     Module[ {exp},
       exp = CreateManagedLibraryExpression["CZIReader", reader1];
 	  CziReaderOpen[
 			ManagedLibraryExpressionID[exp], 
 			x];
-	  exp
+	  Return[exp];
+    ]
+
+CZIGetInfo[ c_ ] :=
+    Module[{},
+      Return[CziReaderInfo[ManagedLibraryExpressionID[c]]];
     ]
 	
-  CZIGetSubBlock[c_,n_] :=
-    Module[ {image},
-      CziGetSubBlockBitmap[ManagedLibraryExpressionID[c],n]
+CZIGetSubBlock[c_,n_] :=
+    Module[ {bitmap},
+      bitmap = CziGetSubBlockBitmap[ManagedLibraryExpressionID[c],n];
+      Return[bitmap];
     ]
-	
+
+CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
+	Module[{roi,img,coordstr},
+      roi = NumericArray[{x,y,w,h},"Integer32"];
+      coordstr = If[ 
+                    StringQ[coord],
+                    coord,
+                    If[
+                        ListQ[coord],
+                        StringJoin[Map[StringJoin[Part[#, 1], ToString[Part[#, 2]]] &, coord, 1]],
+                        ""
+                    ]
+                    ];
+
+      img = CziGetSingleChannelScaledBitmap[
+        ManagedLibraryExpressionID[c],
+        roi,
+        coordstr,
+        zoom];
+      Return[img];
+    ]
 
 
 
