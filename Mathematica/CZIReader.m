@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 BeginPackage[ "CZIReader`"]
 
 (* Export section *)
@@ -26,6 +28,23 @@ Begin["`Private`"]
 (* Implementation section *)
 
 $wllczilibrary = $Failed
+
+libraryfunctionload[func_,argtype_,rettype_] :=
+    Module[{},
+        If[
+         FailureQ[$wllczilibrary],
+         $wllczilibrary = FindLibrary["D:\\Dev\\GitHub\\WolframLibraryLink_libCZI\\out\\build\\x64-Debug\\wllczi\\wllczi.dll"]
+	    ];
+
+        If[
+         FailureQ[$wllczilibrary],
+         $wllczilibrary = FindLibrary["/home/pi/dev/BuildWolframLibraryLink_libCZI/wllczi/libwllczi.so"]
+	    ];
+
+        Return[
+          LibraryFunctionLoad[$wllczilibrary, func,  argtype, rettype]
+	    ];
+      ]
 
 CziReaderOpen = libraryfunctionload[
   "CZIReader_Open",
@@ -119,23 +138,11 @@ coordArgumentToString[coord_] :=
         ]
       ];    
 
-libraryfunctionload[func_,argtype_,rettype_] :=
-    Module[{},
-        If[
-         FailureQ[$wllczilibrary],
-         $wllczilibrary = FindLibrary["D:\\Dev\\GitHub\\WolframLibraryLink_libCZI\\out\\build\\x64-Debug\\wllczi\\wllczi.dll"]
-	    ];
 
-        If[
-         FailureQ[$wllczilibrary],
-         $wllczilibrary = FindLibrary["/home/pi/dev/BuildWolframLibraryLink_libCZI/wllczi/libwllczi.so"]
-	    ];
-
-        Return[
-          LibraryFunctionLoad[$wllczilibrary,func,  argtype, rettype]
-	    ];
-      ]
 
   End[]
 
   EndPackage[]
+
+
+
