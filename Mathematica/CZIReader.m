@@ -25,34 +25,29 @@ Begin["`Private`"]
 
 (* Implementation section *)
 
-$wllczilibrary = "D:\\Dev\\GitHub\\WolframLibraryLink_libCZI\\out\\build\\x64-Debug\\wllczi\\wllczi.dll";
+$wllczilibrary = $Failed
 
-CziReaderOpen = LibraryFunctionLoad[
-  $wllczilibrary,
+CziReaderOpen = libraryfunctionload[
   "CZIReader_Open",
   {Integer, {UTF8String}}, Integer];
   
-CziReaderInfo = LibraryFunctionLoad[
-  $wllczilibrary,
+CziReaderInfo = libraryfunctionload[
   "CZIReader_GetInfo",
   {Integer}, UTF8String];
 
-CziGetSubBlockBitmap = LibraryFunctionLoad[
-  $wllczilibrary,
+CziGetSubBlockBitmap = libraryfunctionload[
   "CZIReader_GetSubBlockBitmap",
   {Integer, Integer}, LibraryDataType[Image]];
 
-CziGetSingleChannelScaledBitmap = LibraryFunctionLoad[
-  $wllczilibrary,
+CziGetSingleChannelScaledBitmap = libraryfunctionload[
   "CZIReader_GetSingleChannelScalingTileComposite",
-  {Integer, LibraryDataType[MNumericArray], UTF8String, 
-   LibraryDataType[Real]}, LibraryDataType[Image]];
+  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real]}, 
+  LibraryDataType[Image]];
 
-CziGetMultiChannelScalingTileCompositeBitmap = LibraryFunctionLoad[
-  $wllczilibrary,
+CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
   "CZIReader_MultiChannelScalingTileComposite",
-  {Integer, LibraryDataType[MNumericArray], UTF8String, 
-   LibraryDataType[Real]}, LibraryDataType[Image]];
+  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real]}, 
+  LibraryDataType[Image]];
 
 OpenCZI[ x_] :=
     Module[ {exp},
@@ -123,6 +118,23 @@ coordArgumentToString[coord_] :=
             ""
         ]
       ];    
+
+libraryfunctionload[func_,argtype_,rettype_] :=
+    Module[{},
+        If[
+         FailureQ[$wllczilibrary],
+         $wllczilibrary = FindLibrary["D:\\Dev\\GitHub\\WolframLibraryLink_libCZI\\out\\build\\x64-Debug\\wllczi\\wllczi.dll"]
+	    ];
+
+        If[
+         FailureQ[$wllczilibrary],
+         $wllczilibrary = FindLibrary["/home/pi/dev/BuildWolframLibraryLink_libCZI/wllczi/libwllczi.so"]
+	    ];
+
+        Return[
+          LibraryFunctionLoad[$wllczilibrary,func,  argtype, rettype]
+	    ];
+      ]
 
   End[]
 
