@@ -33,7 +33,7 @@ if(NOT libCZI_POPULATED)
   set(LIBCZI_BUILD_CZICMD OFF CACHE BOOL "" FORCE)
   set(LIBCZI_BUILD_DYNLIB OFF CACHE BOOL "" FORCE)
 
-  add_subdirectory(${libczi_SOURCE_DIR} ${libczi_BINARY_DIR}))
+  add_subdirectory(${libczi_SOURCE_DIR} ${libczi_BINARY_DIR})
 endif()
 
 #add_subdirectory("${CMAKE_SOURCE_DIR}/modules/libCZI")
