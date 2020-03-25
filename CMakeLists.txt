@@ -32,10 +32,16 @@ message(STATUS ${Mathematica_WolframLibrary_LIBRARIES})
 #include_directories("C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions")
 
 
-set(LIBCZI_BUILD_CZICMD OFF CACHE BOOL "" FORCE)
-set(LIBCZI_BUILD_DYNLIB OFF CACHE BOOL "" FORCE)
-add_subdirectory(extlibs/libCZI)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/libCZI/Src/libCZI)
+#set(LIBCZI_BUILD_CZICMD OFF CACHE BOOL "" FORCE)
+#set(LIBCZI_BUILD_DYNLIB OFF CACHE BOOL "" FORCE)
+#add_subdirectory(extlibs/libCZI)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/libCZI/Src/libCZI)
+include("${CMAKE_SOURCE_DIR}/modules/libCZI.cmake")
+FetchContent_GetProperties(libCZI)
+set(LIBCZI_INCLUDE_DIR "${libczi_SOURCE_DIR}/Src/libCZI")
+message(STATUS ${LIBCZI_INCLUDE_DIR})
+message(STATUS "#######################################################")
+
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     option(WOLFRAMLIBRARYLINK_MINT32 "Use 32-bit integer as 'mint'" OFF) 

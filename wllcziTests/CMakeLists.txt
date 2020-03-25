@@ -11,7 +11,7 @@ target_include_directories(wllcziTests PRIVATE ${GTEST_INCLUDE_DIRS} wllczi)
 target_include_directories(wllcziTests PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../wllczi/>
 )
-target_include_directories(wllcziTests PRIVATE ${Mathematica_INCLUDE_DIR})
+target_include_directories(wllcziTests PRIVATE ${Mathematica_INCLUDE_DIR} ${LIBCZI_INCLUDE_DIR})
 
 
 # Link test executable against gtest & gtest_main
