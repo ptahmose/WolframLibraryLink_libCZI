@@ -2,12 +2,15 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include "inc_libCzi.h"
 
 using namespace std;
 using namespace rapidjson;
+using namespace libCZI;
 
 /*static*/const char* CLibraryInfo::KeyVersionString = "VersionString";
 /*static*/const char* CLibraryInfo::KeyLibraryName = "LibraryName";
+/*static*/const char* CLibraryInfo::KeyCompilerIdentification = "CompilerIdentification";
 
 
 /*static*/const char* CLibraryInfo::VersionString = "0.0.1-dev";
@@ -17,19 +20,28 @@ using namespace rapidjson;
 {
     if (!enumFunc(CLibraryInfo::KeyVersionString)) return;
     if (!enumFunc(CLibraryInfo::KeyLibraryName)) return;
+    if (!enumFunc(CLibraryInfo::KeyCompilerIdentification)) return;
 }
 
 /*static*/bool CLibraryInfo::GetValue(const std::string& key, std::string& value)
 {
-    if (key.compare(CLibraryInfo::KeyVersionString) == 0)
+    if (key == CLibraryInfo::KeyVersionString)
     {
         value = CLibraryInfo::VersionString;
         return true;
     }
 
-    if (key.compare(CLibraryInfo::KeyLibraryName) == 0)
+    if (key == CLibraryInfo::KeyLibraryName)
     {
         value = CLibraryInfo::LibraryName;
+        return true;
+    }
+
+    if (key == CLibraryInfo::KeyCompilerIdentification)
+    {
+        BuildInformation info;
+        libCZI::GetLibCZIBuildInformation(info);
+        value = info.compilerIdentification;
         return true;
     }
 

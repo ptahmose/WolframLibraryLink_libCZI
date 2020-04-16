@@ -8,6 +8,9 @@ BeginPackage[ "CZIReader`"]
 (* There will be no function definitions in this section, only usage messages. *)
 (* Public functions will have names starting with capitals, by convention. *)
 
+GetCZIReaderLibraryInfo::usage = 
+  "Get version/build information about 'CZIReader'."
+
  OpenCZI::usage = 
 	"OpenCZI[ x] opens a CZI file.";
 
@@ -46,6 +49,10 @@ libraryfunctionload[func_,argtype_,rettype_] :=
 	    ];
       ]
 
+GetLibraryInfo = libraryfunctionload[
+  "getLibraryInfo",
+  {}, UTF8String];
+
 CziReaderOpen = libraryfunctionload[
   "CZIReader_Open",
   {Integer, {UTF8String}}, Integer];
@@ -67,6 +74,11 @@ CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
   "CZIReader_MultiChannelScalingTileComposite",
   {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real]}, 
   LibraryDataType[Image]];
+
+GetCZIReaderLibraryInfo[] :=
+  Module[{},
+    Return[GetLibraryInfo[]];
+  ]
 
 OpenCZI[ x_] :=
     Module[ {exp},
@@ -110,7 +122,7 @@ CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
       Return[img];
     ]
 
-  CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
+CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
     Module[{roi,img,coordstr},
       roi = NumericArray[{x,y,w,h},"Integer32"];
       coordstr = coordArgumentToString[coord];

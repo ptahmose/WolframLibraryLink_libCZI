@@ -11,6 +11,7 @@ private:
 public:
     static const char* KeyVersionString;
     static const char* KeyLibraryName;
+    static const char* KeyCompilerIdentification;
 
     static void EnumKeys(std::function<bool(const char*)> enumFunc);
 
