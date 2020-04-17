@@ -12,7 +12,7 @@ endif()
 set(wllczi_LOGLEVEL 1)
 
 configure_file (
-  "${CMAKE_CURRENT_SOURCE_DIR}/Src/wllczi_Config.h.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/wllczi_Config.h.in"
   "${CMAKE_CURRENT_BINARY_DIR}/wllczi_Config.h"
 	ESCAPE_QUOTES @ONLY)
 
