@@ -1,4 +1,5 @@
 #include "CziInstanceManager.h"
+#include "dbgprint.h"
 
 using namespace std;
 
@@ -6,11 +7,13 @@ using namespace std;
 
 void CziReaderManager::AddInstance(mint id)
 {
+    VDBGPRINT((CDbg::Level::Trace, "CziReaderManager::AddInstance: add instance %" MINTFMT ".", id));
     this->map.insert(make_pair(id, make_shared< CziReader>()));
 }
 
 void CziReaderManager::RemoveInstance(mint id)
 {
+    VDBGPRINT((CDbg::Level::Trace, "CziReaderManager::RemoveInstance: add instance %" MINTFMT ".", id));
     auto noOfElementsRemoved = this->map.erase(id);
 }
 

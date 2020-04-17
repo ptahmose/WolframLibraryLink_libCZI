@@ -3,6 +3,7 @@
 #include "stringReturnHelper.h"
 #include "CziInstanceManager.h"
 #include "errorhelper.h"
+#include "dbgprint.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ static void manage_czi_instance(WolframLibraryData libData, mbool mode, mint id)
 
 mint WolframLibrary_getVersion( )
 {
+    DBGPRINT((CDbg::Level::Trace, "WolframLibrary_getVersion: Enter"));
     return (WolframLibraryVersion);
 }
 

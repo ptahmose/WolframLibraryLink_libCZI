@@ -8,6 +8,7 @@
 #include "stringReturnHelper.h"
 #include "errorhelper.h"
 #include "WolframLibLinkUtils.h"
+#include "dbgprint.h"
 #include "inc_libCzi.h"
 
 using namespace std;
@@ -24,6 +25,7 @@ int getLibraryInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
 
 int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
+    DBGPRINT((CDbg::Level::Trace, "CZIReader_Open: Enter"));
     if (Argc != 2)
     {
         return LIBRARY_FUNCTION_ERROR;
@@ -35,6 +37,7 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
 
     try
     {
+        VDBGPRINT((CDbg::Level::Trace, "CZIReader_Open: attempt to open file \"%s\".", filename));
         reader->Open(filename);
     }
     catch (libCZI::LibCZIException& excp)

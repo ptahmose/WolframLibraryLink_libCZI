@@ -1,0 +1,5 @@
+#pragma once
+
+#define WLLCZI_ENABLELOGGING  @wllczi_ENABLE_LOGGING@
+
+#define WLLCZI_LOGLEVEL       @wllczi_LOGLEVEL@
