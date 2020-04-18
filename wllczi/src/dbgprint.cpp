@@ -30,7 +30,7 @@ void CDbg::Print(Level lvl, const char* sz)
 #if _WIN32API
     OutputDebugStringA(ss.str().c_str());
 #else
-    puts(str().c_str());
+    puts(ss.str().c_str());
 #endif
 }
 
