@@ -194,6 +194,7 @@ EXTERN_C WLLCZI_API int CZIReader_MultiChannelScalingTileComposite(WolframLibrar
 // 1st: ROI               -> NumericArray of size 4
 // 2nd: plane-coordinate  -> a string (of form "T3C2Z32")
 // 3rd: zoom              -> A float number
+// 4th: display-settings  -> [optional] a string containing JSON
     if (Argc != 4)
     {
         return LIBRARY_FUNCTION_ERROR;

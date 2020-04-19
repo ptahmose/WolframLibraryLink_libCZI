@@ -38,7 +38,9 @@ add_library (wllczi SHARED
 						src/CziUtilities.cpp
 						src/CziUtilities.h 
 						"src/dbgprint.cpp"
-						"src/dbgprint.h")
+						"src/dbgprint.h" 
+						"src/utils.cpp"
+						"src/utils.h")
 
 set_target_properties(wllczi PROPERTIES CXX_STANDARD 11)
 
@@ -98,7 +100,9 @@ add_library (wllczi_static STATIC
 						src/CziUtilities.cpp
 						src/CziUtilities.h 
 						"src/dbgprint.cpp"
-						"src/dbgprint.h")
+						"src/dbgprint.h" 
+						"src/utils.cpp"
+						"src/utils.h")
 
 
 set_target_properties(wllczi_static PROPERTIES CXX_STANDARD 11)

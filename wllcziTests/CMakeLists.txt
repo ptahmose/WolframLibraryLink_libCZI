@@ -4,7 +4,8 @@
 
 # Add source to this project's executable.
 add_executable( wllcziTests 
-                    WLLFunctionsTests.cpp )
+                    WLLFunctionsTests.cpp  
+                    "CziUtilitiesTest.cpp")
 
 target_include_directories(wllcziTests PRIVATE ${GTEST_INCLUDE_DIRS} wllczi)
 
