@@ -52,4 +52,5 @@ private:
     static const char* JsonKey_Gamma;
     static const char* JsonKey_SplinePoints;
     static std::tuple<int, ChannelDisplaySettingsAndValidity> ParseChannelDisplaySettings(const rapidjson::Value& v);
+    static bool TryParseColor(const std::string& str, libCZI::Rgb8Color* ptrRgbColor);
 };

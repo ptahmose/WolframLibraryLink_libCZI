@@ -69,12 +69,27 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
     document.Parse(sz);
     if (document.HasParseError())
     {
-        throw std::logic_error("Invalid JSON");
+        throw std::invalid_argument("Invalid JSON, document could not be parsed.");
     }
 
-    bool isObj = document.IsObject();
-    bool hasChannels = document.HasMember(CziUtilities::JsonKey_Channels);
-    bool isChannelsArray = document[CziUtilities::JsonKey_Channels].IsArray();
+    const bool isObj = document.IsObject();
+    if (!isObj)
+    {
+        throw std::invalid_argument("No root object.");
+    }
+
+    const bool hasChannels = document.HasMember(CziUtilities::JsonKey_Channels);
+    if (!hasChannels)
+    {
+        throw invalid_argument("No \"channels\"-node.");
+    }
+
+    const bool isChannelsArray = document[CziUtilities::JsonKey_Channels].IsArray();
+    if (!isChannelsArray)
+    {
+        throw invalid_argument("No \"channels\"-array.");
+    }
+
     const auto& channels = document[CziUtilities::JsonKey_Channels];
 
     map<int, ChannelDisplaySettingsAndValidity> result;
@@ -86,7 +101,7 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 
             result[get<0>(r)] = get<1>(r);
         }
-        catch (logic_error& err)
+        catch (invalid_argument& err)
         {
         }
     }
@@ -98,30 +113,48 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 {
     if (v.HasMember(CziUtilities::JsonKey_Ch) == false)
     {
-        throw std::logic_error("No channel specified");
+        throw std::invalid_argument("No channel specified");
+    }
+
+    if (v[CziUtilities::JsonKey_Ch].IsInt() == false)
+    {
+        throw std::invalid_argument("Channel-number must be an integer");
     }
 
     ChannelDisplaySettingsAndValidity cds;
     cds.channel_display_settings.Clear();
 
     int chNo = v[CziUtilities::JsonKey_Ch].GetInt();
+    if (chNo < 0)
+    {
+        throw invalid_argument("Channel-Number must not be negative.");
+    }
 
     if (v.HasMember(CziUtilities::JsonKey_Enabled))
     {
-        cds.channel_display_settings.isEnabled = v[CziUtilities::JsonKey_Enabled].GetBool();
-        cds.validity.Set(ChannelDisplaySettingsValidity::Property::IsEnabled, true);
+        if (v[CziUtilities::JsonKey_Enabled].IsBool())
+        {
+            cds.channel_display_settings.isEnabled = v[CziUtilities::JsonKey_Enabled].GetBool();
+            cds.validity.Set(ChannelDisplaySettingsValidity::Property::IsEnabled, true);
+        }
     }
 
     if (v.HasMember(CziUtilities::JsonKey_BlackPoint))
     {
-        cds.channel_display_settings.blackPoint = v[CziUtilities::JsonKey_BlackPoint].GetFloat();
-        cds.validity.Set(ChannelDisplaySettingsValidity::Property::BlackPoint, true);
+        if (v[CziUtilities::JsonKey_BlackPoint].IsFloat())
+        {
+            cds.channel_display_settings.blackPoint = v[CziUtilities::JsonKey_BlackPoint].GetFloat();
+            cds.validity.Set(ChannelDisplaySettingsValidity::Property::BlackPoint, true);
+        }
     }
 
     if (v.HasMember(CziUtilities::JsonKey_WhitePoint))
     {
-        cds.channel_display_settings.whitePoint = v[CziUtilities::JsonKey_WhitePoint].GetFloat();
-        cds.validity.Set(ChannelDisplaySettingsValidity::Property::WhitePoint, true);
+        if (v[CziUtilities::JsonKey_WhitePoint].IsFloat())
+        {
+            cds.channel_display_settings.whitePoint = v[CziUtilities::JsonKey_WhitePoint].GetFloat();
+            cds.validity.Set(ChannelDisplaySettingsValidity::Property::WhitePoint, true);
+        }
     }
 
     if (v.HasMember(CziUtilities::JsonKey_TintingMode))
@@ -139,6 +172,18 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
             {
                 cds.channel_display_settings.tintingMode = IDisplaySettings::TintingMode::Color;
                 cds.validity.Set(ChannelDisplaySettingsValidity::Property::TintingMode, true);
+            }
+        }
+    }
+
+    if (v.HasMember(CziUtilities::JsonKey_TintingColor))
+    {
+        if (v[CziUtilities::JsonKey_TintingColor].IsString())
+        {
+            const auto& str = ::Utils::trim(v[CziUtilities::JsonKey_TintingColor].GetString());
+            if (TryParseColor(str, &cds.channel_display_settings.tintingColor) == true)
+            {
+                cds.validity.Set(ChannelDisplaySettingsValidity::Property::TintingColor, true);
             }
         }
     }
@@ -168,8 +213,11 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 
     if (v.HasMember(CziUtilities::JsonKey_Gamma))
     {
-        cds.channel_display_settings.gamma = v[CziUtilities::JsonKey_Gamma].GetFloat();
-        cds.validity.Set(ChannelDisplaySettingsValidity::Property::Gamma, true);
+        if (v[CziUtilities::JsonKey_Gamma].IsFloat())
+        {
+            cds.channel_display_settings.gamma = v[CziUtilities::JsonKey_Gamma].GetFloat();
+            cds.validity.Set(ChannelDisplaySettingsValidity::Property::Gamma, true);
+        }
     }
 
     if (v.HasMember(CziUtilities::JsonKey_SplinePoints))
@@ -182,11 +230,11 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 
         for (rapidjson::Value::ConstValueIterator it = sp.Begin(); it != sp.End(); ++it)
         {
-            double d1 = it->GetDouble();
+            const double d1 = it->GetDouble();
             ++it;
             if (it == sp.End())
                 break;
-            double d2 = it->GetDouble();
+            const double d2 = it->GetDouble();
             cds.channel_display_settings.splineCtrlPoints.push_back(IDisplaySettings::SplineControlPoint(d1, d2));
         }
 
@@ -197,6 +245,60 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
     }
 
     return make_tuple(chNo, cds);
+}
+
+/*static*/bool CziUtilities::TryParseColor(const std::string& str, libCZI::Rgb8Color* ptrRgbColor)
+{
+    // the rules are:
+    // - it has to start with a '#'
+    // - then, we expect 6 hex-chars (if there is more after those 6 chars, then they are ignored)
+    // - if we have less than 6 chars, we behave as if the missing chars would be 'F'
+
+    if (str.empty() || str[0] != '#')
+    {
+        return false;
+    }
+
+    std::uint8_t r, g, b;
+    r = g = b = 0xff;
+    for (size_t i = 1; i < (std::min)((size_t)7, (size_t)str.size()); ++i)
+    {
+        if (!isxdigit(str[i]))
+        {
+            return false;
+        }
+
+        switch (i)
+        {
+        case 1:
+            r = (r & 0x0f) | (::Utils::HexCharToInt(str[i]) << 4);
+            break;
+        case 2:
+            r = (r & 0xf0) | ::Utils::HexCharToInt(str[i]);
+            break;
+        case 3:
+            g = (g & 0x0f) | (::Utils::HexCharToInt(str[i]) << 4);
+            break;
+        case 4:
+            g = (g & 0xf0) | ::Utils::HexCharToInt(str[i]);
+            break;
+        case 5:
+            b = (b & 0x0f) | (::Utils::HexCharToInt(str[i]) << 4);
+            break;
+        case 6:
+            b = (b & 0xf0) | ::Utils::HexCharToInt(str[i]);
+            break;
+        }
+    }
+
+    if (ptrRgbColor!=nullptr)
+    {
+        ptrRgbColor->r = r;
+        ptrRgbColor->g = g;
+        ptrRgbColor->b = b;
+    }
+
+    return true;
 }
 
 /*static*/const char* CziUtilities::JsonKey_Channels = "channels";
