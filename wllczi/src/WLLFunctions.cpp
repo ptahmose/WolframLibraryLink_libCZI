@@ -191,11 +191,12 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
 EXTERN_C WLLCZI_API int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
     // arguments:
-// 1st: ROI               -> NumericArray of size 4
-// 2nd: plane-coordinate  -> a string (of form "T3C2Z32")
-// 3rd: zoom              -> A float number
-// 4th: display-settings  -> [optional] a string containing JSON
-    if (Argc != 4)
+    // 1st: ROI               -> NumericArray of size 4
+    // 2nd: plane-coordinate  -> a string (of form "T3C2Z32")
+    // 3rd: zoom              -> A float number
+    // 4th: display-settings  -> [optional] a string containing JSON
+    VDBGPRINT((CDbg::Level::Trace, "CZIReader_MultiChannelScalingTileComposite: Enter (Argc=%" MINTFMT ")", Argc));
+    if (Argc < 4)
     {
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -235,25 +236,38 @@ EXTERN_C WLLCZI_API int CZIReader_MultiChannelScalingTileComposite(WolframLibrar
 
     mreal zoom = MArgument_getReal(Args[3]);
 
+    char* displaySettingsString = nullptr;
+    if (Argc > 4)
+    {
+        displaySettingsString = MArgument_getUTF8String(Args[4]);
+    }
+
+    int returnValue = LIBRARY_NO_ERROR;
     try
     {
         auto out = reader->GetMultiChannelScalingTileComposite(
             libData,
             IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
             &planeCoordinate,
-            (float)zoom);
+            (float)zoom,
+            displaySettingsString);
         MArgument_setMImage(res, out);
     }
     catch (libCZI::LibCZIException& excp)
     {
         libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
-        return LIBRARY_FUNCTION_ERROR;
+        returnValue = LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
         libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
-        return LIBRARY_FUNCTION_ERROR;
+        returnValue = LIBRARY_FUNCTION_ERROR;
     }
 
-    return LIBRARY_NO_ERROR;
+    if (displaySettingsString != nullptr)
+    {
+        libData->UTF8String_disown(displaySettingsString);
+    }
+
+    return returnValue;
 }

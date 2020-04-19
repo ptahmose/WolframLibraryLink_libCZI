@@ -158,6 +158,30 @@ MImage CziReader::GetSingleChannelScalingTileComposite(WolframLibraryData libDat
     return spMimg.release();
 }
 
+MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom, const char* displaySettingsJson)
+{
+    if (displaySettingsJson == nullptr || *displaySettingsJson == '\0')
+    {
+        return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom);
+    }
+
+    ChannelDisplaySettingsInfo dsinfo;
+    try
+    {
+        dsinfo = CziUtilities::ParseDisplaySettings(displaySettingsJson);
+    }
+    catch (invalid_argument&)
+    {
+        return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom);
+    }
+
+    const auto displaySettingsFromCzi = this->GetDispaySettingsFromCzi();
+
+    const auto combinedDisplaySettings = CziUtilities::CombineDisplaySettings(displaySettingsFromCzi.get(), dsinfo.displaySettings);
+
+    return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, combinedDisplaySettings.get());
+}
+
 MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom)
 {
     auto displaySettings = this->GetDispaySettingsFromCzi();
@@ -191,6 +215,67 @@ MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData
 
     libCZI::CDisplaySettingsHelper dsplHlp;
     dsplHlp.Initialize(displaySettings.get(), [&](int chIndx)->libCZI::PixelType
+    {
+        int idx = (int)std::distance(activeChannels.cbegin(), std::find(activeChannels.cbegin(), activeChannels.cend(), chIndx));
+        return channelBitmaps[idx]->GetPixelType();
+    });
+
+    std::vector<IBitmapData*> vecBm; vecBm.reserve(channelBitmaps.size());
+    for (int i = 0; i < channelBitmaps.size(); ++i)
+    {
+        vecBm.emplace_back(channelBitmaps[i].get());
+    }
+
+    auto mimagedeleter = std::bind(
+        [](WolframImageLibrary_Functions imgLibFuncs, MImage mimg)->void {imgLibFuncs->MImage_free(mimg); },
+        libData->imageLibraryFunctions, std::placeholders::_1);
+    std::unique_ptr<IMAGEOBJ_ENTRY, decltype(mimagedeleter)> spMimg(
+        MImageHelper::CreateMImage(libData->imageLibraryFunctions, sizeResult, libCZI::PixelType::Bgr24),
+        mimagedeleter);
+
+    CMImageWrapper mimgWrapper(libData->imageLibraryFunctions, spMimg.get());
+    libCZI::Compositors::ComposeMultiChannel_Bgr24(
+        &mimgWrapper,
+        (int)channelBitmaps.size(),
+        &vecBm[0],
+        dsplHlp.GetChannelInfosArray());
+
+    MImageHelper::SwapRgb(&mimgWrapper);
+
+    return spMimg.release();
+}
+
+MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom, const libCZI::IDisplaySettings* displaySettings)
+{
+    std::vector<int> activeChannels = libCZI::CDisplaySettingsHelper::GetActiveChannels(displaySettings);
+    std::vector<shared_ptr<IBitmapData>> channelBitmaps;
+    IntSize sizeResult;
+    try
+    {
+        channelBitmaps = CziUtilities::GetBitmapsFromSpecifiedChannels(
+            this->reader.get(),
+            planeCoordinate,
+            roi,
+            zoom,
+            [&](int idx, int& chNo)->bool
+        {
+            if (idx < (int)activeChannels.size())
+            {
+                chNo = activeChannels.at(idx);
+                return true;
+            }
+
+            return false;
+        },
+            &sizeResult);
+    }
+    catch (LibCZIInvalidPlaneCoordinateException& /*invalidCoordExcp*/)
+    {
+        return nullptr;
+    }
+
+    libCZI::CDisplaySettingsHelper dsplHlp;
+    dsplHlp.Initialize(displaySettings, [&](int chIndx)->libCZI::PixelType
     {
         int idx = (int)std::distance(activeChannels.cbegin(), std::find(activeChannels.cbegin(), activeChannels.cend(), chIndx));
         return channelBitmaps[idx]->GetPixelType();
@@ -282,7 +367,7 @@ std::shared_ptr<libCZI::IDisplaySettings> CziReader::GetDispaySettingsFromCzi()
     for (decltype(height) y = 0; y < height; ++y)
     {
         memcpy(
-        ((char*)pDst) + y * lengthOfLine,
+            ((char*)pDst) + y * lengthOfLine,
             ((const char*)lckBm.ptrDataRoi) + y * (size_t)lckBm.stride,
             lengthOfLine);
     }

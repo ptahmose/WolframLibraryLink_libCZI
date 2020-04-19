@@ -33,13 +33,22 @@ struct ChannelDisplaySettingsAndValidity
     ChannelDisplaySettingsValidity  validity;
 };
 
+struct ChannelDisplaySettingsInfo
+{
+    /// True if the display-settings are to be merged with the display-settings embedded in the CZI; 
+    /// false means that the display-settings here replace the embedded display-settings.
+    bool    isToBeMerged;
+    std::map<int, ChannelDisplaySettingsAndValidity> displaySettings;
+};
 
 class CziUtilities
 {
 public:
     static std::vector<std::shared_ptr<libCZI::IBitmapData>> GetBitmapsFromSpecifiedChannels(libCZI::ICZIReader* reader, const libCZI::CDimCoordinate& planeCoordinate, const libCZI::IntRect& roi, float zoom, std::function<bool(int index, int& channelNo)> getChannelNo, libCZI::IntSize* ptrPixelSize);
 
-    static std::map<int, ChannelDisplaySettingsAndValidity> ParseDisplaySettings(const char* sz);
+    static ChannelDisplaySettingsInfo ParseDisplaySettings(const char* sz);
+
+    static std::shared_ptr<libCZI::IDisplaySettings> CombineDisplaySettings(const libCZI::IDisplaySettings* display_settings, const std::map<int, ChannelDisplaySettingsAndValidity>& partialDs);
 private:
     static const char* JsonKey_Channels;
     static const char* JsonKey_Ch;
@@ -53,4 +62,5 @@ private:
     static const char* JsonKey_SplinePoints;
     static std::tuple<int, ChannelDisplaySettingsAndValidity> ParseChannelDisplaySettings(const rapidjson::Value& v);
     static bool TryParseColor(const std::string& str, libCZI::Rgb8Color* ptrRgbColor);
+    static void TransferPartialChannelDisplaySettings(libCZI::ChannelDisplaySettingsPOD& cds, const ChannelDisplaySettingsAndValidity& pds);
 };

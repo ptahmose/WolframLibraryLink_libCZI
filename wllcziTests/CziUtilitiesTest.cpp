@@ -31,8 +31,8 @@ TEST(CziUtilitiesTests, ParseDisplaySettingsTest1)
 
     auto r = CziUtilities::ParseDisplaySettings(sz);
 
-    EXPECT_EQ(r.size(), 1);
-    const auto& chds = r.at(0);
+    EXPECT_EQ(r.displaySettings.size(), 1);
+    const auto& chds = r.displaySettings.at(0);
 
     EXPECT_TRUE(chds.validity.Get(ChannelDisplaySettingsValidity::Property::IsEnabled));
     EXPECT_TRUE(chds.channel_display_settings.isEnabled);
@@ -81,7 +81,7 @@ TEST(CziUtilitiesTests, ParseDisplaySettingsTest2)
 
     auto r = CziUtilities::ParseDisplaySettings(sz);
 
-    EXPECT_EQ(r.size(), 0);
+    EXPECT_EQ(r.displaySettings.size(), 0);
 }
 
 TEST(CziUtilitiesTests, ParseDisplaySettingsTest3)
@@ -129,8 +129,8 @@ TEST(CziUtilitiesTests, ParseDisplaySettingsTest4)
 
     auto r = CziUtilities::ParseDisplaySettings(sz);
 
-    EXPECT_EQ(r.size(), 1);
-    const auto& chds = r.at(0);
+    EXPECT_EQ(r.displaySettings.size(), 1);
+    const auto& chds = r.displaySettings.at(0);
 
     EXPECT_TRUE(chds.validity.Get(ChannelDisplaySettingsValidity::Property::TintingColor));
     EXPECT_EQ(chds.channel_display_settings.tintingColor.r, 0x12);

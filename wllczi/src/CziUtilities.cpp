@@ -63,7 +63,7 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
     return chBitmaps;
 }
 
-/*static*/std::map<int, ChannelDisplaySettingsAndValidity> CziUtilities::ParseDisplaySettings(const char* sz)
+/*static*/ChannelDisplaySettingsInfo CziUtilities::ParseDisplaySettings(const char* sz)
 {
     rapidjson::Document document;
     document.Parse(sz);
@@ -92,20 +92,21 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 
     const auto& channels = document[CziUtilities::JsonKey_Channels];
 
-    map<int, ChannelDisplaySettingsAndValidity> result;
+    ChannelDisplaySettingsInfo result;
     for (decltype(channels.Size()) i = 0; i < channels.Size(); ++i)
     {
         try
         {
             auto r = CziUtilities::ParseChannelDisplaySettings(channels[i]);
 
-            result[get<0>(r)] = get<1>(r);
+            result.displaySettings[get<0>(r)] = get<1>(r);
         }
         catch (invalid_argument& err)
         {
         }
     }
 
+    result.isToBeMerged = true;
     return result;
 }
 
@@ -261,7 +262,7 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 
     std::uint8_t r, g, b;
     r = g = b = 0xff;
-    for (size_t i = 1; i < (std::min)((size_t)7, (size_t)str.size()); ++i)
+    for (size_t i = 1; i < (std::min)(static_cast<size_t>(7), str.size()); ++i)
     {
         if (!isxdigit(str[i]))
         {
@@ -291,7 +292,7 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
         }
     }
 
-    if (ptrRgbColor!=nullptr)
+    if (ptrRgbColor != nullptr)
     {
         ptrRgbColor->r = r;
         ptrRgbColor->g = g;
@@ -311,3 +312,65 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 /*static*/const char* CziUtilities::JsonKey_GradationCurveMode = "gradation-curve-mode";
 /*static*/const char* CziUtilities::JsonKey_Gamma = "gamma";
 /*static*/const char* CziUtilities::JsonKey_SplinePoints = "spline-control-points";
+
+/*static*/std::shared_ptr<libCZI::IDisplaySettings> CziUtilities::CombineDisplaySettings(const libCZI::IDisplaySettings* display_settings, const std::map<int, ChannelDisplaySettingsAndValidity>& partialDs)
+{
+    libCZI::DisplaySettingsPOD dsPod;
+    IDisplaySettings::Clone(display_settings, dsPod);
+
+    for (auto it = partialDs.begin(); it != partialDs.end(); ++it)
+    {
+        auto& cds = dsPod.channelDisplaySettings.at(it->first);
+        CziUtilities::TransferPartialChannelDisplaySettings(cds, it->second);
+    }
+
+    return DisplaySettingsPOD::CreateIDisplaySettingSp(dsPod);
+}
+
+/*static*/void CziUtilities::TransferPartialChannelDisplaySettings(libCZI::ChannelDisplaySettingsPOD& cds, const ChannelDisplaySettingsAndValidity& pds)
+{
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::IsEnabled))
+    {
+        cds.isEnabled = pds.channel_display_settings.isEnabled;
+    }
+
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::Weight))
+    {
+        cds.weight = pds.channel_display_settings.weight;
+    }
+
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::TintingMode))
+    {
+        cds.tintingMode = pds.channel_display_settings.tintingMode;
+    }
+
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::TintingColor))
+    {
+        cds.tintingColor = pds.channel_display_settings.tintingColor;
+    }
+
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::BlackPoint))
+    {
+        cds.blackPoint = pds.channel_display_settings.blackPoint;
+    }
+
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::WhitePoint))
+    {
+        cds.whitePoint = pds.channel_display_settings.whitePoint;
+    }
+
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::GradationCurveMode))
+    {
+        cds.gradationCurveMode = pds.channel_display_settings.gradationCurveMode;
+    }
+
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::Gamma))
+    {
+        cds.gamma = pds.channel_display_settings.gamma;
+    }
+
+    if (pds.validity.Get(ChannelDisplaySettingsValidity::Property::SplineCtrlPts))
+    {
+        cds.splineCtrlPoints = pds.channel_display_settings.splineCtrlPoints;
+    }
+}
