@@ -72,7 +72,7 @@ CziGetSingleChannelScaledBitmap = libraryfunctionload[
 
 CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
   "CZIReader_MultiChannelScalingTileComposite",
-  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real]}, 
+  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], UTF8String}, 
   LibraryDataType[Image]];
 
 GetCZIReaderLibraryInfo[] :=
@@ -122,7 +122,7 @@ CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
       Return[img];
     ]
 
-CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
+CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displSettings_:""]  :=
     Module[{roi,img,coordstr},
       roi = NumericArray[{x,y,w,h},"Integer32"];
       coordstr = coordArgumentToString[coord];
@@ -131,7 +131,8 @@ CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
         ManagedLibraryExpressionID[c],
         roi,
         coordstr,
-        zoom];
+        zoom,
+        displSettings];
       Return[img];
     ]
 
