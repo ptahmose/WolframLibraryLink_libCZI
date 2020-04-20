@@ -24,7 +24,7 @@ GetCZIReaderLibraryInfo::usage =
     "CZISingleChannelScaledComposite[c,x,y,w,h,zoom,coord]";
 
  CZIMultiChannelScaledComposite::usage = 
-    "CZIMultiChannelScaledComposite[c,x,y,w,h,zoom,coord]";
+    "CZIMultiChannelScaledComposite[c,x,y,w,h,zoom,coord,displaySettings]";
 	
 Begin["`Private`"]
 
@@ -122,17 +122,20 @@ CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
       Return[img];
     ]
 
-CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displSettings_:""]  :=
+CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySettings_:""]  :=
     Module[{roi,img,coordstr},
       roi = NumericArray[{x,y,w,h},"Integer32"];
       coordstr = coordArgumentToString[coord];
 
-      img = CziGetMultiChannelScalingTileCompositeBitmap[
-        ManagedLibraryExpressionID[c],
-        roi,
-        coordstr,
-        zoom,
-        displSettings];
+      img = Which[
+              StringQ[displaySettings]         (* if "displaySettings_" is a string, then it needs to be JSON and suitably composed *),
+              CziGetMultiChannelScalingTileCompositeBitmap[ManagedLibraryExpressionID[c],roi,coordstr,zoom,displaySettings],
+              ListQ[displaySettings],
+              CziGetMultiChannelScalingTileCompositeBitmap[ManagedLibraryExpressionID[c],roi,coordstr,zoom,ExportString[displaySettings,"JSON"]],
+              True,
+                Message("Argument 'displaySettings' must either be a string containing JSON, or a List which can be converted to JSON");
+                $Failed
+              ];
       Return[img];
     ]
 
