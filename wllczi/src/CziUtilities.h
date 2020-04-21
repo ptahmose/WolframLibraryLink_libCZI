@@ -49,6 +49,7 @@ public:
     static ChannelDisplaySettingsInfo ParseDisplaySettings(const char* sz);
 
     static std::shared_ptr<libCZI::IDisplaySettings> CombineDisplaySettings(const libCZI::IDisplaySettings* display_settings, const std::map<int, ChannelDisplaySettingsAndValidity>& partialDs);
+    static std::shared_ptr<libCZI::IDisplaySettings> ConvertToDisplaySettings(const std::map<int, ChannelDisplaySettingsAndValidity>& partialDs);
 private:
     static const char* JsonKey_Channels;
     static const char* JsonKey_Ch;
@@ -60,7 +61,9 @@ private:
     static const char* JsonKey_GradationCurveMode;
     static const char* JsonKey_Gamma;
     static const char* JsonKey_SplinePoints;
+    static const char* JsonKey_MergeWithEmbeddedDisplaySettings;
     static std::tuple<int, ChannelDisplaySettingsAndValidity> ParseChannelDisplaySettings(const rapidjson::Value& v);
     static bool TryParseColor(const std::string& str, libCZI::Rgb8Color* ptrRgbColor);
     static void TransferPartialChannelDisplaySettings(libCZI::ChannelDisplaySettingsPOD& cds, const ChannelDisplaySettingsAndValidity& pds);
+
 };

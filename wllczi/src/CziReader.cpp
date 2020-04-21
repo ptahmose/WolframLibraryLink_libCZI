@@ -165,21 +165,21 @@ MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData
         return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom);
     }
 
-    ChannelDisplaySettingsInfo dsinfo;
-    try
+    ChannelDisplaySettingsInfo dsinfo = CziUtilities::ParseDisplaySettings(displaySettingsJson);
+
+    if (dsinfo.isToBeMerged == true)
     {
-        dsinfo = CziUtilities::ParseDisplaySettings(displaySettingsJson);
+        const auto displaySettingsFromCzi = this->GetDispaySettingsFromCzi();
+        const auto combinedDisplaySettings = CziUtilities::CombineDisplaySettings(displaySettingsFromCzi.get(), dsinfo.displaySettings);
+
+        return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, combinedDisplaySettings.get());
     }
-    catch (invalid_argument&)
+    else
     {
-        return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom);
+        const auto resultingDisplaySettings = CziUtilities::ConvertToDisplaySettings(dsinfo.displaySettings);
+
+        return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, resultingDisplaySettings.get());
     }
-
-    const auto displaySettingsFromCzi = this->GetDispaySettingsFromCzi();
-
-    const auto combinedDisplaySettings = CziUtilities::CombineDisplaySettings(displaySettingsFromCzi.get(), dsinfo.displaySettings);
-
-    return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, combinedDisplaySettings.get());
 }
 
 MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom)

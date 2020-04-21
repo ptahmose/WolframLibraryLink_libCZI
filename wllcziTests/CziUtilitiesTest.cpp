@@ -59,7 +59,7 @@ TEST(CziUtilitiesTests, ParseDisplaySettingsTest1)
 
 TEST(CziUtilitiesTests, ParseDisplaySettingsTest2)
 {
-    // the "ch" node must present, otherwise we expect an empty result
+    // the "ch" node must present, otherwise we expect an exception
     static const char* sz =
         R"(
     {
@@ -79,9 +79,15 @@ TEST(CziUtilitiesTests, ParseDisplaySettingsTest2)
     }
         )";
 
-    auto r = CziUtilities::ParseDisplaySettings(sz);
-
-    EXPECT_EQ(r.displaySettings.size(), 0);
+    try
+    {
+        auto r = CziUtilities::ParseDisplaySettings(sz);
+        FAIL() << "expected an exception";
+    }
+    catch (const invalid_argument&)
+    {
+        SUCCEED();
+    }
 }
 
 TEST(CziUtilitiesTests, ParseDisplaySettingsTest3)
@@ -116,6 +122,47 @@ TEST(CziUtilitiesTests, ParseDisplaySettingsTest4)
                             "black-point" : 0.1,
                             "white-point" : 0.9,
                             "gamma" : 0.16091187298297886,
+                            "tinting-mode" : "color",           
+                            "tinting-color" : "#123456",
+                            "gradation-curve-mode":"spline",    
+                            "spline-control-points" : [
+                                    0.19685038924217225,
+                                    0.7571428418159485,
+                                    0.34645670652389529,
+                                    0.04285714402794838]
+                        }
+                    ]
+    }
+        )";
+
+    auto r = CziUtilities::ParseDisplaySettings(sz);
+
+    EXPECT_EQ(r.isToBeMerged, true);
+    EXPECT_EQ(r.displaySettings.size(), 1);
+    const auto& chds = r.displaySettings.at(0);
+
+    EXPECT_TRUE(chds.validity.Get(ChannelDisplaySettingsValidity::Property::TintingColor));
+    EXPECT_EQ(chds.channel_display_settings.tintingMode, IDisplaySettings::TintingMode::Color);
+    EXPECT_EQ(chds.channel_display_settings.tintingColor.r, 0x12);
+    EXPECT_EQ(chds.channel_display_settings.tintingColor.g, 0x34);
+    EXPECT_EQ(chds.channel_display_settings.tintingColor.b, 0x56);
+    EXPECT_EQ(chds.channel_display_settings.gradationCurveMode, IDisplaySettings::GradationCurveMode::Spline);
+}
+
+TEST(CziUtilitiesTests, ParseDisplaySettingsTest5)
+{
+    // the "ch" node must present, otherwise we expect an empty result
+    static const char* sz =
+        R"(
+    {
+        "merge-with-embedded" : false,
+        "channels": [
+                        {
+                            "ch": 0,
+                            "enabled": true,
+                            "black-point" : 0.1,
+                            "white-point" : 0.9,
+                            "gamma" : 0.16091187298297886,
                             "tinting-color" : "#123456",
                             "spline-control-points" : [
                                     0.19685038924217225,
@@ -128,6 +175,7 @@ TEST(CziUtilitiesTests, ParseDisplaySettingsTest4)
         )";
 
     auto r = CziUtilities::ParseDisplaySettings(sz);
+    EXPECT_EQ(r.isToBeMerged, false);
 
     EXPECT_EQ(r.displaySettings.size(), 1);
     const auto& chds = r.displaySettings.at(0);

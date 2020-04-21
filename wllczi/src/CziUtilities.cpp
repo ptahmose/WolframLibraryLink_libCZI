@@ -95,23 +95,27 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
     ChannelDisplaySettingsInfo result;
     for (decltype(channels.Size()) i = 0; i < channels.Size(); ++i)
     {
-        try
-        {
-            auto r = CziUtilities::ParseChannelDisplaySettings(channels[i]);
+        auto r = CziUtilities::ParseChannelDisplaySettings(channels[i]);
 
-            result.displaySettings[get<0>(r)] = get<1>(r);
-        }
-        catch (invalid_argument& err)
-        {
-        }
+        // note: if there are duplicate channels, the last one wins
+        result.displaySettings[get<0>(r)] = get<1>(r);
     }
 
     result.isToBeMerged = true;
+    if (document.HasMember(CziUtilities::JsonKey_MergeWithEmbeddedDisplaySettings))
+    {
+        if (document[CziUtilities::JsonKey_MergeWithEmbeddedDisplaySettings].IsBool())
+        {
+            result.isToBeMerged = document[CziUtilities::JsonKey_MergeWithEmbeddedDisplaySettings].GetBool();
+        }
+    }
+
     return result;
 }
 
 /*static*/std::tuple<int, ChannelDisplaySettingsAndValidity> CziUtilities::ParseChannelDisplaySettings(const rapidjson::Value& v)
 {
+    // We only throw an exception if there is no valid channel-number. If we encounter other problem, we ignore it.
     if (v.HasMember(CziUtilities::JsonKey_Ch) == false)
     {
         throw std::invalid_argument("No channel specified");
@@ -260,11 +264,11 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
         return false;
     }
 
-    std::uint8_t r, g, b;
-    r = g = b = 0xff;
+    std::uint8_t r{ 0xff }, g{ 0xff }, b{ 0xff };
     for (size_t i = 1; i < (std::min)(static_cast<size_t>(7), str.size()); ++i)
     {
-        if (!isxdigit(str[i]))
+        const uint8_t nibble = ::Utils::HexCharToInt(str[i]);
+        if (nibble > 0x0f)
         {
             return false;
         }
@@ -272,22 +276,22 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
         switch (i)
         {
         case 1:
-            r = (r & 0x0f) | (::Utils::HexCharToInt(str[i]) << 4);
+            r = (r & 0x0f) | (nibble << 4);
             break;
         case 2:
-            r = (r & 0xf0) | ::Utils::HexCharToInt(str[i]);
+            r = (r & 0xf0) | nibble;
             break;
         case 3:
-            g = (g & 0x0f) | (::Utils::HexCharToInt(str[i]) << 4);
+            g = (g & 0x0f) | (nibble << 4);
             break;
         case 4:
-            g = (g & 0xf0) | ::Utils::HexCharToInt(str[i]);
+            g = (g & 0xf0) | nibble;
             break;
         case 5:
-            b = (b & 0x0f) | (::Utils::HexCharToInt(str[i]) << 4);
+            b = (b & 0x0f) | (nibble << 4);
             break;
         case 6:
-            b = (b & 0xf0) | ::Utils::HexCharToInt(str[i]);
+            b = (b & 0xf0) | nibble;
             break;
         }
     }
@@ -312,16 +316,33 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 /*static*/const char* CziUtilities::JsonKey_GradationCurveMode = "gradation-curve-mode";
 /*static*/const char* CziUtilities::JsonKey_Gamma = "gamma";
 /*static*/const char* CziUtilities::JsonKey_SplinePoints = "spline-control-points";
+/*static*/const char* CziUtilities::JsonKey_MergeWithEmbeddedDisplaySettings = "merge-with-embedded";
 
 /*static*/std::shared_ptr<libCZI::IDisplaySettings> CziUtilities::CombineDisplaySettings(const libCZI::IDisplaySettings* display_settings, const std::map<int, ChannelDisplaySettingsAndValidity>& partialDs)
 {
     libCZI::DisplaySettingsPOD dsPod;
     IDisplaySettings::Clone(display_settings, dsPod);
 
-    for (auto it = partialDs.begin(); it != partialDs.end(); ++it)
+    for (auto it = partialDs.cbegin(); it != partialDs.cend(); ++it)
     {
         auto& cds = dsPod.channelDisplaySettings.at(it->first);
         CziUtilities::TransferPartialChannelDisplaySettings(cds, it->second);
+    }
+
+    return DisplaySettingsPOD::CreateIDisplaySettingSp(dsPod);
+}
+
+/*static*/std::shared_ptr<libCZI::IDisplaySettings> CziUtilities::ConvertToDisplaySettings(const std::map<int, ChannelDisplaySettingsAndValidity>& partialDs)
+{
+    libCZI::DisplaySettingsPOD dsPod;
+
+    // we create "default channel-display-settings", and the apply the information provided with "partialDs"
+    for (auto it = partialDs.cbegin(); it != partialDs.cend(); ++it)
+    {
+        ChannelDisplaySettingsPOD channelDisplaySettings;
+        channelDisplaySettings.Clear();
+        CziUtilities::TransferPartialChannelDisplaySettings(channelDisplaySettings, it->second);
+        dsPod.channelDisplaySettings[it->first] = channelDisplaySettings;
     }
 
     return DisplaySettingsPOD::CreateIDisplaySettingSp(dsPod);
