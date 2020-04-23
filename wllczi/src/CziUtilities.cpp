@@ -20,7 +20,7 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
     std::vector<std::shared_ptr<IBitmapData>> chBitmaps;
     libCZI::CDimCoordinate coordinate = planeCoordinate;
 
-    auto subBlockStatistics = reader->GetStatistics();
+    const auto subBlockStatistics = reader->GetStatistics();
 
     libCZI::ISingleChannelScalingTileAccessor::Options sctaOptions; sctaOptions.Clear();
     sctaOptions.backGroundColor = RgbFloatColor{ 0, 0, 0 };

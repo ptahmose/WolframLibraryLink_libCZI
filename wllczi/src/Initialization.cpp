@@ -4,6 +4,7 @@
 #include "CziInstanceManager.h"
 #include "errorhelper.h"
 #include "dbgprint.h"
+#include "inc_libCzi.h"
 
 using namespace std;
 
@@ -21,14 +22,22 @@ static void manage_czi_instance(WolframLibraryData libData, mbool mode, mint id)
     }
 }
 
-mint WolframLibrary_getVersion( )
+mint WolframLibrary_getVersion()
 {
     DBGPRINT((CDbg::Level::Trace, "WolframLibrary_getVersion: Enter"));
     return (WolframLibraryVersion);
 }
 
-int WolframLibrary_initialize( WolframLibraryData libData)
+int WolframLibrary_initialize(WolframLibraryData libData)
 {
+#if _WIN32API
+    // on Windows, prefer to use the Microsoft-WIC-JPGXR-codec
+    const auto site = libCZI::GetDefaultSiteObject(libCZI::SiteObjectType::WithWICDecoder);
+    if (site != nullptr)
+    {
+        libCZI::SetSiteObject(site);
+    }
+#endif
     int r = libData->registerLibraryExpressionManager(LibraryExpressionNameCziReader, manage_czi_instance);
     return r;
 }
