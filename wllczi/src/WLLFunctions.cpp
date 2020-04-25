@@ -188,7 +188,7 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     return LIBRARY_NO_ERROR;
 }
 
-EXTERN_C WLLCZI_API int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
     // arguments:
     // 1st: ROI               -> NumericArray of size 4
@@ -270,4 +270,44 @@ EXTERN_C WLLCZI_API int CZIReader_MultiChannelScalingTileComposite(WolframLibrar
     }
 
     return returnValue;
+}
+
+int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 1)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    mint id = MArgument_getInteger(Args[0]);
+
+    std::shared_ptr<CziReader> reader;
+    try
+    {
+        reader = CziReaderManager::Instance.GetInstance(id);
+    }
+    catch (out_of_range&)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    try 
+    {
+        string s = reader->GetMetadataXml();
+        g_stringReturnHelper.StoreString(s);
+        MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
+    }
+    catch (libCZI::LibCZIException& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziGetMetadataXml(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+    catch (exception& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziGetMetadataXml(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    return LIBRARY_NO_ERROR;
 }

@@ -441,3 +441,14 @@ std::shared_ptr<libCZI::IDisplaySettings> CziReader::GetDispaySettingsFromCzi()
     }
 }
 
+std::string CziReader::GetMetadataXml()
+{
+    auto mds = this->reader->ReadMetadataSegment();
+    auto m = mds->CreateMetaFromMetadataSegment();
+    if (!m->IsXmlValid())
+    {
+        throw runtime_error("Metadata-XML found to be invalid.");
+    }
+
+    return m->GetXml();
+}

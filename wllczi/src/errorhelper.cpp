@@ -46,3 +46,17 @@ using namespace std;
         1 + excp.GetNumberOfCharsParsedOk() << ".";
     return ss.str();
 }
+
+/*static*/std::string ErrHelper::GetErrorText_CziGetMetadataXml(std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error retrieving XML-metadata: \"" << excp.what() << "\"";
+    return ss.str();
+}
+
+/*static*/std::string ErrHelper::GetErrorText_CziGetMetadataXml(libCZI::LibCZIException& excp)
+{
+    stringstream ss;
+    ss << "Error retrieving XML-metadata: \"" << excp.what() << "\"";
+    return ss.str();
+}

@@ -19,6 +19,7 @@ public:
     void Open(const std::string& utf8_filename);
 
     std::string GetInfo();
+    std::string GetMetadataXml();
 
     MImage GetSubBlockImage(WolframLibraryData libData,int no);
     MImage GetSingleChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom);

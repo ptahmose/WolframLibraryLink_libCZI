@@ -44,3 +44,5 @@ EXTERN_C WLLCZI_API int CZIReader_GetSingleChannelScalingTileComposite(WolframLi
 EXTERN_C WLLCZI_API int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
 
 EXTERN_C WLLCZI_API int CZIReader_ReleaseInstance(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
+
+EXTERN_C WLLCZI_API int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);

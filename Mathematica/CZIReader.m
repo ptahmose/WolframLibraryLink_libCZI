@@ -9,25 +9,28 @@ BeginPackage[ "CZIReader`"]
 (* Public functions will have names starting with capitals, by convention. *)
 
 GetCZIReaderLibraryInfo::usage = 
-  "Get version/build information about 'CZIReader'."
+    "Get version/build information about 'CZIReader'."
 
- OpenCZI::usage = 
-	"OpenCZI[filename] opens a CZI file.";
+OpenCZI::usage = 
+	  "OpenCZI[filename] opens a CZI file.";
 
- ReleaseCZI::usage = 
-  "Releases the CZI-object. Note that if the object gets garbage-collected, then it will be released automatically. See e.g. https://reference.wolfram.com/language/ref/CreateManagedLibraryExpression.html";
+ReleaseCZI::usage = 
+    "Releases the CZI-object. Note that if the object gets garbage-collected, then it will be released automatically. See e.g. https://reference.wolfram.com/language/ref/CreateManagedLibraryExpression.html";
 
- CZIGetInfo::usage =
-  "CZIGetInfo[fileobj] gets statistics about the document.";
+CZIGetInfo::usage =
+    "CZIGetInfo[fileobj] gets statistics about the document.";
 	
- CZIGetSubBlock::usage =
+CZIGetSubBlock::usage =
     "CZIGetSubBlock[fileobj,n] read the specified subblock.";
 
- CZISingleChannelScaledComposite::usage = 
+CZISingleChannelScaledComposite::usage = 
     "CZISingleChannelScaledComposite[fileobj,x,y,w,h,zoom,coord] gets a single-channel tile-composite.";
 
- CZIMultiChannelScaledComposite::usage = 
+CZIMultiChannelScaledComposite::usage = 
     "CZIMultiChannelScaledComposite[fileobj,x,y,w,h,zoom,coord,displaySettings] gets the multi-channel multi-tile composite.";
+
+CZIGetMetadataXml::usage = 
+    "CZIGetMetadataXml[fileobj] gets the XML-metadata.";
 	
 Begin["`Private`"]
 
@@ -82,6 +85,10 @@ CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
   {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], UTF8String}, 
   LibraryDataType[Image]];
 
+CziGetMetadataXml = libraryfunctionload[
+  "CZIReader_GetMetadataXml",
+  {Integer}, UTF8String];
+
 GetCZIReaderLibraryInfo[] :=
   Module[{},
     Return[GetLibraryInfo[]];
@@ -112,7 +119,7 @@ CZIGetSubBlock[c_,n_] :=
       Return[bitmap];
     ]
 
-CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
+CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_] :=
 	Module[{roi,img,coordstr},
       roi = NumericArray[{x,y,w,h},"Integer32"];
       coordstr = If[ 
@@ -133,7 +140,7 @@ CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
       Return[img];
     ]
 
-CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySettings_:""]  :=
+CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySettings_:""] :=
     Module[{roi,img,coordstr},
       roi = NumericArray[{x,y,w,h},"Integer32"];
       coordstr = coordArgumentToString[coord];
@@ -149,6 +156,12 @@ CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySettings_:""] 
               ];
       Return[img];
     ]
+
+CZIGetMetadataXml[c_] :=
+   Module[{},
+      Return[CziGetMetadataXml[ManagedLibraryExpressionID[c]]];
+    ]
+
 
   (* All functions which are not public, and are only used in the 
    internal implementation of the package, go into this section.
