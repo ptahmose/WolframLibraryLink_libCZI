@@ -42,3 +42,5 @@ EXTERN_C WLLCZI_API int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, 
 EXTERN_C WLLCZI_API int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
 
 EXTERN_C WLLCZI_API int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
+
+EXTERN_C WLLCZI_API int CZIReader_ReleaseInstance(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);

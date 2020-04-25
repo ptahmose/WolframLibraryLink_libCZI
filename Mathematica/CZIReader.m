@@ -12,19 +12,22 @@ GetCZIReaderLibraryInfo::usage =
   "Get version/build information about 'CZIReader'."
 
  OpenCZI::usage = 
-	"OpenCZI[ x] opens a CZI file.";
+	"OpenCZI[filename] opens a CZI file.";
+
+ ReleaseCZI::usage = 
+  "Releases the CZI-object. Note that if the object gets garbage-collected, then it will be released automatically. See e.g. https://reference.wolfram.com/language/ref/CreateManagedLibraryExpression.html";
 
  CZIGetInfo::usage =
-  "Get statistics.";
+  "CZIGetInfo[fileobj] gets statistics about the document.";
 	
  CZIGetSubBlock::usage =
-    "CZIGetSubBlock[ c , n]";
+    "CZIGetSubBlock[fileobj,n] read the specified subblock.";
 
  CZISingleChannelScaledComposite::usage = 
-    "CZISingleChannelScaledComposite[c,x,y,w,h,zoom,coord]";
+    "CZISingleChannelScaledComposite[fileobj,x,y,w,h,zoom,coord] gets a single-channel tile-composite.";
 
  CZIMultiChannelScaledComposite::usage = 
-    "CZIMultiChannelScaledComposite[c,x,y,w,h,zoom,coord,displaySettings]";
+    "CZIMultiChannelScaledComposite[fileobj,x,y,w,h,zoom,coord,displaySettings] gets the multi-channel multi-tile composite.";
 	
 Begin["`Private`"]
 
@@ -56,6 +59,10 @@ GetLibraryInfo = libraryfunctionload[
 CziReaderOpen = libraryfunctionload[
   "CZIReader_Open",
   {Integer, {UTF8String}}, Integer];
+
+CziReaderReleaseInstance = libraryfunctionload[
+  "CZIReader_ReleaseInstance",
+  {Integer}, "Void"];
   
 CziReaderInfo = libraryfunctionload[
   "CZIReader_GetInfo",
@@ -89,6 +96,11 @@ OpenCZI[ x_] :=
 	  Return[exp];
     ]
 
+ReleaseCZI[ c_] :=
+    Module[{},
+      CziReaderReleaseInstance[ManagedLibraryExpressionID[c]];
+    ]
+
 CZIGetInfo[ c_ ] :=
     Module[{},
       Return[CziReaderInfo[ManagedLibraryExpressionID[c]]];
@@ -99,7 +111,6 @@ CZIGetSubBlock[c_,n_] :=
       bitmap = CziGetSubBlockBitmap[ManagedLibraryExpressionID[c],n];
       Return[bitmap];
     ]
-
 
 CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
 	Module[{roi,img,coordstr},
@@ -153,8 +164,6 @@ coordArgumentToString[coord_] :=
             ""
         ]
       ];    
-
-
 
   End[]
 

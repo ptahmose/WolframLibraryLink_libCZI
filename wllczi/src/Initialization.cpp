@@ -31,11 +31,17 @@ mint WolframLibrary_getVersion()
 int WolframLibrary_initialize(WolframLibraryData libData)
 {
 #if _WIN32API
-    // on Windows, prefer to use the Microsoft-WIC-JPGXR-codec
-    const auto site = libCZI::GetDefaultSiteObject(libCZI::SiteObjectType::WithWICDecoder);
-    if (site != nullptr)
+    static bool alreadyInitialized = false;
+    if (!alreadyInitialized)
     {
-        libCZI::SetSiteObject(site);
+        // on Windows, prefer to use the Microsoft-WIC-JPGXR-codec
+        const auto site = libCZI::GetDefaultSiteObject(libCZI::SiteObjectType::WithWICDecoder);
+        if (site != nullptr)
+        {
+            libCZI::SetSiteObject(site);
+        }
+
+        alreadyInitialized = true;
     }
 #endif
     int r = libData->registerLibraryExpressionManager(LibraryExpressionNameCziReader, manage_czi_instance);
@@ -46,4 +52,11 @@ void WolframLibrary_uninitialize(WolframLibraryData libData)
 {
     g_stringReturnHelper.Clear();
     int r = libData->unregisterLibraryExpressionManager(LibraryExpressionNameCziReader);
+}
+
+int CZIReader_ReleaseInstance(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 1) return LIBRARY_FUNCTION_ERROR;
+    mint id = MArgument_getInteger(Args[0]);
+    return libData->releaseManagedLibraryExpression(LibraryExpressionNameCziReader, id);
 }

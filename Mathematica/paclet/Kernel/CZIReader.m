@@ -8,20 +8,26 @@ BeginPackage[ "CZIReader`"]
 (* There will be no function definitions in this section, only usage messages. *)
 (* Public functions will have names starting with capitals, by convention. *)
 
+GetCZIReaderLibraryInfo::usage = 
+  "Get version/build information about 'CZIReader'."
+
  OpenCZI::usage = 
-	"OpenCZI[ x] opens a CZI file.";
+	"OpenCZI[filename] opens a CZI file.";
+
+ ReleaseCZI::usage = 
+  "Releases the CZI-object. Note that if the object gets garbage-collected, then it will be released automatically. See e.g. https://reference.wolfram.com/language/ref/CreateManagedLibraryExpression.html";
 
  CZIGetInfo::usage =
-  "Get statistics.";
+  "CZIGetInfo[fileobj] gets statistics about the document.";
 	
  CZIGetSubBlock::usage =
-    "CZIGetSubBlock[ c , n]";
+    "CZIGetSubBlock[fileobj,n] read the specified subblock.";
 
  CZISingleChannelScaledComposite::usage = 
-    "CZISingleChannelScaledComposite[c,x,y,w,h,zoom,coord]";
+    "CZISingleChannelScaledComposite[fileobj,x,y,w,h,zoom,coord] gets a single-channel tile-composite.";
 
  CZIMultiChannelScaledComposite::usage = 
-    "CZIMultiChannelScaledComposite[c,x,y,w,h,zoom,coord]";
+    "CZIMultiChannelScaledComposite[fileobj,x,y,w,h,zoom,coord,displaySettings] gets the multi-channel multi-tile composite.";
 	
 Begin["`Private`"]
 
@@ -33,12 +39,12 @@ libraryfunctionload[func_,argtype_,rettype_] :=
     Module[{},
         If[
          FailureQ[$wllczilibrary],
-         $wllczilibrary = FindLibrary["D:\\Dev\\GitHub\\WolframLibraryLink_libCZI\\out\\build\\x64-Debug\\wllczi\\wllczi.dll"]
+         $wllczilibrary = FindLibrary["wllczi.dll"]
 	    ];
 
         If[
          FailureQ[$wllczilibrary],
-         $wllczilibrary = FindLibrary["/home/pi/dev/BuildWolframLibraryLink_libCZI/wllczi/libwllczi.so"]
+         $wllczilibrary = FindLibrary["libwllczi.so"]
 	    ];
 
         Return[
@@ -46,9 +52,17 @@ libraryfunctionload[func_,argtype_,rettype_] :=
 	    ];
       ]
 
+GetLibraryInfo = libraryfunctionload[
+  "getLibraryInfo",
+  {}, UTF8String];
+
 CziReaderOpen = libraryfunctionload[
   "CZIReader_Open",
   {Integer, {UTF8String}}, Integer];
+
+CziReaderReleaseInstance = libraryfunctionload[
+  "CZIReader_ReleaseInstance",
+  {Integer}, "Void"];
   
 CziReaderInfo = libraryfunctionload[
   "CZIReader_GetInfo",
@@ -65,8 +79,13 @@ CziGetSingleChannelScaledBitmap = libraryfunctionload[
 
 CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
   "CZIReader_MultiChannelScalingTileComposite",
-  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real]}, 
+  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], UTF8String}, 
   LibraryDataType[Image]];
+
+GetCZIReaderLibraryInfo[] :=
+  Module[{},
+    Return[GetLibraryInfo[]];
+  ]
 
 OpenCZI[ x_] :=
     Module[ {exp},
@@ -75,6 +94,11 @@ OpenCZI[ x_] :=
 			ManagedLibraryExpressionID[exp], 
 			x];
 	  Return[exp];
+    ]
+
+ReleaseCZI[ c_] :=
+    Module[{},
+      CziReaderReleaseInstance[ManagedLibraryExpressionID[c]];
     ]
 
 CZIGetInfo[ c_ ] :=
@@ -87,7 +111,6 @@ CZIGetSubBlock[c_,n_] :=
       bitmap = CziGetSubBlockBitmap[ManagedLibraryExpressionID[c],n];
       Return[bitmap];
     ]
-
 
 CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
 	Module[{roi,img,coordstr},
@@ -110,16 +133,20 @@ CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
       Return[img];
     ]
 
-  CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
+CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySettings_:""]  :=
     Module[{roi,img,coordstr},
       roi = NumericArray[{x,y,w,h},"Integer32"];
       coordstr = coordArgumentToString[coord];
 
-      img = CziGetMultiChannelScalingTileCompositeBitmap[
-        ManagedLibraryExpressionID[c],
-        roi,
-        coordstr,
-        zoom];
+      img = Which[
+              StringQ[displaySettings]         (* if "displaySettings_" is a string, then it needs to be JSON and suitably composed *),
+              CziGetMultiChannelScalingTileCompositeBitmap[ManagedLibraryExpressionID[c],roi,coordstr,zoom,displaySettings],
+              ListQ[displaySettings],
+              CziGetMultiChannelScalingTileCompositeBitmap[ManagedLibraryExpressionID[c],roi,coordstr,zoom,ExportString[displaySettings,"JSON"]],
+              True,
+                Message("Argument 'displaySettings' must either be a string containing JSON, or a List which can be converted to JSON");
+                $Failed
+              ];
       Return[img];
     ]
 
@@ -137,8 +164,6 @@ coordArgumentToString[coord_] :=
             ""
         ]
       ];    
-
-
 
   End[]
 
