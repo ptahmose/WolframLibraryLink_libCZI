@@ -292,7 +292,7 @@ int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* A
         return LIBRARY_FUNCTION_ERROR;
     }
 
-    try 
+    try
     {
         string s = reader->GetMetadataXml();
         g_stringReturnHelper.StoreString(s);
@@ -309,5 +309,41 @@ int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* A
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    return LIBRARY_NO_ERROR;
+}
+
+int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 1)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    mint id = MArgument_getInteger(Args[0]);
+
+    std::shared_ptr<CziReader> reader;
+    try
+    {
+        reader = CziReaderManager::Instance.GetInstance(id);
+    }
+    catch (out_of_range&)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    mint dims[1];
+    dims[0] = 3;
+    MTensor tensor(nullptr);
+    libData->MTensor_new(MType_Real, /*rank*/1, dims, &tensor);
+
+    auto s = reader->GetScaling();
+
+    for (mint i = 1; i < 4; ++i)
+    {
+        libData->MTensor_setReal(tensor, &i, s[i-1]);
+    }
+
+    MArgument_setMTensor(res, tensor);
     return LIBRARY_NO_ERROR;
 }

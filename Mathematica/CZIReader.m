@@ -31,6 +31,9 @@ CZIMultiChannelScaledComposite::usage =
 
 CZIGetMetadataXml::usage = 
     "CZIGetMetadataXml[fileobj] gets the XML-metadata.";
+
+CZIGetScaling::usage = 
+    "CZIGetScaling[fileobj] gets the scaling in X, Y and Z in units of meter.";
 	
 Begin["`Private`"]
 
@@ -88,6 +91,10 @@ CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
 CziGetMetadataXml = libraryfunctionload[
   "CZIReader_GetMetadataXml",
   {Integer}, UTF8String];
+
+CziGetScaling = libraryfunctionload[
+  "CZIReader_GetScaling",
+  {Integer}, {Real, 1}];
 
 GetCZIReaderLibraryInfo[] :=
   Module[{},
@@ -162,6 +169,14 @@ CZIGetMetadataXml[c_] :=
       Return[CziGetMetadataXml[ManagedLibraryExpressionID[c]]];
     ]
 
+CZIGetScaling[c_] :=
+    Module[{scalingsXYZ,assoc},
+      scalingsXYZ = CziGetScaling[ManagedLibraryExpressionID[c]];
+      assoc = Append[<| |>,If[scalingsXYZ[[1]]>=0,"X"->scalingsXYZ[[1]],{}]];
+      assoc = Append[assoc,If[scalingsXYZ[[2]]>=0,"Y"->scalingsXYZ[[2]],{}]];
+      assoc = Append[assoc,If[scalingsXYZ[[3]]>=0,"Z"->scalingsXYZ[[3]],{}]];
+      Return[assoc];
+      ]
 
   (* All functions which are not public, and are only used in the 
    internal implementation of the package, go into this section.

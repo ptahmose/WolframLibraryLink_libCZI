@@ -28,6 +28,17 @@ std::string CziReader::GetInfo()
     return StatisticsToJson(statistics);
 }
 
+std::array<double, 3> CziReader::GetScaling()
+{
+    const libCZI::ScalingInfo& scaling = this->GetScalingInfoFromCzi();
+    return std::array<double, 3>
+    {
+        scaling.IsScaleXValid() ? scaling.scaleX : -1,
+        scaling.IsScaleYValid() ? scaling.scaleY : -1,
+        scaling.IsScaleZValid() ? scaling.scaleZ : -1
+    };
+}
+
 std::string CziReader::StatisticsToJson(const libCZI::SubBlockStatistics& statistics)
 {
     StringBuffer buffer;
@@ -162,14 +173,14 @@ MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData
 {
     if (displaySettingsJson == nullptr || *displaySettingsJson == '\0')
     {
-        return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, this->GetDispaySettingsFromCzi().get());
+        return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, this->GetDisplaySettingsFromCzi().get());
     }
 
     ChannelDisplaySettingsInfo dsinfo = CziUtilities::ParseDisplaySettings(displaySettingsJson);
 
     if (dsinfo.isToBeMerged == true)
     {
-        const auto displaySettingsFromCzi = this->GetDispaySettingsFromCzi();
+        const auto displaySettingsFromCzi = this->GetDisplaySettingsFromCzi();
         const auto combinedDisplaySettings = CziUtilities::CombineDisplaySettings(displaySettingsFromCzi.get(), dsinfo.displaySettings);
 
         return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, combinedDisplaySettings.get());
@@ -330,19 +341,30 @@ MImage CziReader::GetMultiChannelScalingTileCompositeAllChannelsDisabled(Wolfram
     return spMimg.release();
 }
 
-std::shared_ptr<libCZI::IDisplaySettings> CziReader::GetDispaySettingsFromCzi()
+void CziReader::InitializeInfoFromCzi()
 {
     std::call_once(
-        this->flagDispaySettingsFromCzi,
+        this->flagInfoFromCziMetadata,
         [this]()
     {
         auto mds = this->reader->ReadMetadataSegment();
         auto md = mds->CreateMetaFromMetadataSegment();
         const auto docInfo = md->GetDocumentInfo();
         this->displaySettingsFromCzi = docInfo->GetDisplaySettings();
+        this->scalingInfoFromCzi = docInfo->GetScalingInfoEx();
     });
+}
 
+std::shared_ptr<libCZI::IDisplaySettings> CziReader::GetDisplaySettingsFromCzi()
+{
+    this->InitializeInfoFromCzi();
     return this->displaySettingsFromCzi;
+}
+
+const libCZI::ScalingInfo& CziReader::GetScalingInfoFromCzi()
+{
+    this->InitializeInfoFromCzi();
+    return this->scalingInfoFromCzi;
 }
 
 /*static*/MImage CziReader::ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions, libCZI::IBitmapData* bitmapData)
