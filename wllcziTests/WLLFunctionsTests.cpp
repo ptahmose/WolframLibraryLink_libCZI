@@ -1,10 +1,8 @@
 #include <gtest/gtest.h>
 #include <string>
+#include "testutilities.h"
 #define _WLLCZISTATICLIB
 #include <inc/exportedFunctions.h>
-
-#define QUOTE(str) #str
-#define EXPAND_AND_QUOTE(str) QUOTE(str)
 
 using namespace std;
 
@@ -12,14 +10,6 @@ TEST(WLLFunctionsTests, WolframLibrary_getVersion)
 {
     auto v = WolframLibrary_getVersion();
     EXPECT_EQ(v, WolframLibraryVersion);
-}
-
-static string GetSampleFilename(const char* sz)
-{
-    string s = EXPAND_AND_QUOTE(WLLCZITESTSAMPLEFILEDIR);
-    s += "/";
-    s += sz;
-    return s;
 }
 
 static void (*pfnRegisterInstance)(WolframLibraryData, mbool, mint);

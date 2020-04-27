@@ -110,8 +110,8 @@ endif()
 
 ##target_link_libraries(main PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 
-message(STATUS "XYZ")
-message(STATUS ${GTEST_INCLUDE_DIRS} )
+#message(STATUS "XYZ")
+#message(STATUS ${GTEST_INCLUDE_DIRS} )
 
 add_subdirectory("wllcziTests")
 

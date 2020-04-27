@@ -48,3 +48,10 @@ EXTERN_C WLLCZI_API int CZIReader_ReleaseInstance(WolframLibraryData libData, mi
 EXTERN_C WLLCZI_API int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
 
 EXTERN_C WLLCZI_API int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
+
+
+EXTERN_C WLLCZI_API int CZIReader_ReadSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
+EXTERN_C WLLCZI_API int CZIReader_GetBitmapFromSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
+EXTERN_C WLLCZI_API int CZIReader_GetMetadataFromSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
+EXTERN_C WLLCZI_API int CZIReader_GetInfoFromSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
+EXTERN_C WLLCZI_API int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);

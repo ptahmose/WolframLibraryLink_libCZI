@@ -6,6 +6,7 @@
 #include <array>
 #include <WolframLibrary.h>
 #include <WolframImageLibrary.h>
+#include "CziReaderSbBlkStore.h"
 
 class CziReader
 {
@@ -17,6 +18,7 @@ private:
     std::shared_ptr<libCZI::IDisplaySettings> displaySettingsFromCzi;
     libCZI::ScalingInfoEx scalingInfoFromCzi;
 
+    CziReaderSubBlockStore sbBlkStore;
 public:
     CziReader() : reader(libCZI::CreateCZIReader())
     {}
@@ -31,6 +33,12 @@ public:
     MImage GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom, const char* displaySettingsJson);
 
     std::array<double, 3>   GetScaling();
+
+    mint    ReadSubBlock(int no);
+    MImage  GetBitmapFromSubBlock(mint handle, WolframLibraryData libData);
+    std::string GetMetadataFromSubBlock(mint handle);
+    std::string GetInfoFromSubBlock(mint handle);
+    bool    ReleaseSubBlock(mint handle);
 private:
     /// Initializes the members "displaySettingsFromCzi" and "scalingInfoFromCzi".
     void InitializeInfoFromCzi();

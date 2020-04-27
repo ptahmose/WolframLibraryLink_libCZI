@@ -40,7 +40,9 @@ add_library (wllczi SHARED
 						"src/dbgprint.cpp"
 						"src/dbgprint.h" 
 						"src/utils.cpp"
-						"src/utils.h")
+						"src/utils.h" 
+						"src/CziReaderSbBlkStore.h"
+						"src/CziReaderSbBlkStore.cpp")
 
 set_target_properties(wllczi PROPERTIES CXX_STANDARD 11)
 
@@ -102,7 +104,9 @@ add_library (wllczi_static STATIC
 						"src/dbgprint.cpp"
 						"src/dbgprint.h" 
 						"src/utils.cpp"
-						"src/utils.h")
+						"src/utils.h" 
+						"src/CziReaderSbBlkStore.h"
+						"src/CziReaderSbBlkStore.cpp")
 
 
 set_target_properties(wllczi_static PROPERTIES CXX_STANDARD 11)

@@ -34,8 +34,8 @@ std::array<double, 3> CziReader::GetScaling()
     return std::array<double, 3>
     {
         scaling.IsScaleXValid() ? scaling.scaleX : -1,
-        scaling.IsScaleYValid() ? scaling.scaleY : -1,
-        scaling.IsScaleZValid() ? scaling.scaleZ : -1
+            scaling.IsScaleYValid() ? scaling.scaleY : -1,
+            scaling.IsScaleZValid() ? scaling.scaleZ : -1
     };
 }
 
@@ -192,69 +192,6 @@ MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData
         return CziReader::GetMultiChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, resultingDisplaySettings.get());
     }
 }
-
-//MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom)
-//{
-//    auto displaySettings = this->GetDispaySettingsFromCzi();
-//
-//    std::vector<int> activeChannels = libCZI::CDisplaySettingsHelper::GetActiveChannels(displaySettings.get());
-//    std::vector<shared_ptr<IBitmapData>> channelBitmaps;
-//    IntSize sizeResult;
-//    try
-//    {
-//        channelBitmaps = CziUtilities::GetBitmapsFromSpecifiedChannels(
-//            this->reader.get(),
-//            planeCoordinate,
-//            roi,
-//            zoom,
-//            [&](int idx, int& chNo)->bool
-//        {
-//            if (idx < (int)activeChannels.size())
-//            {
-//                chNo = activeChannels.at(idx);
-//                return true;
-//            }
-//
-//            return false;
-//        },
-//            &sizeResult);
-//    }
-//    catch (LibCZIInvalidPlaneCoordinateException& /*invalidCoordExcp*/)
-//    {
-//        return nullptr;
-//    }
-//
-//    libCZI::CDisplaySettingsHelper dsplHlp;
-//    dsplHlp.Initialize(displaySettings.get(), [&](int chIndx)->libCZI::PixelType
-//    {
-//        int idx = (int)std::distance(activeChannels.cbegin(), std::find(activeChannels.cbegin(), activeChannels.cend(), chIndx));
-//        return channelBitmaps[idx]->GetPixelType();
-//    });
-//
-//    std::vector<IBitmapData*> vecBm; vecBm.reserve(channelBitmaps.size());
-//    for (int i = 0; i < channelBitmaps.size(); ++i)
-//    {
-//        vecBm.emplace_back(channelBitmaps[i].get());
-//    }
-//
-//    auto mimagedeleter = std::bind(
-//        [](WolframImageLibrary_Functions imgLibFuncs, MImage mimg)->void {imgLibFuncs->MImage_free(mimg); },
-//        libData->imageLibraryFunctions, std::placeholders::_1);
-//    std::unique_ptr<IMAGEOBJ_ENTRY, decltype(mimagedeleter)> spMimg(
-//        MImageHelper::CreateMImage(libData->imageLibraryFunctions, sizeResult, libCZI::PixelType::Bgr24),
-//        mimagedeleter);
-//
-//    CMImageWrapper mimgWrapper(libData->imageLibraryFunctions, spMimg.get());
-//    libCZI::Compositors::ComposeMultiChannel_Bgr24(
-//        &mimgWrapper,
-//        (int)channelBitmaps.size(),
-//        &vecBm[0],
-//        dsplHlp.GetChannelInfosArray());
-//
-//    MImageHelper::SwapRgb(&mimgWrapper);
-//
-//    return spMimg.release();
-//}
 
 MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom, const libCZI::IDisplaySettings* displaySettings)
 {
@@ -474,3 +411,53 @@ std::string CziReader::GetMetadataXml()
 
     return m->GetXml();
 }
+
+mint CziReader::ReadSubBlock(int no)
+{
+    auto sbBlk = this->reader->ReadSubBlock(no);
+    if (!sbBlk)
+    {
+        std::stringstream ss;
+        ss << "SubBlock for id=" << no << " was not found.";
+        throw invalid_argument(ss.str());
+    }
+
+    return static_cast<mint>(this->sbBlkStore.AddSubBlock(sbBlk));
+}
+
+MImage CziReader::GetBitmapFromSubBlock(mint handle, WolframLibraryData libData)
+{
+    auto sbBlk = this->sbBlkStore.GetForHandle(handle);
+    if (!sbBlk)
+    {
+        std::stringstream ss;
+        ss << "SubBlock for handle=" << handle << " is not present.";
+        throw invalid_argument(ss.str());
+    }
+
+    auto bm = sbBlk->CreateBitmap();
+    return ConvertToMImage(libData->imageLibraryFunctions, bm.get());
+}
+
+std::string CziReader::GetMetadataFromSubBlock(mint handle)
+{
+    auto sbBlk = this->sbBlkStore.GetForHandle(handle);
+    if (!sbBlk)
+    {
+        std::stringstream ss;
+        ss << "SubBlock for handle=" << handle << " is not present.";
+        throw invalid_argument(ss.str());
+    }
+
+    size_t sizeData;
+    auto ptrData = sbBlk->GetRawData(ISubBlock::MemBlkType::Metadata, &sizeData);
+    if (!ptrData)
+    {
+        return "";
+    }
+
+    string metadataXml(static_cast<const char*>(ptrData.get()), sizeData);
+    return metadataXml;
+}
+//std::string CziReader::GetInfoFromSubBlock(mint handle)
+//bool CziReader::ReleaseSubBlock(mint handle)
