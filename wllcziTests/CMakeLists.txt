@@ -10,6 +10,8 @@ add_executable( wllcziTests
                     "testutilities.cpp"
                     "testutilities.h")
 
+add_dependencies(wllcziTests rapidjson)
+
 target_include_directories(wllcziTests PRIVATE ${GTEST_INCLUDE_DIRS} wllczi)
 
 target_include_directories(wllcziTests PRIVATE

@@ -459,5 +459,70 @@ std::string CziReader::GetMetadataFromSubBlock(mint handle)
     string metadataXml(static_cast<const char*>(ptrData.get()), sizeData);
     return metadataXml;
 }
-//std::string CziReader::GetInfoFromSubBlock(mint handle)
-//bool CziReader::ReleaseSubBlock(mint handle)
+
+std::string CziReader::GetInfoFromSubBlock(mint handle)
+{
+    auto sbBlk = this->sbBlkStore.GetForHandle(handle);
+    if (!sbBlk)
+    {
+        std::stringstream ss;
+        ss << "SubBlock for handle=" << handle << " is not present.";
+        throw invalid_argument(ss.str());
+    }
+
+    auto sbInfo = sbBlk->GetSubBlockInfo();
+    return this->SubblockInfoToJson(sbInfo);
+}
+ 
+bool CziReader::ReleaseSubBlock(mint handle)
+{
+    return this->sbBlkStore.RemoveSubBlock(handle);
+}
+
+std::string CziReader::SubblockInfoToJson(const libCZI::SubBlockInfo& subblockInfo)
+{
+    StringBuffer buffer;
+    Writer<StringBuffer> writer(buffer);
+    writer.StartObject();
+    writer.Key("CompressionMode");
+    writer.String(libCZI::Utils::CompressionModeToInformalString(subblockInfo.mode));
+    writer.Key("Pixeltype");
+    writer.String(libCZI::Utils::PixelTypeToInformalString(subblockInfo.pixelType));
+
+    writer.Key("Coordinate");
+    writer.StartObject();
+    subblockInfo.coordinate.EnumValidDimensions(
+        [&](DimensionIndex dim, int v)->bool
+    {
+        char dimensionStr[2];
+        dimensionStr[0] = libCZI::Utils::DimensionToChar(dim);
+        dimensionStr[1] = '\0';
+        writer.Key(dimensionStr);
+        writer.Int(v);
+    });
+
+    writer.EndObject();
+
+    if (subblockInfo.mIndex != std::numeric_limits<int>::max())
+    {
+        writer.Key("Mindex");
+        writer.Int(subblockInfo.mIndex);
+    }
+
+    writer.Key("LogicalRect");
+    writer.StartArray();
+    writer.Int(subblockInfo.logicalRect.x);
+    writer.Int(subblockInfo.logicalRect.y);
+    writer.Int(subblockInfo.logicalRect.w);
+    writer.Int(subblockInfo.logicalRect.h);
+    writer.EndArray();
+
+    writer.Key("PhysicalSize");
+    writer.StartArray();
+    writer.Int(subblockInfo.physicalSize.w);
+    writer.Int(subblockInfo.physicalSize.h);
+    writer.EndArray();
+
+    writer.EndObject();
+    return buffer.GetString();
+}

@@ -46,6 +46,7 @@ private:
     const libCZI::ScalingInfo& GetScalingInfoFromCzi();
 
     std::string StatisticsToJson(const libCZI::SubBlockStatistics& statistics);
+    std::string SubblockInfoToJson(const libCZI::SubBlockInfo& subblockInfo);
 
     static MImage ConvertToMImage(WolframImageLibrary_Functions imgLibFunctions, libCZI::IBitmapData* bitmapData);
     static void CopyStrided(libCZI::IBitmapData* bitmapData, void* pDst);
