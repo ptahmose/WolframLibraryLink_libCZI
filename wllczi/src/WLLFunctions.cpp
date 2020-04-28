@@ -234,7 +234,7 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
         return LIBRARY_FUNCTION_ERROR;
     }
 
-    mreal zoom = MArgument_getReal(Args[3]);
+    const mreal zoom = MArgument_getReal(Args[3]);
 
     char* displaySettingsString = nullptr;
     if (Argc > 4)
@@ -319,7 +319,7 @@ int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args,
         return LIBRARY_FUNCTION_ERROR;
     }
 
-    mint id = MArgument_getInteger(Args[0]);
+    const mint id = MArgument_getInteger(Args[0]);
 
     std::shared_ptr<CziReader> reader;
     try
@@ -345,5 +345,181 @@ int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args,
     }
 
     MArgument_setMTensor(res, tensor);
+    return LIBRARY_NO_ERROR;
+}
+
+int CZIReader_ReadSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 2)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    const mint id = MArgument_getInteger(Args[0]);
+    const mint blockNo = MArgument_getInteger(Args[1]);
+
+    std::shared_ptr<CziReader> reader;
+    try
+    {
+        reader = CziReaderManager::Instance.GetInstance(id);
+    }
+    catch (out_of_range&)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    try
+    {
+        const mint handle = reader->ReadSubBlock(blockNo);
+        MArgument_setInteger(res, handle);
+    }
+    catch (exception& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    return LIBRARY_NO_ERROR;
+}
+
+int CZIReader_GetBitmapFromSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 2)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    mint id = MArgument_getInteger(Args[0]);
+    mint handle = MArgument_getInteger(Args[1]);
+
+    std::shared_ptr<CziReader> reader;
+    try
+    {
+        reader = CziReaderManager::Instance.GetInstance(id);
+    }
+    catch (out_of_range&)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    try
+    {
+        MImage img = reader->GetBitmapFromSubBlock(handle,libData);
+        MArgument_setMImage(res, img);
+    }
+    catch (exception& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    return LIBRARY_NO_ERROR;
+}
+
+int CZIReader_GetMetadataFromSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 2)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    const mint id = MArgument_getInteger(Args[0]);
+    const mint handle = MArgument_getInteger(Args[1]);
+
+    std::shared_ptr<CziReader> reader;
+    try
+    {
+        reader = CziReaderManager::Instance.GetInstance(id);
+    }
+    catch (out_of_range&)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    try
+    {
+        auto xml = reader->GetMetadataFromSubBlock(handle);
+        g_stringReturnHelper.StoreString(xml);
+        MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
+    }
+    catch (exception& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    return LIBRARY_NO_ERROR;
+}
+
+int CZIReader_GetInfoFromSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 2)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    const mint id = MArgument_getInteger(Args[0]);
+    const mint handle = MArgument_getInteger(Args[1]);
+
+    std::shared_ptr<CziReader> reader;
+    try
+    {
+        reader = CziReaderManager::Instance.GetInstance(id);
+    }
+    catch (out_of_range&)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    try
+    {
+        auto xml = reader->GetInfoFromSubBlock(handle);
+        g_stringReturnHelper.StoreString(xml);
+        MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
+    }
+    catch (exception& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    return LIBRARY_NO_ERROR;
+}
+
+int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc != 2)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    const mint id = MArgument_getInteger(Args[0]);
+    const mint handle = MArgument_getInteger(Args[1]);
+
+    std::shared_ptr<CziReader> reader;
+    try
+    {
+        reader = CziReaderManager::Instance.GetInstance(id);
+    }
+    catch (out_of_range&)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    try
+    {
+        bool success = reader->ReleaseSubBlock(handle);
+    }
+    catch (exception& excp)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
     return LIBRARY_NO_ERROR;
 }
