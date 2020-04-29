@@ -25,7 +25,9 @@ TEST(CziReaderTests, GetInfoSubBlockTest)
 {
     CziReader reader;
     reader.Open(GetSampleFilename("test1.czi"));
+
     mint h = reader.ReadSubBlock(0);
+    auto _ = finally([h,&reader]()->void { reader.ReleaseSubBlock(h); });
     auto info = reader.GetInfoFromSubBlock(h);
 
     rapidjson::Document document;
@@ -38,7 +40,24 @@ TEST(CziReaderTests, GetInfoSubBlockTest)
     EXPECT_TRUE(document.HasMember("LogicalRect"));
     EXPECT_TRUE(document.HasMember("PhysicalSize"));
 
-    bool b = reader.ReleaseSubBlock(h);
-    EXPECT_TRUE(b);
+    EXPECT_TRUE(document["CompressionMode"].IsString());
+    EXPECT_TRUE(strcmp(document["CompressionMode"].GetString(), "uncompressed") == 0);
+    EXPECT_TRUE(document["Pixeltype"].IsString());
+    EXPECT_TRUE(strcmp(document["Pixeltype"].GetString(), "bgr24") == 0);
+    EXPECT_TRUE(document["Coordinate"].IsObject());
+    EXPECT_TRUE(document["Coordinate"].GetObject().HasMember("T"));
+    EXPECT_TRUE(document["Coordinate"].GetObject()["T"].IsInt());
+    EXPECT_TRUE(document["Coordinate"].GetObject()["T"].GetInt() == 0);
 
+    EXPECT_TRUE(document["LogicalRect"].IsArray());
+    EXPECT_TRUE(document["LogicalRect"].GetArray().Size() == 4);
+    EXPECT_TRUE(document["LogicalRect"].GetArray()[0] == 0);
+    EXPECT_TRUE(document["LogicalRect"].GetArray()[1] == 0);
+    EXPECT_TRUE(document["LogicalRect"].GetArray()[2] == 1024);
+    EXPECT_TRUE(document["LogicalRect"].GetArray()[3] == 768);
+
+    EXPECT_TRUE(document["PhysicalSize"].IsArray());
+    EXPECT_TRUE(document["PhysicalSize"].GetArray().Size() == 2);
+    EXPECT_TRUE(document["PhysicalSize"].GetArray()[0] == 1024);
+    EXPECT_TRUE(document["PhysicalSize"].GetArray()[1] == 768);
 }

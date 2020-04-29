@@ -42,7 +42,8 @@ add_library (wllczi SHARED
 						"src/utils.cpp"
 						"src/utils.h" 
 						"src/CziReaderSbBlkStore.h"
-						"src/CziReaderSbBlkStore.cpp")
+						"src/CziReaderSbBlkStore.cpp"
+						"src/finally.h")
 
 set_target_properties(wllczi PROPERTIES CXX_STANDARD 11)
 

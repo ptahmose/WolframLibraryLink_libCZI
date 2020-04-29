@@ -4,6 +4,7 @@
 #include <mutex>
 #include <memory>
 #include <array>
+#include "finally.h"
 #include <WolframLibrary.h>
 #include <WolframImageLibrary.h>
 #include "CziReaderSbBlkStore.h"
