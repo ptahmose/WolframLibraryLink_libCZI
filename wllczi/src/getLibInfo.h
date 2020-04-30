@@ -6,7 +6,6 @@
 class CLibraryInfo
 {
 private:
-    static const char* VersionString;
     static const char* LibraryName;
 public:
     /// The key for the "version string" for the wllczi-library.

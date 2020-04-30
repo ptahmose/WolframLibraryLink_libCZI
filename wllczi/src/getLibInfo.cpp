@@ -4,6 +4,7 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 #include "inc_libCzi.h"
+#include "wllczi_Config.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -17,7 +18,6 @@ using namespace libCZI;
 /*static*/const char* CLibraryInfo::KeyLibCZIRepositoryBranch = "libCZIRepoBranch";
 /*static*/const char* CLibraryInfo::KeyLibCZIRepositoryHash = "libCZIRepoTag";
 
-/*static*/const char* CLibraryInfo::VersionString = "0.0.1-dev";
 /*static*/const char* CLibraryInfo::LibraryName = "wllczi";
 
 /*static*/void CLibraryInfo::EnumKeys(std::function<bool(const char*)> enumFunc)
@@ -46,7 +46,14 @@ using namespace libCZI;
 {
     if (key == CLibraryInfo::KeyVersionString)
     {
-        value = CLibraryInfo::VersionString;
+        stringstream ss;
+        ss << WLLCZI_VERSION_MAJOR << "." << WLLCZI_VERSION_MINOR << "." << WLLCZI_VERSION_PATCH;
+        if (strlen(WLLCZI_VERSION_EXT) > 0)
+        {
+            ss << "-" << WLLCZI_VERSION_EXT;
+        }
+
+        value = ss.str();
         return true;
     }
 

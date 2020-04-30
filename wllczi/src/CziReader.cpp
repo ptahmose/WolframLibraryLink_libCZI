@@ -499,6 +499,7 @@ std::string CziReader::SubblockInfoToJson(const libCZI::SubBlockInfo& subblockIn
         dimensionStr[1] = '\0';
         writer.Key(dimensionStr);
         writer.Int(v);
+        return true;
     });
 
     writer.EndObject();

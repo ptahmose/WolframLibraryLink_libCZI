@@ -34,7 +34,10 @@ CZIGetMetadataXml::usage =
 
 CZIGetScaling::usage = 
     "CZIGetScaling[fileobj] gets the scaling in X, Y and Z in units of meter.";
-	
+
+CZIGetSubBlockData::usage =
+    "CZIGetSubBlockData[fileobj, n,  options] gets various data from the subblock with index 'n'."
+
 Begin["`Private`"]
 
 (* Implementation section *)
@@ -95,6 +98,27 @@ CziGetMetadataXml = libraryfunctionload[
 CziGetScaling = libraryfunctionload[
   "CZIReader_GetScaling",
   {Integer}, {Real, 1}];
+
+CziHandleForSubBlock = libraryfunctionload[
+  "CZIReader_ReadSubBlock",
+  {Integer, Integer}, Integer]; 
+
+CziGetInfoForSubBlockHandle = libraryfunctionload[
+  "CZIReader_GetInfoFromSubBlock",
+  {Integer, Integer}, UTF8String]; 
+
+CziGetMetadataXmlForSubBlockHandle = libraryfunctionload[
+  "CZIReader_GetMetadataFromSubBlock",
+  {Integer, Integer}, UTF8String]; 
+
+CziGetBitmapForSubBlockHandle = libraryfunctionload[
+  "CZIReader_GetBitmapFromSubBlock",
+   {Integer, Integer}, LibraryDataType[Image]];
+
+CziReleaseSubBlockHandle = libraryfunctionload[
+  "CZIReader_ReleaseSubBlock",
+  {Integer, Integer}, "Void"]; 
+
 
 GetCZIReaderLibraryInfo[] :=
   Module[{},
@@ -177,6 +201,28 @@ CZIGetScaling[c_] :=
       assoc = Append[assoc,If[scalingsXYZ[[3]]>=0,"Z"->scalingsXYZ[[3]],{}]];
       Return[assoc];
       ]
+
+CZIGetSubBlockData[c_, no_, options_] :=
+    Module[{sbblkHandle,assoc},
+        sbblkHandle = CziHandleForSubBlock[ManagedLibraryExpressionID[c],no];
+        assoc = <| |>;
+        assoc = If[
+                  TrueQ["XML" /. options],
+                  Append[assoc,"XML"->CziGetMetadataXmlForSubBlockHandle[ManagedLibraryExpressionID[c],sbblkHandle]],
+                  assoc];
+        assoc = If[
+                  TrueQ["Info" /. options],
+                  Append[assoc,"Info"->CziGetInfoForSubBlockHandle[ManagedLibraryExpressionID[c],sbblkHandle]],
+                  assoc];
+        assoc = If[
+                  TrueQ["Image" /. options],
+                  Append[assoc,"Image"->CziGetBitmapForSubBlockHandle[ManagedLibraryExpressionID[c],sbblkHandle]],
+                  assoc];
+        CziReleaseSubBlockHandle[ManagedLibraryExpressionID[c],sbblkHandle];
+        Return[assoc];
+    ]
+
+CZIGetSubBlockData[c_, no_] := CZIGetSubBlockData[c,no,{"XML"->True,"Info"->True,"Image"->True}];
 
   (* All functions which are not public, and are only used in the 
    internal implementation of the package, go into this section.

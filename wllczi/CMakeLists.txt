@@ -11,6 +11,11 @@ endif()
 
 set(wllczi_LOGLEVEL 1)
 
+set(wllczi_VERSION_MAJOR	${WLLCZI_MAJOR})
+set(wllczi_VERSION_MINOR	${WLLCZI_MINOR})
+set(wllczi_VERSION_PATCH	${WLLCZI_PATCH})
+set(wllczi_VERSION_EXT    ${WLLCZI_EXT})
+
 configure_file (
   "${CMAKE_CURRENT_SOURCE_DIR}/src/wllczi_Config.h.in"
   "${CMAKE_CURRENT_BINARY_DIR}/wllczi_Config.h"
@@ -75,9 +80,6 @@ if(WIN32)
  target_compile_definitions(wllczi PRIVATE _WIN32API=1)
 endif()
 
-#set_target_properties(SqliteImgDoc PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
-#set_target_properties(wllczi PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF)
-
 #########################################################################################
 # The static wllczi-library is intended to facilitate unit-tests
 #########################################################################################
@@ -132,4 +134,3 @@ if(WIN32)
  target_compile_definitions(wllczi_static PRIVATE _WIN32API=1)
 endif()
 
-# TODO: Add tests and install targets if needed.
