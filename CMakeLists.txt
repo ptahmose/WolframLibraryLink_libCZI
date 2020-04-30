@@ -39,8 +39,10 @@ message(STATUS "#######################################################")
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     option(WOLFRAMLIBRARYLINK_MINT32 "Use 32-bit integer as 'mint'" OFF) 
+    message(STATUS "'mint' is 64-bit integer")
 else()
     option(WOLFRAMLIBRARYLINK_MINT32 "Use 32-bit integer as 'mint'" ON) 
+    message(STATUS "'mint' is 32-bit integer")
 endif()
 
 add_subdirectory ("wllczi")
