@@ -6,7 +6,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/ptahmose/libCZI.git
   GIT_TAG        origin/wolframliblink  # use the latest in this branch
   # this version is "known-to-work"
-  #GIT_TAG        f2b561648f820d21e533fed70bb57cdce7aaf9d3
+  #GIT_TAG        9aa6b6e411de217a9f2aa91909107def843fe1ec
   #CMAKE_ARGS "-DLIBCZI_BUILD_CZICMD=OFF -DLIBCZI_BUILD_DYNLIB=OFF"
   # ^ or like this - sometimes it's better because FetchContent won't look
   # into remote to see if branch head was updated or not - good for stable

@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 3.7)
 
 set(WLLCZI_MAJOR 0)
 set(WLLCZI_MINOR 1)
-set(WLLCZI_PATCH 1)
+set(WLLCZI_PATCH 2)
 set(WLLCZI_EXT "alpha")
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules" ${CMAKE_MODULE_PATH})
