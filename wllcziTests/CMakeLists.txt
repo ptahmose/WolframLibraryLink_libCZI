@@ -20,7 +20,10 @@ target_include_directories(wllcziTests PRIVATE ${Mathematica_INCLUDE_DIR} ${LIBC
 
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(wllcziTests PRIVATE ${GTEST_BOTH_LIBRARIES} gtest_main wllczi_static)
+target_link_libraries(wllcziTests PRIVATE ${GTEST_BOTH_LIBRARIES} wllczi_static)
+if(WIN32)
+  target_link_libraries(wllcziTests PRIVATE gtest_main)
+endif()
 
 target_compile_definitions(wllcziTests PRIVATE WLLCZITESTSAMPLEFILEDIR=${CMAKE_CURRENT_SOURCE_DIR}/samples)
 
@@ -37,4 +40,4 @@ if(WOLFRAMLIBRARYLINK_MINT32)
 endif()
 
 
-add_test(wllcziTests  wllcziTests  )
+add_test(wllcziTests wllcziTests)
