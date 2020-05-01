@@ -24,7 +24,7 @@ CZIGetSubBlock::usage =
     "CZIGetSubBlock[fileobj,n] read the specified subblock.";
 
 CZISingleChannelScaledComposite::usage = 
-    "CZISingleChannelScaledComposite[fileobj,x,y,w,h,zoom,coord] gets a single-channel tile-composite.";
+    "CZISingleChannelScaledComposite[fileobj,x,y,w,h,zoom,coord,backgroundColor] gets a single-channel tile-composite.";
 
 CZIMultiChannelScaledComposite::usage = 
     "CZIMultiChannelScaledComposite[fileobj,x,y,w,h,zoom,coord,displaySettings] gets the multi-channel multi-tile composite.";
@@ -81,9 +81,9 @@ CziGetSubBlockBitmap = libraryfunctionload[
   "CZIReader_GetSubBlockBitmap",
   {Integer, Integer}, LibraryDataType[Image]];
 
-CziGetSingleChannelScaledBitmap = libraryfunctionload[
+CziGetSingleChannelScaledBitmap2 = libraryfunctionload[
   "CZIReader_GetSingleChannelScalingTileComposite",
-  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real]}, 
+  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], LibraryDataType[MNumericArray]}, 
   LibraryDataType[Image]];
 
 CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
@@ -150,7 +150,9 @@ CZIGetSubBlock[c_,n_] :=
       Return[bitmap];
     ]
 
-CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
+CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_] := CZISingleChannelScaledComposite[c,x,y,w,h,zoom,coord,{0,0,0}];
+
+CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,backGroundColor_] :=
 	Module[{roi,img,coordstr},
       roi = NumericArray[{x,y,w,h},"Integer32"];
       coordstr = If[ 
@@ -163,11 +165,12 @@ CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_]  :=
                     ]
                     ];
 
-      img = CziGetSingleChannelScaledBitmap[
+      img = CziGetSingleChannelScaledBitmap2[
         ManagedLibraryExpressionID[c],
         roi,
         coordstr,
-        zoom];
+        zoom,
+        NumericArray[Take[Join[backGroundColor,{Last[backGroundColor],Last[backGroundColor]}],3],"Real32","ClipAndCoerce"]];
       Return[img];
     ]
 
@@ -242,5 +245,6 @@ coordArgumentToString[coord_] :=
   End[]
 
   EndPackage[]
+
 
 
