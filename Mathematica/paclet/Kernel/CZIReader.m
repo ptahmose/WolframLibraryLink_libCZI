@@ -11,24 +11,33 @@ BeginPackage[ "CZIReader`"]
 GetCZIReaderLibraryInfo::usage = 
   "Get version/build information about 'CZIReader'."
 
- OpenCZI::usage = 
+OpenCZI::usage = 
 	"OpenCZI[filename] opens a CZI file.";
 
- ReleaseCZI::usage = 
-  "Releases the CZI-object. Note that if the object gets garbage-collected, then it will be released automatically. See e.g. https://reference.wolfram.com/language/ref/CreateManagedLibraryExpression.html";
+ReleaseCZI::usage = 
+    "Releases the CZI-object. Note that if the object gets garbage-collected, then it will be released automatically. See e.g. https://reference.wolfram.com/language/ref/CreateManagedLibraryExpression.html";
 
- CZIGetInfo::usage =
+CZIGetInfo::usage =
   "CZIGetInfo[fileobj] gets statistics about the document.";
 	
- CZIGetSubBlock::usage =
+CZIGetSubBlock::usage =
     "CZIGetSubBlock[fileobj,n] read the specified subblock.";
 
- CZISingleChannelScaledComposite::usage = 
+CZISingleChannelScaledComposite::usage = 
     "CZISingleChannelScaledComposite[fileobj,x,y,w,h,zoom,coord] gets a single-channel tile-composite.";
 
- CZIMultiChannelScaledComposite::usage = 
+CZIMultiChannelScaledComposite::usage = 
     "CZIMultiChannelScaledComposite[fileobj,x,y,w,h,zoom,coord,displaySettings] gets the multi-channel multi-tile composite.";
-	
+
+CZIGetMetadataXml::usage = 
+    "CZIGetMetadataXml[fileobj] gets the XML-metadata.";
+
+CZIGetScaling::usage = 
+    "CZIGetScaling[fileobj] gets the scaling in X, Y and Z in units of meter.";
+
+CZIGetSubBlockData::usage =
+    "CZIGetSubBlockData[fileobj, n,  options] gets various data from the subblock with index 'n'."
+
 Begin["`Private`"]
 
 (* Implementation section *)
@@ -81,6 +90,35 @@ CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
   "CZIReader_MultiChannelScalingTileComposite",
   {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], UTF8String}, 
   LibraryDataType[Image]];
+
+CziGetMetadataXml = libraryfunctionload[
+  "CZIReader_GetMetadataXml",
+  {Integer}, UTF8String];
+
+CziGetScaling = libraryfunctionload[
+  "CZIReader_GetScaling",
+  {Integer}, {Real, 1}];
+
+CziHandleForSubBlock = libraryfunctionload[
+  "CZIReader_ReadSubBlock",
+  {Integer, Integer}, Integer]; 
+
+CziGetInfoForSubBlockHandle = libraryfunctionload[
+  "CZIReader_GetInfoFromSubBlock",
+  {Integer, Integer}, UTF8String]; 
+
+CziGetMetadataXmlForSubBlockHandle = libraryfunctionload[
+  "CZIReader_GetMetadataFromSubBlock",
+  {Integer, Integer}, UTF8String]; 
+
+CziGetBitmapForSubBlockHandle = libraryfunctionload[
+  "CZIReader_GetBitmapFromSubBlock",
+   {Integer, Integer}, LibraryDataType[Image]];
+
+CziReleaseSubBlockHandle = libraryfunctionload[
+  "CZIReader_ReleaseSubBlock",
+  {Integer, Integer}, "Void"]; 
+
 
 GetCZIReaderLibraryInfo[] :=
   Module[{},
@@ -150,6 +188,42 @@ CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySettings_:""] 
       Return[img];
     ]
 
+CZIGetMetadataXml[c_] :=
+   Module[{},
+      Return[CziGetMetadataXml[ManagedLibraryExpressionID[c]]];
+    ]
+
+CZIGetScaling[c_] :=
+    Module[{scalingsXYZ,assoc},
+      scalingsXYZ = CziGetScaling[ManagedLibraryExpressionID[c]];
+      assoc = Append[<| |>,If[scalingsXYZ[[1]]>=0,"X"->scalingsXYZ[[1]],{}]];
+      assoc = Append[assoc,If[scalingsXYZ[[2]]>=0,"Y"->scalingsXYZ[[2]],{}]];
+      assoc = Append[assoc,If[scalingsXYZ[[3]]>=0,"Z"->scalingsXYZ[[3]],{}]];
+      Return[assoc];
+      ]
+
+CZIGetSubBlockData[c_, no_, options_] :=
+    Module[{sbblkHandle,assoc},
+        sbblkHandle = CziHandleForSubBlock[ManagedLibraryExpressionID[c],no];
+        assoc = <| |>;
+        assoc = If[
+                  TrueQ["XML" /. options],
+                  Append[assoc,"XML"->CziGetMetadataXmlForSubBlockHandle[ManagedLibraryExpressionID[c],sbblkHandle]],
+                  assoc];
+        assoc = If[
+                  TrueQ["Info" /. options],
+                  Append[assoc,"Info"->CziGetInfoForSubBlockHandle[ManagedLibraryExpressionID[c],sbblkHandle]],
+                  assoc];
+        assoc = If[
+                  TrueQ["Image" /. options],
+                  Append[assoc,"Image"->CziGetBitmapForSubBlockHandle[ManagedLibraryExpressionID[c],sbblkHandle]],
+                  assoc];
+        CziReleaseSubBlockHandle[ManagedLibraryExpressionID[c],sbblkHandle];
+        Return[assoc];
+    ]
+
+CZIGetSubBlockData[c_, no_] := CZIGetSubBlockData[c,no,{"XML"->True,"Info"->True,"Image"->True}];
+
   (* All functions which are not public, and are only used in the 
    internal implementation of the package, go into this section.
    These have non-capital names by convention. *)
@@ -168,6 +242,5 @@ coordArgumentToString[coord_] :=
   End[]
 
   EndPackage[]
-
 
 

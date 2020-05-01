@@ -139,6 +139,12 @@ MImage CziReader::GetSubBlockImage(WolframLibraryData libData, int no)
 
 MImage CziReader::GetSingleChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom)
 {
+    const RgbFloatColor backgndCol{ 0,0,0 };
+    return this->GetSingleChannelScalingTileComposite(libData, roi, planeCoordinate, zoom, backgndCol);
+}
+
+MImage CziReader::GetSingleChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom, const libCZI::RgbFloatColor& backgroundColor)
+{
     auto scsta = this->reader->CreateSingleChannelScalingTileAccessor();
     libCZI::IntSize size = scsta->CalcSize(roi, zoom);
 
@@ -163,7 +169,10 @@ MImage CziReader::GetSingleChannelScalingTileComposite(WolframLibraryData libDat
         mimagedeleter);
 
     CMImageWrapper mimgWrapper(libData->imageLibraryFunctions, spMimg.get());
-    scsta->Get(&mimgWrapper, roi, planeCoordinate, zoom, nullptr);
+    ISingleChannelScalingTileAccessor::Options accessorGetOptions;
+    accessorGetOptions.Clear();
+    accessorGetOptions.backGroundColor = backgroundColor;
+    scsta->Get(&mimgWrapper, roi, planeCoordinate, zoom, &accessorGetOptions);
     MImageHelper::SwapRgb(&mimgWrapper);
 
     return spMimg.release();

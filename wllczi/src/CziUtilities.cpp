@@ -22,9 +22,8 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 
     const auto subBlockStatistics = reader->GetStatistics();
 
-    libCZI::ISingleChannelScalingTileAccessor::Options sctaOptions; sctaOptions.Clear();
-    sctaOptions.backGroundColor = RgbFloatColor{ 0, 0, 0 };
-    sctaOptions.drawTileBorder = false;
+    libCZI::ISingleChannelScalingTileAccessor::Options sctaOptions;
+    sctaOptions.Clear();
 
     auto accessor = reader->CreateSingleChannelScalingTileAccessor();
 

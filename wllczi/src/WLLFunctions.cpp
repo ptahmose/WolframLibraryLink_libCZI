@@ -125,7 +125,8 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     // 1st: ROI               -> NumericArray of size 4
     // 2nd: plane-coordinate  -> a string (of form "T3C2Z32")
     // 3rd: zoom              -> A float number
-    if (Argc != 4)
+    // 4th: background-color  -> optional, RgbGFloat (numeric array of size 3)
+    if (Argc != 4 && Argc != 5)
     {
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -145,7 +146,12 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     int roiValues[4];
     WolframNumericArrayLibrary_Functions naFuncs = libData->numericarrayLibraryFunctions;
     MNumericArray numArrayRegionOfInterest = MArgument_getMNumericArray(Args[1]);
-    WolframLibLinkUtils::TryGetAsInt32(roiValues, sizeof(roiValues) / sizeof(roiValues[0]), numArrayRegionOfInterest, naFuncs);
+    const bool b = WolframLibLinkUtils::TryGetAsInt32(roiValues, sizeof(roiValues) / sizeof(roiValues[0]), numArrayRegionOfInterest, naFuncs);
+    if (!b)
+    {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid().c_str());
+        return LIBRARY_FUNCTION_ERROR;
+    }
 
     char* coordinateString = MArgument_getUTF8String(Args[2]);
     CDimCoordinate planeCoordinate;
@@ -153,25 +159,56 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     {
         planeCoordinate = CDimCoordinate::Parse(coordinateString);
     }
-    catch (libCZI::LibCZIStringParseException& excp)
+    catch (libCZI::LibCZIStringParseException& parseExcp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, parseExcp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
+        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
 
-    mreal zoom = MArgument_getReal(Args[3]);
+    const mreal zoom = MArgument_getReal(Args[3]);
+
+    bool haveBackgroundColorArgs = false;
+    float rgbFloatValues[3];
+    if (Argc >= 5)
+    {
+        MNumericArray numArrayBackgndColor = MArgument_getMNumericArray(Args[4]);
+        bool b = WolframLibLinkUtils::TryGetAsFloat32(rgbFloatValues, sizeof(rgbFloatValues) / sizeof(rgbFloatValues[0]), numArrayBackgndColor, libData->numericarrayLibraryFunctions);
+        if (b == false)
+        {
+            libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid().c_str());
+            return LIBRARY_FUNCTION_ERROR;
+        }
+
+        haveBackgroundColorArgs = true;
+    }
 
     try
     {
-        auto out = reader->GetSingleChannelScalingTileComposite(
-            libData,
-            IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
-            &planeCoordinate,
-            (float)zoom);
+        MImage out;
+        if (haveBackgroundColorArgs == false)
+        {
+            out = reader->GetSingleChannelScalingTileComposite(
+                libData,
+                IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
+                &planeCoordinate,
+                static_cast<float>(zoom));
+        }
+        else
+        {
+            const libCZI::RgbFloatColor bckGndColor{ rgbFloatValues[0],rgbFloatValues[1],rgbFloatValues[2] };
+            out = reader->GetSingleChannelScalingTileComposite(
+                libData,
+                IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
+                &planeCoordinate,
+                static_cast<float>(zoom),
+                bckGndColor);
+        }
+
         MArgument_setMImage(res, out);
     }
     catch (libCZI::LibCZIException& excp)
@@ -341,7 +378,7 @@ int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args,
 
     for (mint i = 1; i < 4; ++i)
     {
-        libData->MTensor_setReal(tensor, &i, s[i-1]);
+        libData->MTensor_setReal(tensor, &i, s[i - 1]);
     }
 
     MArgument_setMTensor(res, tensor);
@@ -406,7 +443,7 @@ int CZIReader_GetBitmapFromSubBlock(WolframLibraryData libData, mint Argc, MArgu
 
     try
     {
-        MImage img = reader->GetBitmapFromSubBlock(handle,libData);
+        MImage img = reader->GetBitmapFromSubBlock(handle, libData);
         MArgument_setMImage(res, img);
     }
     catch (exception& excp)

@@ -41,10 +41,28 @@ using namespace std;
 /*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(const char* coordinateString, libCZI::LibCZIStringParseException& excp)
 {
     stringstream ss;
-    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \"" 
-        << coordinateString << "\" could not be parsed, stopped at character no " << 
+    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \""
+        << coordinateString << "\" could not be parsed, stopped at character no " <<
         1 + excp.GetNumberOfCharsParsedOk() << ".";
     return ss.str();
+}
+
+/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(const char* coordinateString, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \""
+        << coordinateString << "\" could not be parsed -> " << excp.what() << ".";
+    return ss.str();
+}
+
+/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid()
+{
+    return string("Error in 'CZIReader_GetSingleChannelScalingTileComposite': Error with ROI-argument");
+}
+
+/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid()
+{
+    return string("Error in 'CZIReader_GetSingleChannelScalingTileComposite': Error with BackgroundColor-argument");
 }
 
 /*static*/std::string ErrHelper::GetErrorText_CziGetMetadataXml(std::exception& excp)
