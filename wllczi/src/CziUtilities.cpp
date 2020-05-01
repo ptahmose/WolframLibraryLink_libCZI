@@ -24,6 +24,7 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
 
     libCZI::ISingleChannelScalingTileAccessor::Options sctaOptions;
     sctaOptions.Clear();
+    sctaOptions.backGroundColor = RgbFloatColor{ 0,0,0 };
 
     auto accessor = reader->CreateSingleChannelScalingTileAccessor();
 
