@@ -56,7 +56,7 @@ add_dependencies(wllczi rapidjson)
 
 target_link_libraries(wllczi PRIVATE libCZIStatic JxrDecodeStatic)
 
-target_include_directories(wllczi PRIVATE ${Mathematica_INCLUDE_DIR} ${LIBCZI_INCLUDE_DIR})
+target_include_directories(wllczi PRIVATE ${Mathematica_INCLUDE_DIR} ${LIBCZI_INCLUDE_DIR}  ${RAPIDJSON_INCLUDE_DIR})
 
 #target_link_libraries(wllczi PRIVATE "C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions/wstp64i4.lib")
 
@@ -114,9 +114,9 @@ add_library (wllczi_static STATIC
 
 set_target_properties(wllczi_static PROPERTIES CXX_STANDARD 11)
 
-add_dependencies(wllczi_static rapidjson)
+#add_dependencies(wllczi_static rapidjson)
 
-target_include_directories(wllczi_static PRIVATE ${Mathematica_INCLUDE_DIR} ${LIBCZI_INCLUDE_DIR})
+target_include_directories(wllczi_static PRIVATE ${Mathematica_INCLUDE_DIR} ${LIBCZI_INCLUDE_DIR} ${RAPIDJSON_INCLUDE_DIR})
 
 target_link_libraries(wllczi_static PRIVATE libCZIStatic JxrDecodeStatic)
 
