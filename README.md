@@ -29,6 +29,7 @@ The following commands are provided:
 |:-------------------------------|:------------------------------------------------------|
 |GetCZIReaderLibraryInfo         | gather information about the CZIReader-package        |
 |OpenCZI                         | open a CZI-file                                       |
+|ReleaseCZI                      | destroy the CZI-document object                       |
 |CZIGetInfo                      | get information about the content of the CZI-document |
 |CZIGetSubBlock                  | get the bitmap of the specified subblock              |
 |CZISingleChannelScaledComposite | get a (scaled) multi-tile composite                   |
