@@ -95,6 +95,8 @@ using namespace libCZI;
                 if (pixelType != nullptr) { *pixelType = libCZI::PixelType::Gray8; }
                 return true;
             }
+
+            break;
         case MImage_CS_RGB:
             if (imgLibFunctions->MImage_interleavedQ(mimg) && imgLibFunctions->MImage_getChannels(mimg) == 3)
             {
@@ -117,6 +119,8 @@ using namespace libCZI;
                 if (pixelType != nullptr) { *pixelType = libCZI::PixelType::Gray16; }
                 return true;
             }
+
+            break;
         case MImage_CS_RGB:
             if (imgLibFunctions->MImage_interleavedQ(mimg) && imgLibFunctions->MImage_getChannels(mimg) == 3)
             {
@@ -136,6 +140,8 @@ using namespace libCZI;
             if (pixelType != nullptr) { *pixelType = libCZI::PixelType::Gray32Float; }
             return true;
         }
+
+        break;
     }
     }
 
