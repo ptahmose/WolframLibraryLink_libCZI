@@ -36,4 +36,4 @@ The following commands are provided:
 |CZIMultiChannelScaledComposite  | get a (scaled) multi-tile multi-channel composite     |
 |CZIGetMetadataXml               | get the XML-information                               |
 |CZIGetScaling                   | get the scaling of the document                       |
-|CZIGetSubBlockData              | get content of a subblock                             |
+|[CZIGetSubBlockData](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czigetsubblockdatafileobj-index-options)              | get content of a subblock                             |
