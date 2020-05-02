@@ -21,7 +21,7 @@ FindFile["CZIReader`"]    (* see where the paclet was downloaded to and installe
 PacletUninstall["CZIReader"] (* uninstall the CZIReader-paclet *)
 ```
 
-#Usage
+# Usage
 
 The following commands are provided:
 
