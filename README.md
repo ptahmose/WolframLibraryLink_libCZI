@@ -13,13 +13,10 @@ A Paclet is provided which includes binaries for ARM (e.g. Raspberry Pi), Window
 ![Paclet installation](./doc/content/pacletinstall.png "paclet_installation")
 
 ```
-PacletInstall["https://github.com/ptahmose/WolframLibraryLink_libCZI/\
-releases/download/v0.1.2/CZIReader-0.1.2.paclet"]
+PacletInstall["https://github.com/ptahmose/WolframLibraryLink_libCZI/releases/download/v0.1.2/CZIReader-0.1.2.paclet"]
 
-FindFile["CZIReader`"]    (* see where the paclet was downloaded to \
-and installed *)
--> "/home/pi/.Mathematica/Paclets/Repository/CZIReader-0.1.2/Kernel/\
-CZIReader.m"
+FindFile["CZIReader`"]    (* see where the paclet was downloaded to and installed *)
+-> "/home/pi/.Mathematica/Paclets/Repository/CZIReader-0.1.2/Kernel/CZIReader.m"
 
 PacletUninstall["CZIReader"] (* uninstall the CZIReader-paclet *)
 ```
