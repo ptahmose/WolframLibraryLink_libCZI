@@ -10,6 +10,6 @@ This project provides a [Wolfram Library Link](https://reference.wolfram.com/lan
 
 A Paclet is provided which includes binaries for ARM (e.g. Raspberry Pi), Windows x86 & x64 and Linux x64 on the [release-page](https://github.com/ptahmose/WolframLibraryLink_libCZI/releases) here on GitHub.
 
-![alt text](./doc/content/pacletinstall.png "Paclet installation")
+![Paclet installation](./doc/content/pacletinstall.png "paclet_installation")
 
 
