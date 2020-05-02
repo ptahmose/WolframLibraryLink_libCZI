@@ -12,4 +12,30 @@ A Paclet is provided which includes binaries for ARM (e.g. Raspberry Pi), Window
 
 ![Paclet installation](./doc/content/pacletinstall.png "paclet_installation")
 
+```
+PacletInstall["https://github.com/ptahmose/WolframLibraryLink_libCZI/\
+releases/download/v0.1.2/CZIReader-0.1.2.paclet"]
 
+FindFile["CZIReader`"]    (* see where the paclet was downloaded to \
+and installed *)
+-> "/home/pi/.Mathematica/Paclets/Repository/CZIReader-0.1.2/Kernel/\
+CZIReader.m"
+
+PacletUninstall["CZIReader"] (* uninstall the CZIReader-paclet *)
+```
+
+#Usage
+
+The following commands are provided:
+
+|command                         |description                                            |
+|:-------------------------------|:------------------------------------------------------|
+|GetCZIReaderLibraryInfo         | gather information about the CZIReader-package        |
+|OpenCZI                         | open a CZI-file                                       |
+|CZIGetInfo                      | get information about the content of the CZI-document |
+|CZIGetSubBlock                  | get the bitmap of the specified subblock              |
+|CZISingleChannelScaledComposite | get a (scaled) multi-tile composite                   |
+|CZIMultiChannelScaledComposite  | get a (scaled) multi-tile multi-channel composite     |
+|CZIGetMetadataXml               | get the XML-information                               |
+|CZIGetScaling                   | get the scaling of the document                       |
+|CZIGetSubBlockData              | get content of a subblock                             |
