@@ -41,3 +41,7 @@ The following commands are provided:
 |[CZIGetSubBlockData](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czigetsubblockdatafileobj-index-options)              | get content of a subblock                             |
 
 See the [wiki](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage) for more information.
+
+# Building
+
+The wllczi-shared-library can be built using cmake. [Here](https://asciinema.org/a/326514) is a recording of a build on a Raspberry Pi.
