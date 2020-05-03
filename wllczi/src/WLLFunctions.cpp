@@ -106,8 +106,8 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
 
     try
     {
-        // TODO: check whether "blockNo" is a valid "int"
-        auto out = reader->GetSubBlockImage(libData, blockNo);
+        WolframLibLinkUtils::ThrowIfValueIsNotInt32OrNegative(blockNo);
+        auto out = reader->GetSubBlockImage(libData, static_cast<int>(blockNo));
         MArgument_setMImage(res, out);
     }
     catch (exception& excp)
@@ -408,7 +408,8 @@ int CZIReader_ReadSubBlock(WolframLibraryData libData, mint Argc, MArgument* Arg
 
     try
     {
-        const mint handle = reader->ReadSubBlock(blockNo);
+        WolframLibLinkUtils::ThrowIfValueIsNotInt32OrNegative(blockNo);
+        const mint handle = reader->ReadSubBlock(static_cast<int>(blockNo));
         MArgument_setInteger(res, handle);
     }
     catch (exception& excp)

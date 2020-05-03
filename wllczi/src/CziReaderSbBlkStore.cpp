@@ -1,5 +1,4 @@
 #include "CziReaderSbBlkStore.h"
-
 #include <utility>
 
 CziReaderSubBlockStore::CziReaderSubBlockStore() : lastHandle(1000)

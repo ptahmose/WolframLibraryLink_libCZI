@@ -62,7 +62,7 @@ public:
     {
         libCZI::BitmapLockInfo lockInfo;
         lockInfo.ptrData = lockInfo.ptrDataRoi = this->imgLibFunctions->MImage_getRawData(this->mimg);
-        lockInfo.stride = MImageHelper::GetBytesPerPel(this->pixelType) * this->imgLibFunctions->MImage_getColumnCount(this->mimg);
+        lockInfo.stride = MImageHelper::GetBytesPerPel(this->pixelType) * static_cast<uint32_t>(this->imgLibFunctions->MImage_getColumnCount(this->mimg));
         lockInfo.size = ((std::uint64_t)lockInfo.stride) * this->imgLibFunctions->MImage_getRowCount(this->mimg);
         return lockInfo;
     }

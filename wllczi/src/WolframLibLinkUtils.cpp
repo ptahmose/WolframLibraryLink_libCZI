@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cmath>
 #include <limits>
+#include <stdexcept>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ using namespace std;
     }
 
     const mint* dimensions = naFuns->MNumericArray_getDimensions(numArray);
-    if (dimensions[0]<=0 || static_cast<size_t>(dimensions[0]) != outCount)
+    if (dimensions[0] <= 0 || static_cast<size_t>(dimensions[0]) != outCount)
     {
         return false;
     }
@@ -84,7 +85,7 @@ using namespace std;
         for (size_t i = 0; i < outCount; ++i)
         {
             auto v = p[i];
-            if (v > std::numeric_limits<int32_t>::max())
+            if (v > static_cast<uint32_t>(std::numeric_limits<int32_t>::max()))
             {
                 return false;
             }
@@ -293,4 +294,12 @@ using namespace std;
     }
 
     return true;
+}
+
+/*static*/void WolframLibLinkUtils::ThrowIfValueIsNotInt32OrNegative(mint i)
+{
+    if (i<0 || i>numeric_limits<int>::max())
+    {
+        throw invalid_argument("Argument is not a non-negative int32");
+    }
 }
