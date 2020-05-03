@@ -5,6 +5,7 @@ read [CZI-documents](https://www.zeiss.com/microscopy/int/products/microscope-so
 # Description
 
 This project provides a [Wolfram Library Link](https://reference.wolfram.com/language/LibraryLink/tutorial/Overview.html) implementation (based on [libCZI](https://github.com/ptahmose/libCZI)) allowing to directly open and read a CZI-document.
+See the module in action -> [here](https://youtu.be/ApOlKVpkWD0[) and [here](https://youtu.be/lTkrwYfyjK0).
 
 # Installing
 
