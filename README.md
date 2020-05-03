@@ -39,3 +39,5 @@ The following commands are provided:
 |CZIGetMetadataXml               | get the XML-information                               |
 |CZIGetScaling                   | get the scaling of the document                       |
 |[CZIGetSubBlockData](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czigetsubblockdatafileobj-index-options)              | get content of a subblock                             |
+
+See the [wiki](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage) for more information.
