@@ -8,6 +8,7 @@
 #include "stringReturnHelper.h"
 #include "errorhelper.h"
 #include "WolframLibLinkUtils.h"
+#include "finally.h"
 #include "dbgprint.h"
 #include "inc_libCzi.h"
 
@@ -34,6 +35,10 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
     mint id = MArgument_getInteger(Args[0]);
     auto reader = CziReaderManager::Instance.GetInstance(id);
     char* filename = MArgument_getUTF8String(Args[1]);
+    auto _ = finally([filename, libData]()->void
+    {
+        libData->UTF8String_disown(filename);
+    });
 
     try
     {
@@ -51,7 +56,6 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
         return LIBRARY_FUNCTION_ERROR;
     }
 
-    libData->UTF8String_disown(filename);
     return LIBRARY_NO_ERROR;
 }
 
@@ -154,6 +158,7 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     }
 
     char* coordinateString = MArgument_getUTF8String(Args[2]);
+    auto _ = finally([coordinateString, libData]()->void { libData->UTF8String_disown(coordinateString); });
     CDimCoordinate planeCoordinate;
     try
     {
@@ -256,6 +261,7 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
     WolframLibLinkUtils::TryGetAsInt32(roiValues, sizeof(roiValues) / sizeof(roiValues[0]), numArrayRegionOfInterest, naFuncs);
 
     char* coordinateString = MArgument_getUTF8String(Args[2]);
+    auto _1 = finally([coordinateString, libData]()->void { libData->UTF8String_disown(coordinateString); });
     CDimCoordinate planeCoordinate;
     try
     {
@@ -279,6 +285,14 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
         displaySettingsString = MArgument_getUTF8String(Args[4]);
     }
 
+    auto _2 = finally([displaySettingsString, libData]()->void
+    {
+        if (displaySettingsString != nullptr)
+        {
+            libData->UTF8String_disown(displaySettingsString);
+        }
+    });
+
     int returnValue = LIBRARY_NO_ERROR;
     try
     {
@@ -299,11 +313,6 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
     {
         libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
         returnValue = LIBRARY_FUNCTION_ERROR;
-    }
-
-    if (displaySettingsString != nullptr)
-    {
-        libData->UTF8String_disown(displaySettingsString);
     }
 
     return returnValue;
