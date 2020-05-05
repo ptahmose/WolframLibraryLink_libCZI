@@ -13,7 +13,7 @@ void CziReaderManager::AddInstance(mint id)
 
 void CziReaderManager::RemoveInstance(mint id)
 {
-    VDBGPRINT((CDbg::Level::Trace, "CziReaderManager::RemoveInstance: add instance %" MINTFMT ".", id));
+    VDBGPRINT((CDbg::Level::Trace, "CziReaderManager::RemoveInstance: remove instance %" MINTFMT ".", id));
     auto noOfElementsRemoved = this->map.erase(id);
 }
 

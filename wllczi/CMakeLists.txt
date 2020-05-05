@@ -3,7 +3,7 @@
 #
 #cmake_minimum_required (VERSION 3.8)
 
-if(CMAKE_BUILD_TYPE MATCHES DEBUG)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
  set(wllczi_ENABLE_LOGGING 1)
 else()
  set(wllczi_ENABLE_LOGGING 0)

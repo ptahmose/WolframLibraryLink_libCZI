@@ -3,7 +3,7 @@
 #include <stdarg.h>
 
 #if _WIN32API
- #include <Windows.h>
+#include <Windows.h>
 #endif
 
 using namespace std;
@@ -38,12 +38,12 @@ void CDbg::Print(Level lvl, const char* sz)
 {
     switch (lvl)
     {
-    case Level::Trace:return "Trace";
-    case Level::Debug:return "Debug";
-    case Level::Info:return "Info";
-    case Level::Warn:return "Warn";
-    case Level::Error:return "Error";
-    case Level::Fatal:return "Fatal";
+    case Level::Trace: return "Trace";
+    case Level::Debug: return "Debug";
+    case Level::Info:  return "Info";
+    case Level::Warn:  return "Warn";
+    case Level::Error: return "Error";
+    case Level::Fatal: return "Fatal";
     }
 
     return "Invalid";
