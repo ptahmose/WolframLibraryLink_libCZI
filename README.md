@@ -30,14 +30,14 @@ The following commands are provided:
 |command                         |description                                            |
 |:-------------------------------|:------------------------------------------------------|
 |GetCZIReaderLibraryInfo         | gather information about the CZIReader-package        |
-|OpenCZI                         | open a CZI-file                                       |
-|ReleaseCZI                      | destroy the CZI-document object                       |
-|CZIGetInfo                      | get information about the content of the CZI-document |
-|CZIGetSubBlock                  | get the bitmap of the specified subblock              |
-|CZISingleChannelScaledComposite | get a (scaled) multi-tile composite                   |
-|CZIMultiChannelScaledComposite  | get a (scaled) multi-tile multi-channel composite     |
+|[OpenCZI](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#openczifilename)| open a CZI-file                                       |
+|[ReleaseCZI](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#releaseczifileobj)| destroy the CZI-document object                       |
+|[CZIGetInfo](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czigetinfofileobj)| get information about the content of the CZI-document |
+|[CZIGetSubBlock](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czigetsubblockfileobj-index)| get the bitmap of the specified subblock              |
+|[CZISingleChannelScaledComposite](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czisinglechannelscaledcompositefileobjxywhzoomcoordbackgroundcolor)| get a (scaled) multi-tile composite                   |
+|[CZIMultiChannelScaledComposite](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czimultichannelscaledcompositefileobjxywhzoomcoorddisplaysettings)| get a (scaled) multi-tile multi-channel composite     |
 |CZIGetMetadataXml               | get the XML-information                               |
-|CZIGetScaling                   | get the scaling of the document                       |
+|[CZIGetScaling](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czigetscalingfileobj)| get the scaling of the document                       |
 |[CZIGetSubBlockData](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage#czigetsubblockdatafileobj-index-options)              | get content of a subblock                             |
 
 See the [wiki](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage) for more information.
