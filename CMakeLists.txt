@@ -60,14 +60,21 @@ else()
       GIT_REPOSITORY https://github.com/google/googletest.git
       GIT_TAG        release-1.10.0
     )
+
+    FetchContent_MakeAvailable(googletest)
+#[[
     FetchContent_GetProperties(googletest)
     if(NOT googletest_POPULATED)
-        FetchContent_Populate(googletest)
-	  	add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+      FetchContent_Populate(googletest)
+    endif()
+	  	#add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+      message(STATUS "*#+#+#+#+#+#+#+#")
+      message(STATUS ${googletest_SOURCE_DIR})
+      message(STATUS "*#+#+#+#+#+#+#+#")
 		  set(GTEST_INCLUDE_DIRS ${googletest_SOURCE_DIR}/googletest/include)
       set(GTEST_BOTH_LIBRARIES ${CMAKE_BINARY_DIR}/lib/libgtest ${CMAKE_BINARY_DIR}/lib/libgtest_main)    
-    endif()
-
+    #endif()
+    ]]
 endif()
 
 add_subdirectory("wllcziTests")

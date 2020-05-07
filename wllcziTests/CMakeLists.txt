@@ -12,7 +12,9 @@ add_executable( wllcziTests
 
 add_dependencies(wllcziTests rapidjson)
 
-target_include_directories(wllcziTests PRIVATE ${GTEST_INCLUDE_DIRS} wllczi  ${RAPIDJSON_INCLUDE_DIR})
+#target_include_directories(wllcziTests PRIVATE ${GTEST_INCLUDE_DIRS} wllczi  ${RAPIDJSON_INCLUDE_DIR})
+#target_include_directories(wllcziTests PRIVATE ${googletest_SOURCE_DIR}/googletest/include wllczi  ${RAPIDJSON_INCLUDE_DIR})
+target_include_directories(wllcziTests PRIVATE ${RAPIDJSON_INCLUDE_DIR})
 
 target_include_directories(wllcziTests PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../wllczi/>)
 
@@ -20,10 +22,11 @@ target_include_directories(wllcziTests PRIVATE ${Mathematica_INCLUDE_DIR} ${LIBC
 
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(wllcziTests PRIVATE ${GTEST_BOTH_LIBRARIES} wllczi_static)
-if(WIN32)
-  target_link_libraries(wllcziTests PRIVATE gtest_main)
-endif()
+#target_link_libraries(wllcziTests PRIVATE ${GTEST_BOTH_LIBRARIES} wllczi_static)
+target_link_libraries(wllcziTests PRIVATE  wllczi_static)
+#if(WIN32)
+  target_link_libraries(wllcziTests PRIVATE gtest_main gmock)
+#endif()
 
 target_compile_definitions(wllcziTests PRIVATE WLLCZITESTSAMPLEFILEDIR=${CMAKE_CURRENT_SOURCE_DIR}/samples)
 
