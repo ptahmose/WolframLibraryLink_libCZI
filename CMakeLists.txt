@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : Top-level CMake project file, do global configuration
 # and include sub-projects here.
 #
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.11)
 
 set(WLLCZI_MAJOR 0)
 set(WLLCZI_MINOR 1)
@@ -61,29 +61,13 @@ else()
       GIT_TAG        release-1.10.0
     )
 
-#[[    FetchContent_MakeAvailable(googletest)      ]]
-
+#[[    FetchContent_MakeAvailable(googletest)     #Requires CMake 3.16+ ]]
 
     FetchContent_GetProperties(googletest)
     if(NOT googletest_POPULATED)
       FetchContent_Populate(googletest)
       add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
     endif()
-
-
-#[[
-    FetchContent_GetProperties(googletest)
-    if(NOT googletest_POPULATED)
-      FetchContent_Populate(googletest)
-    endif()
-	  	#add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-      message(STATUS "*#+#+#+#+#+#+#+#")
-      message(STATUS ${googletest_SOURCE_DIR})
-      message(STATUS "*#+#+#+#+#+#+#+#")
-		  set(GTEST_INCLUDE_DIRS ${googletest_SOURCE_DIR}/googletest/include)
-      set(GTEST_BOTH_LIBRARIES ${CMAKE_BINARY_DIR}/lib/libgtest ${CMAKE_BINARY_DIR}/lib/libgtest_main)    
-    #endif()
-    ]]
 endif()
 
 add_subdirectory("wllcziTests")

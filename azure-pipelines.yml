@@ -8,7 +8,7 @@ trigger:
 
 jobs:
 - job: LinuxARM
-  timeoutInMinutes: 180
+  timeoutInMinutes: 240
   pool:
     vmImage: 'ubuntu-latest'
     timeoutInMinutes: 180
