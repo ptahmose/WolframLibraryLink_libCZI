@@ -20,7 +20,10 @@ steps:
     pwd
     wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
     unzip -P "Xrk7#4Pt" raspiqemu.zip    
-    cp CI/* raspiwllczibuildsystem/
+    cp CI/autorun.expect raspiwllczibuildsystem/autorun.expect
+    cp CI/run_raspi.sh raspiwllczibuildsystem/run_raspi.sh
+    chmod +x raspiwllczibuildsystem/autorun.expect
+    chmod +x raspiwllczibuildsystem/run_raspi.sh
     cd raspiwllczibuildsystem
     expect  autorun.expect
     echo Add other tasks to build, test, and deploy your project.
