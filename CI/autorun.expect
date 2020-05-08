@@ -20,7 +20,12 @@ send "raspberry\r"
 
 #Do whatever you want to do with in the guest VM. ( Run a process and write result to log )
 
-#poweroff the Guest VM
 expect "pi@raspberrypi:~$ "
+send "cd wllczi;rm -rf *"
+expect "pi@raspberrypi:~/wllczi$ "
+send "git clone https://github.com/ptahmose/WolframLibraryLink_libCZI.git"
+expect "pi@raspberrypi:~/wllczi$ "
+send "mkdir build; cd build;cmake ../WolframLibraryLink_libCZI -DCMAKE_BUILD_TYPE=Release; make"
+expect "pi@raspberrypi:~/wllczi$ "
+#poweroff the Guest VM
 send "shutdown -h now\r"
-
