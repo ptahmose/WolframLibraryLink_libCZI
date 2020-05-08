@@ -7,8 +7,16 @@ trigger:
 - master
 
 jobs:
+- job: Windows
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - task: CMake@1    
+  inputs:
+    cmakeArgs: -A Win32 -DCMAKE_BUILD_TYPE=Release 
 - job: LinuxARM
   timeoutInMinutes: 240
+  dependsOn: Windows
   pool:
     vmImage: 'ubuntu-latest'
     timeoutInMinutes: 240
