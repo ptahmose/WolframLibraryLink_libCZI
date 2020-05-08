@@ -26,6 +26,6 @@ expect "pi@raspberrypi:~/wllczi$ "
 send "git clone https://github.com/ptahmose/WolframLibraryLink_libCZI.git\r"
 expect "pi@raspberrypi:~/wllczi$ "
 send "mkdir build; cd build;cmake ../WolframLibraryLink_libCZI -DCMAKE_BUILD_TYPE=Release; make\r"
-expect "pi@raspberrypi:~/wllczi$ "
+expect "pi@raspberrypi:~/wllczi/build$ "
 #poweroff the Guest VM
 send "shutdown -h now\r"
