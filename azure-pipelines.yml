@@ -9,14 +9,12 @@ trigger:
 jobs:
 - job: LinuxARM
   timeoutInMinutes: 180
-pool:
-  vmImage: 'ubuntu-latest'
-  timeoutInMinutes: 180
-
+  pool:
+    vmImage: 'ubuntu-latest'
+    timeoutInMinutes: 180
   steps:
   - script: echo Hello, world!
     displayName: 'Run a one-line script'
-
   - script: |
       sudo apt-get install qemu-system-arm expect
       qemu-system-arm --version
