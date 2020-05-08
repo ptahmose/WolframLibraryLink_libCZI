@@ -14,11 +14,12 @@ steps:
   displayName: 'Run a one-line script'
 
 - script: |
-    sudo apt-get install qemu-system-arm expect
-    qemu-system-arm --version
+    #sudo apt-get install qemu-system-arm expect
+    #qemu-system-arm --version
     uname -a
     pwd
-    wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
+    #wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
+    ls
     unzip -P "Xrk7#4Pt" raspiqemu.zip    
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml

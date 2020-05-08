@@ -1,0 +1,26 @@
+#!/usr/bin/expect -f
+
+#starts guest vm, run benchmarks, poweroff
+set timeout -1
+
+#Assign a variable to the log file
+set log     [lindex $argv 0]
+
+#Start the guest VM
+spawn ./run_raspi.sh
+
+#Login process
+expect "login: "
+#Enter username
+send "pi\r"
+
+#Enter Password
+expect "Password: "
+send "raspberry\r"
+
+#Do whatever you want to do with in the guest VM. ( Run a process and write result to log )
+
+#poweroff the Guest VM
+expect "pi@raspberrypi:~$ "
+send "shutdown -h now\r"
+
