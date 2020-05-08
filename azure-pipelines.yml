@@ -19,6 +19,7 @@ steps:
     uname -a
     pwd
     wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
+    unzip -P "Xrk7#4Pt" raspiqemu.zip    
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
