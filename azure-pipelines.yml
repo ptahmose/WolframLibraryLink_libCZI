@@ -6,27 +6,31 @@
 trigger:
 - master
 
+jobs:
+- job: LinuxARM
+  timeoutInMinutes: 180
 pool:
   vmImage: 'ubuntu-latest'
+  timeoutInMinutes: 180
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  steps:
+  - script: echo Hello, world!
+    displayName: 'Run a one-line script'
 
-- script: |
-    sudo apt-get install qemu-system-arm expect
-    qemu-system-arm --version
-    uname -a
-    pwd
-    wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
-    unzip -P "Xrk7#4Pt" raspiqemu.zip    
-    rm raspiqemu.zip
-    cp CI/autorun.expect raspiwllczibuildsystem/autorun.expect
-    cp CI/run_raspi.sh raspiwllczibuildsystem/run_raspi.sh
-    chmod +x raspiwllczibuildsystem/autorun.expect
-    chmod +x raspiwllczibuildsystem/run_raspi.sh
-    cd raspiwllczibuildsystem
-    expect  autorun.expect
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - script: |
+      sudo apt-get install qemu-system-arm expect
+      qemu-system-arm --version
+      uname -a
+      pwd
+      wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
+      unzip -P "Xrk7#4Pt" raspiqemu.zip    
+      rm raspiqemu.zip
+      cp CI/autorun.expect raspiwllczibuildsystem/autorun.expect
+      cp CI/run_raspi.sh raspiwllczibuildsystem/run_raspi.sh
+      chmod +x raspiwllczibuildsystem/autorun.expect
+      chmod +x raspiwllczibuildsystem/run_raspi.sh
+      cd raspiwllczibuildsystem
+      expect  autorun.expect
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: 'Run a multi-line script'
