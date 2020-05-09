@@ -64,7 +64,7 @@ jobs:
   - task: DownloadSecureFile@1
     inputs:
       secureFile: 'C.zip'
-  - script: env;mkdir ~/artifacts;mkdir ~/artifacts/Winx86;mkdir ~/artifacts/Winx64
+  - script: env;mkdir ~/artifacts;mkdir ~/artifacts/Winx86;mkdir ~/artifacts/Winx64;mkdir ~/artifacts/Linuxx64
     displayName: 'Make folders where to put the Windows-binaries'
   - task: DownloadPipelineArtifact@2
     inputs:
@@ -84,7 +84,7 @@ jobs:
   - task: CMake@1
     inputs:
       cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C  -DWLLCZI_BUILD_UNITTESTS=ON'
-  - script: cmake --build  .\build --config Release
+  - script: cmake --build  ./build --config Release
     displayName: 'Build Linux-x64'
   - task: PublishPipelineArtifact@1
     inputs:
