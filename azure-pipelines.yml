@@ -108,11 +108,12 @@ jobs:
       sudo chmod 0777 /mnt/raspi
       sudo mount /dev/nbd0p2 /mnt/raspi
       sudo mkdir /mnt/raspi/home/pi/EXTDATA
+      sudo sudo chmod 0777 /mnt/raspi/home/pi/EXTDATA
       sudo cp -r ~/artifacts /mnt/raspi/home/pi/EXTDATA
       sudo ls -l -R /mnt/raspi/home/pi/EXTDATA
       sudo umount /mnt/raspi/
       sudo qemu-nbd --disconnect /dev/nbd0
-      sudo rmmod nbd
+      #sudo rmmod nbd
       cp CI/autorun.expect raspiwllczibuildsystem/autorun.expect
       cp CI/run_raspi.sh raspiwllczibuildsystem/run_raspi.sh
       chmod +x raspiwllczibuildsystem/autorun.expect
@@ -120,7 +121,7 @@ jobs:
       cd raspiwllczibuildsystem
       expect  autorun.expect
       cd ..
-      sudo modprobe nbd max_part=8 
+      #sudo modprobe nbd max_part=8 
       sudo qemu-nbd --read-only --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sudo mount -o ro,noload /dev/nbd0p2 /mnt/raspi
       mkdir paclet
