@@ -88,9 +88,9 @@ jobs:
       sudo mkdir /mnt/raspi
       sudo chmod 0777 /mnt/raspi
       sudo mount /dev/nbd0p2 /mnt/raspi
-      mkdir /mnt/raspi/home/pi/EXTDATA
-      cp -r ~/artifacts /mnt/raspi/home/pi/EXTDATA
-      ls -l -R /mnt/raspi/home/pi/EXTDATA
+      sudo mkdir /mnt/raspi/home/pi/EXTDATA
+      sudo cp -r ~/artifacts /mnt/raspi/home/pi/EXTDATA
+      sudo ls -l -R /mnt/raspi/home/pi/EXTDATA
       sudo umount /mnt/raspi/
       sudo qemu-nbd --disconnect /dev/nbd0
       sudo rmmod nbd
