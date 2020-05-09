@@ -11,6 +11,14 @@ jobs:
   pool:
     vmImage: 'windows-latest'
   steps:
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: 'C.zip'
+  - task: ExtractFiles@1
+    inputs:
+      archiveFilePatterns: 'C.zip'
+      destinationFolder: 'mathematicaheaders'
+      cleanDestinationFolder: true      
   - task: CMake@1
     inputs:
       cmakeArgs: '-A Win32 -DCMAKE_BUILD_TYPE=Release'
