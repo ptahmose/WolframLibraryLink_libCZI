@@ -21,13 +21,14 @@ jobs:
       cleanDestinationFolder: true      
   - task: CMake@1
     inputs:
+      workingDirectory: $(Build.SourcesDirectory)/build
       cmakeArgs: '.. -A Win32 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C -DWLLCZI_BUILD_UNITTESTS=ON'
   - task: CmdLine@2
     inputs:
       script: 'cmake --build  .\build --config Release'
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: $(Agent.BuildDirectory)/wllczi/Release/wllczi.dll
+      targetPath: $(Build.SourcesDirectory)/build/wllczi/Release/wllczi.dll
       artifactName: wllcziWinx86
 - job: Windowsx64
   pool:
@@ -56,8 +57,13 @@ jobs:
     vmImage: 'ubuntu-latest'
     timeoutInMinutes: 240
   steps:
-  - script: echo Hello, world!
-    displayName: 'Run a one-line script'
+  - script: env;mkdir ~/artifacts;mkdir ~/artifacts/Winx86;mkdir ~/artifacts/Winx64
+      displayName: 'Make folders where to put the Windows-binaries'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: WebApp
+      patterns: '**/*'
+      path: $(Agent.BuildDirectory)/artifacts/Winx86
   - script: |
       sudo apt-get -qq install qemu-system-arm expect
       qemu-system-arm --version
