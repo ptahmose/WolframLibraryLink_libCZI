@@ -25,6 +25,10 @@ jobs:
   - task: CmdLine@2
     inputs:
       script: 'cmake --build  .\build --config Release'
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: $(Agent.BuildDirectory)/wllczi/Release/wllczi.dll
+      artifactName: wllcziWinx86
 - job: Windowsx64
   pool:
     vmImage: 'windows-latest'
