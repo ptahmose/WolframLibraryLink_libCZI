@@ -86,6 +86,7 @@ jobs:
       rm raspiqemu.zip
       sudo qemu-nbd --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sudo mkdir /mnt/raspi
+      sudo chmod 0777 /mnt/raspi
       sudo mount /dev/nbd0p2 /mnt/raspi
       mkdir /mnt/raspi/home/pi/EXTDATA
       cp -r ~/artifacts /mnt/raspi/home/pi/EXTDATA
