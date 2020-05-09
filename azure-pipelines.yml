@@ -21,7 +21,7 @@ jobs:
       cleanDestinationFolder: true      
   - task: CMake@1
     inputs:
-      cmakeArgs: '-A Win32 -DCMAKE_BUILD_TYPE=Release'
+      cmakeArgs: '.. -A Win32 -DCMAKE_BUILD_TYPE=Release'
 - job: LinuxARM
   timeoutInMinutes: 240
   dependsOn: Windows
