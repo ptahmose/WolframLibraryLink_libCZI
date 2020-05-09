@@ -84,11 +84,13 @@ jobs:
   - task: CMake@1
     inputs:
       cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C  -DWLLCZI_BUILD_UNITTESTS=ON'
-  - script: cmake --build  ./build --config Release
+  - script: |
+      cmake --build  ./build --config Release
+      cp ./build/wllczi/libwllczi.so  ~/artifacts/Linuxx64/ 
     displayName: 'Build Linux-x64'
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: $(Build.SourcesDirectory)/build/wllczi/Release/libwllczi.so
+      targetPath: $(Build.SourcesDirectory)/build/wllczi/libwllczi.so
       artifactName: wllcziLinuxx64
   - script: |
       sudo apt-get -qq install qemu-system-arm expect
