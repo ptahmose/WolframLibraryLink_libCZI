@@ -123,6 +123,7 @@ jobs:
       cd ..
       #sudo modprobe nbd max_part=8 
       sudo qemu-nbd --read-only --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
+      sleep 30
       sudo mount -o ro,noload /dev/nbd0p2 /mnt/raspi
       mkdir paclet
       cp  /mnt/raspi/home/pi/EXTDATA/CZIReader-*.paclet paclet/
