@@ -68,6 +68,11 @@ jobs:
       artifact: wllcziWinx86
       patterns: '**/*'
       path: $(Agent.BuildDirectory)/artifacts/Winx86
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: wllcziWinx64
+      patterns: '**/*'
+      path: $(Agent.BuildDirectory)/artifacts/Winx64
   - script: |
       sudo apt-get -qq install qemu-system-arm expect
       qemu-system-arm --version
@@ -75,14 +80,16 @@ jobs:
       lscpu
       pwd
       echo ${HOME}
-      sudo modprobe nbd max_part=8   # enable NBD on the host
       wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
       unzip -P "Xrk7#4Pt" raspiqemu.zip    
       rm raspiqemu.zip
-      sudo qemu-nbd --read-only --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
+      sudo modprobe nbd max_part=8   # enable NBD on the host
+      sudo qemu-nbd --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sudo mkdir /mnt/raspi
-      sudo mount -o ro,noload /dev/nbd0p2 /mnt/raspi
-      ls -l /mnt/raspi
+      sudo mount /dev/nbd0p2 /mnt/raspi
+      mkdir /mnt/raspi/home/pi/EXTDATA
+      cp -r ~/artifacts /mnt/raspi/home/pi/EXTDATA
+      ls -l -R /mnt/raspi/home/pi/EXTDATA
       sudo umount /mnt/raspi/
       sudo qemu-nbd --disconnect /dev/nbd0
       sudo rmmod nbd
@@ -95,3 +102,15 @@ jobs:
       echo Add other tasks to build, test, and deploy your project.
       echo See https://aka.ms/yaml
     displayName: 'Run a multi-line script'
+
+
+
+
+#sudo modprobe nbd max_part=8   # enable NBD on the host
+#sudo qemu-nbd --read-only --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
+#sudo mkdir /mnt/raspi
+#sudo mount -o ro,noload /dev/nbd0p2 /mnt/raspi
+#ls -l /mnt/raspi
+#sudo umount /mnt/raspi/
+#sudo qemu-nbd --disconnect /dev/nbd0
+#sudo rmmod nbd
