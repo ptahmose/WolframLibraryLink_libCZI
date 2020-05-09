@@ -7,7 +7,7 @@ trigger:
 - master
 
 jobs:
-- job: Windows
+- job: Windowsx86
   pool:
     vmImage: 'windows-latest'
   steps:
@@ -21,13 +21,33 @@ jobs:
       cleanDestinationFolder: true      
   - task: CMake@1
     inputs:
-      cmakeArgs: '.. -A Win32 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C'
+      cmakeArgs: '.. -A Win32 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C -DWLLCZI_BUILD_UNITTESTS=OFF'
   - task: CmdLine@2
     inputs:
       script: 'cmake --build  .\build'
+- job: Windowsx64
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: 'C.zip'
+  - task: ExtractFiles@1
+    inputs:
+      archiveFilePatterns: '$(Agent.TempDirectory)\C.zip'
+      destinationFolder: 'mathematicaheaders'
+      cleanDestinationFolder: true      
+  - task: CMake@1
+    inputs:
+      cmakeArgs: '.. -A x64 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C  -DWLLCZI_BUILD_UNITTESTS=OFF'
+  - task: CmdLine@2
+    inputs:
+      script: 'cmake --build  .\build'      
 - job: LinuxARM
   timeoutInMinutes: 240
-  dependsOn: Windows
+  dependsOn: 
+  - Windowsx86
+  - Windowsx64
   pool:
     vmImage: 'ubuntu-latest'
     timeoutInMinutes: 240
