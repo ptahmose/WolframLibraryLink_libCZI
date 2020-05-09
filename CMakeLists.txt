@@ -8,6 +8,8 @@ set(WLLCZI_MINOR 1)
 set(WLLCZI_PATCH 2)
 set(WLLCZI_EXT "alpha")
 
+configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/Mathematica/CZIReader/PacletInfo.wl.in"  "${CMAKE_CURRENT_SOURCE_DIR}/Mathematica/CZIReader/PacletInfo.wl")
+
 if(WIN32)
   # use "static C-runtime" -> https://stackoverflow.com/questions/14172856/compile-with-mt-instead-of-md-using-cmake
   # Note: this requires CMAKE version 3.15+

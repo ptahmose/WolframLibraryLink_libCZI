@@ -346,3 +346,4 @@ build32/
 build64/
 out/
 enc_temp_folder/
+/Mathematica/CZIReader/PacletInfo.wl
