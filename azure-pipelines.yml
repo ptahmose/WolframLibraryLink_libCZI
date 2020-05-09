@@ -16,7 +16,7 @@ jobs:
       secureFile: 'C.zip'
   - task: ExtractFiles@1
     inputs:
-      archiveFilePatterns: 'C.zip'
+      archiveFilePatterns: '$(Agent.TempDirectory)\C.zip'
       destinationFolder: 'mathematicaheaders'
       cleanDestinationFolder: true      
   - task: CMake@1
