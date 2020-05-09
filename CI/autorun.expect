@@ -32,6 +32,8 @@ send "cp ~/EXTDATA/Winx86/* ../WolframLibraryLink_libCZI/Mathematica/CZIReader/L
 expect "pi@raspberrypi:~/wllczi/build$ "
 send "cp ~/EXTDATA/Winx64/* ../WolframLibraryLink_libCZI/Mathematica/CZIReader/LibraryResources/Windows-x86-64/\r"
 expect "pi@raspberrypi:~/wllczi/build$ "
+send "cp ~/EXTDATA/Linuxx64/* ../WolframLibraryLink_libCZI/Mathematica/CZIReader/LibraryResources/Linux-x86-64/\r"
+expect "pi@raspberrypi:~/wllczi/build$ "
 send "cp wllczi/libwllczi.so ../WolframLibraryLink_libCZI/Mathematica/CZIReader/LibraryResources/Linux-ARM/\r"
 expect "pi@raspberrypi:~/wllczi/build$ "
 send "cd ../WolframLibraryLink_libCZI/Mathematica/\r"
