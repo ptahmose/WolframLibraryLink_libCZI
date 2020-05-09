@@ -58,7 +58,7 @@ jobs:
     timeoutInMinutes: 240
   steps:
   - script: env;mkdir ~/artifacts;mkdir ~/artifacts/Winx86;mkdir ~/artifacts/Winx64
-      displayName: 'Make folders where to put the Windows-binaries'
+    displayName: 'Make folders where to put the Windows-binaries'
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: WebApp
