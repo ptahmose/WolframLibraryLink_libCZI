@@ -24,7 +24,7 @@ jobs:
       cmakeArgs: '.. -A Win32 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C'
   - task: CmdLine@2
     inputs:
-      script: 'cmake --build .\build'
+      script: 'cmake --build  .\build'
 - job: LinuxARM
   timeoutInMinutes: 240
   dependsOn: Windows
