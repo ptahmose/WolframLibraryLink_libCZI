@@ -61,6 +61,9 @@ jobs:
     vmImage: 'ubuntu-latest'
     timeoutInMinutes: 240
   steps:
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: 'C.zip'
   - script: env;mkdir ~/artifacts;mkdir ~/artifacts/Winx86;mkdir ~/artifacts/Winx64
     displayName: 'Make folders where to put the Windows-binaries'
   - task: DownloadPipelineArtifact@2
@@ -73,12 +76,9 @@ jobs:
       artifact: wllcziWinx64
       patterns: '**/*'
       path: $(Agent.BuildDirectory)/artifacts/Winx64
-  - task: DownloadSecureFile@1
-    inputs:
-      secureFile: 'C.zip'
   - task: ExtractFiles@1
     inputs:
-      archiveFilePatterns: '$(Agent.TempDirectory)\C.zip'
+      archiveFilePatterns: '$(Agent.TempDirectory)/C.zip'
       destinationFolder: 'mathematicaheaders'
       cleanDestinationFolder: true      
   - task: CMake@1
