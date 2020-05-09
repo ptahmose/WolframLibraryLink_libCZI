@@ -80,10 +80,10 @@ jobs:
       lscpu
       pwd
       echo ${HOME}
-      wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
+      sudo modprobe nbd max_part=8   # enable NBD on the host
+      wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524673&authkey=ADOgFOWKONZdQK0" -O raspiqemu.zip --no-verbose
       unzip -P "Xrk7#4Pt" raspiqemu.zip    
       rm raspiqemu.zip
-      sudo modprobe nbd max_part=8   # enable NBD on the host
       sudo qemu-nbd --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sudo mkdir /mnt/raspi
       sudo mount /dev/nbd0p2 /mnt/raspi
