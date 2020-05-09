@@ -131,9 +131,11 @@ jobs:
       echo Add other tasks to build, test, and deploy your project.
       echo See https://aka.ms/yaml
     displayName: 'Run a multi-line script'
+  - script: echo "##vso[task.setvariable variable=pacletname]`ls paclet/`"
+    displayName: 'figure out name of paclet'
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: '$(Pipeline.Workspace)/paclet/'
+      targetPath: '$(Pipeline.Workspace)/paclet/$(pacletname)'
       artifact: 'Paclet'
       publishLocation: 'pipeline'
 
