@@ -1,1 +1,1 @@
-PackPaclet["L:\\temp\\ZZ\\CZIReader"]
+PackPaclet["./CZIReader"]
