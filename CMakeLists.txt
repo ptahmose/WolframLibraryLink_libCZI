@@ -18,7 +18,11 @@ include("${CMAKE_SOURCE_DIR}/modules/rapidJSON.cmake")
 
 message(STATUS ${CMAKE_MODULE_PATH} )
 
-find_package(Mathematica)
+if(WLLCZI_MATHEMATICAHEADERS)
+  set(Mathematica_INCLUDE_DIR ${WLLCZI_MATHEMATICAHEADERS})
+else()
+  find_package(Mathematica)
+endif(WLLCZI_MATHEMATICAHEADERS)
 
 message(STATUS "Mathematica_INCLUDE_DIR: ${Mathematica_INCLUDE_DIR}")
 message(STATUS "Mathematica_WolframLibrary_LIBRARIES: ${Mathematica_WolframLibrary_LIBRARIES}")
