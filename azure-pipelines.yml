@@ -73,6 +73,23 @@ jobs:
       artifact: wllcziWinx64
       patterns: '**/*'
       path: $(Agent.BuildDirectory)/artifacts/Winx64
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: 'C.zip'
+  - task: ExtractFiles@1
+    inputs:
+      archiveFilePatterns: '$(Agent.TempDirectory)\C.zip'
+      destinationFolder: 'mathematicaheaders'
+      cleanDestinationFolder: true      
+  - task: CMake@1
+    inputs:
+      cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C  -DWLLCZI_BUILD_UNITTESTS=ON'
+ - script: cmake --build  .\build --config Release
+    displayName: 'Build Linux-x64'
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: $(Build.SourcesDirectory)/build/wllczi/Release/libwllczi.so
+      artifactName: wllcziLinuxx64
   - script: |
       sudo apt-get -qq install qemu-system-arm expect
       qemu-system-arm --version
