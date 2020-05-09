@@ -21,10 +21,10 @@ jobs:
       cleanDestinationFolder: true      
   - task: CMake@1
     inputs:
-      cmakeArgs: '.. -A Win32 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C -DWLLCZI_BUILD_UNITTESTS=OFF'
+      cmakeArgs: '.. -A Win32 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C -DWLLCZI_BUILD_UNITTESTS=ON'
   - task: CmdLine@2
     inputs:
-      script: 'cmake --build  .\build'
+      script: 'cmake --build  .\build --config Release'
 - job: Windowsx64
   pool:
     vmImage: 'windows-latest'
@@ -39,10 +39,10 @@ jobs:
       cleanDestinationFolder: true      
   - task: CMake@1
     inputs:
-      cmakeArgs: '.. -A x64 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C  -DWLLCZI_BUILD_UNITTESTS=OFF'
+      cmakeArgs: '.. -A x64 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C  -DWLLCZI_BUILD_UNITTESTS=ON'
   - task: CmdLine@2
     inputs:
-      script: 'cmake --build  .\build'      
+      script: 'cmake --build  .\build --config Release'      
 - job: LinuxARM
   timeoutInMinutes: 240
   dependsOn: 

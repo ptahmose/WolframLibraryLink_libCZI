@@ -8,6 +8,11 @@ set(WLLCZI_MINOR 1)
 set(WLLCZI_PATCH 2)
 set(WLLCZI_EXT "alpha")
 
+# use "static C-runtime" -> https://stackoverflow.com/questions/14172856/compile-with-mt-instead-of-md-using-cmake
+# Note: this requires CMAKE version 3.15+
+cmake_policy(SET CMP0091 NEW)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules" ${CMAKE_MODULE_PATH})
 
 project ("WolframLibraryLink_libCZI")
@@ -65,6 +70,7 @@ if (WLLCZI_BUILD_UNITTESTS)
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG        release-1.10.0
+        CMAKE_ARGS     "DUSE_STATIC_RT=ON"
       )
 
   #[[    FetchContent_MakeAvailable(googletest)     #Requires CMake 3.16+ ]]
