@@ -47,7 +47,11 @@ jobs:
       cmakeArgs: '.. -A x64 -DCMAKE_BUILD_TYPE=Release -DWLLCZI_MATHEMATICAHEADERS=$(Build.SourcesDirectory)\mathematicaheaders\C  -DWLLCZI_BUILD_UNITTESTS=ON'
   - task: CmdLine@2
     inputs:
-      script: 'cmake --build  .\build --config Release'      
+      script: 'cmake --build  .\build --config Release'
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: $(Build.SourcesDirectory)/build/wllczi/Release/wllczi.dll
+      artifactName: wllcziWinx64
 - job: LinuxARM
   timeoutInMinutes: 240
   dependsOn: 
@@ -61,7 +65,7 @@ jobs:
     displayName: 'Make folders where to put the Windows-binaries'
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: WebApp
+      artifact: wllcziWinx86
       patterns: '**/*'
       path: $(Agent.BuildDirectory)/artifacts/Winx86
   - script: |
@@ -70,6 +74,7 @@ jobs:
       uname -a
       lscpu
       pwd
+      echo ${HOME}
       sudo modprobe nbd max_part=8   # enable NBD on the host
       wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524672&authkey=ALnAfwEWG8RrIeI" -O raspiqemu.zip --no-verbose
       unzip -P "Xrk7#4Pt" raspiqemu.zip    
