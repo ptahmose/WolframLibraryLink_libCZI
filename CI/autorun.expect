@@ -19,7 +19,8 @@ expect "Password: "
 send "raspberry\r"
 
 #Do whatever you want to do with in the guest VM. ( Run a process and write result to log )
-
+expect "pi@raspberrypi:~$ "
+send "ls -l -R ~/EXTDATA\r"
 expect "pi@raspberrypi:~$ "
 send "cd wllczi;rm -rf *\r"
 expect "pi@raspberrypi:~/wllczi$ "

@@ -93,6 +93,7 @@ jobs:
       targetPath: $(Build.SourcesDirectory)/build/wllczi/libwllczi.so
       artifactName: wllcziLinuxx64
   - script: |
+      ls -l -R ~/artifacts
       sudo apt-get -qq install qemu-system-arm expect
       qemu-system-arm --version
       uname -a
@@ -105,10 +106,11 @@ jobs:
       rm raspiqemu.zip
       sudo qemu-nbd --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sudo mkdir /mnt/raspi
-      sudo chmod 0777 /mnt/raspi
+      sudo chmod 777 /mnt/raspi
+      sleep 10;sync
       sudo mount /dev/nbd0p2 /mnt/raspi
       sudo mkdir /mnt/raspi/home/pi/EXTDATA
-      sudo sudo chmod 0777 /mnt/raspi/home/pi/EXTDATA
+      sudo sudo chmod 777 /mnt/raspi/home/pi/EXTDATA
       sudo cp -r ~/artifacts /mnt/raspi/home/pi/EXTDATA
       sudo ls -l -R /mnt/raspi/home/pi/EXTDATA
       sudo umount /mnt/raspi/
@@ -120,10 +122,10 @@ jobs:
       chmod +x raspiwllczibuildsystem/run_raspi.sh
       cd raspiwllczibuildsystem
       expect  autorun.expect
-      cd ..
+      sleep 10;sync;cd ..
       #sudo modprobe nbd max_part=8 
       sudo qemu-nbd --read-only --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
-      sleep 30
+      sleep 10
       sudo mount -o ro,noload /dev/nbd0p2 /mnt/raspi
       mkdir paclet
       cp  /mnt/raspi/home/pi/EXTDATA/CZIReader-*.paclet paclet/
