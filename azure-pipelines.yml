@@ -95,13 +95,13 @@ jobs:
   - script: |
       cp  $(Agent.BuildDirectory)/artifacts/Winx64/* ~/artifacts/Winx64
       cp  $(Agent.BuildDirectory)/artifacts/Winx86/* ~/artifacts/Winx86
-      ls -l -R ~/artifacts
+      #ls -l -R ~/artifacts
       sudo apt-get -qq install qemu-system-arm expect
-      qemu-system-arm --version
-      uname -a
-      lscpu
-      pwd
-      echo ${HOME}
+      #qemu-system-arm --version
+      #uname -a
+      #lscpu
+      #pwd
+      #echo ${HOME}
       sudo modprobe nbd max_part=8   # enable NBD on the host
       wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524673&authkey=ADOgFOWKONZdQK0" -O raspiqemu.zip --no-verbose
       unzip -P "Xrk7#4Pt" raspiqemu.zip    
@@ -123,7 +123,6 @@ jobs:
       chmod +x raspiwllczibuildsystem/autorun.expect
       chmod +x raspiwllczibuildsystem/run_raspi.sh
       mkdir paclet
-      #cp CI/SimpleHTTPServerWithUpload.py paclet/
       cd paclet
       python3 ../CI/SimpleHTTPServerWithUpload.py &
       cd ..
@@ -132,21 +131,12 @@ jobs:
       expect  autorun.expect
       echo "****************** QEMU FINISHED ******************"
       sleep 10;sync;cd ..
-      #qemu-img info raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
-      ##sudo modprobe nbd max_part=8 
-      #sudo qemu-nbd --read-only --connect=/dev/nbd1 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
-      #sleep 10
-      #sudo mount -o ro,noload /dev/nbd1p2 /mnt/raspi
-      #echo "/mnt/raspi/home/pi/";ls -l /mnt/raspi/home/pi/
-      #echo "/mnt/raspi/home/pi/PACLETOUT/";ls -l /mnt/raspi/home/pi/PACLETOUT/
-      #mkdir paclet
-      #cp  /mnt/raspi/home/pi/PACLETOUT/CZIReader-*.paclet paclet/
-      #sudo umount /mnt/raspi/
-      #sudo qemu-nbd --disconnect /dev/nbd1
+      kill %1         # stop the web-server
       echo "ls -l paclet/";ls -l paclet/
-      echo Add other tasks to build, test, and deploy your project.
-      echo See https://aka.ms/yaml
-    displayName: 'Run a multi-line script'
+      countofiles=$(ls 2>/dev/null -Ubad1 -- paclet/*.paclet | wc -l) # check that we have more than one file 
+      if [ $countofiles -eq 0 ]; then exit 1; fi                      # otherwise, end with error
+      echo ARM-build and paclet-generation succeeded
+    displayName: 'ARM-build & paclet generation'
   - script: echo "##vso[task.setvariable variable=pacletname]`ls paclet/*.paclet`"
     displayName: 'figure out name of paclet'
   - task: PublishPipelineArtifact@1
@@ -161,11 +151,3 @@ jobs:
 #      publishLocation: 'Container'
 
 
-#sudo modprobe nbd max_part=8   # enable NBD on the host
-#sudo qemu-nbd --read-only --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
-#sudo mkdir /mnt/raspi
-#sudo mount -o ro,noload /dev/nbd0p2 /mnt/raspi
-#ls -l /mnt/raspi
-#sudo umount /mnt/raspi/
-#sudo qemu-nbd --disconnect /dev/nbd0
-#sudo rmmod nbd
