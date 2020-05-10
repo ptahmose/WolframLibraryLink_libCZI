@@ -43,6 +43,8 @@ expect "pi@raspberrypi:~/wllczi/WolframLibraryLink_libCZI/Mathematica$ "
 send "wolframscript -f createPaclet.wls\r"
 expect "pi@raspberrypi:~/wllczi/WolframLibraryLink_libCZI/Mathematica$ "
 send "ls -l;mkdir ~/PACLETOUT;cp CZIReader-*.paclet ~/PACLETOUT/;ls -l ~/PACLETOUT/\r"
+expect "pi@raspberrypi:~/wllczi/WolframLibraryLink_libCZI/Mathematica$ "
+send "curl -F \"file=@/home/pi/PACLETOUT/CZIReader-0.1.2.paclet\" 10.0.2.2:44445 \r"
 
 #poweroff the Guest VM
 expect "pi@raspberrypi:~/wllczi/WolframLibraryLink_libCZI/Mathematica$ "
