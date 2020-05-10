@@ -151,7 +151,7 @@ jobs:
     displayName: 'figure out name of paclet'
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: '$(Build.SourcesDirectory)/paclet/$(pacletname)'
+      targetPath: '$(Build.SourcesDirectory)/$(pacletname)'
       artifact: 'Paclet'
       publishLocation: 'pipeline'
 
