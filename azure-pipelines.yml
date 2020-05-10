@@ -127,6 +127,7 @@ jobs:
       expect  autorun.expect
       echo "****************** QEMU FINISHED ******************"
       sleep 10;sync;cd ..
+      qemu-img info raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       #sudo modprobe nbd max_part=8 
       sudo qemu-nbd --read-only --connect=/dev/nbd1 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sleep 10
