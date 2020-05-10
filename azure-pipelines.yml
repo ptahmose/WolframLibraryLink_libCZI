@@ -129,8 +129,9 @@ jobs:
       sudo qemu-nbd --read-only --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sleep 10
       sudo mount -o ro,noload /dev/nbd0p2 /mnt/raspi
+      ls -l /mnt/raspi/home/pi/PACLETOUT/
       mkdir paclet
-      cp  /mnt/raspi/home/pi/EXTDATA/CZIReader-*.paclet paclet/
+      cp  /mnt/raspi/home/pi/PACLETOUT/CZIReader-*.paclet paclet/
       sudo umount /mnt/raspi/
       sudo qemu-nbd --disconnect /dev/nbd0
       ls -l paclet/
