@@ -154,7 +154,11 @@ jobs:
       targetPath: '$(Build.SourcesDirectory)/$(pacletname)'
       artifact: 'Paclet'
       publishLocation: 'pipeline'
-
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)/$(pacletname)'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
 
 
 #sudo modprobe nbd max_part=8   # enable NBD on the host
