@@ -123,9 +123,9 @@ jobs:
       chmod +x raspiwllczibuildsystem/autorun.expect
       chmod +x raspiwllczibuildsystem/run_raspi.sh
       mkdir paclet
-      cp CI/SimpleHTTPServerWithUpload.py paclet/
+      #cp CI/SimpleHTTPServerWithUpload.py paclet/
       cd paclet
-      python3 SimpleHTTPServerWithUpload.py &
+      python3 ../CI/SimpleHTTPServerWithUpload.py &
       cd ..
       cd raspiwllczibuildsystem
       sleep 10;sync
@@ -147,11 +147,11 @@ jobs:
       echo Add other tasks to build, test, and deploy your project.
       echo See https://aka.ms/yaml
     displayName: 'Run a multi-line script'
-  - script: echo "##vso[task.setvariable variable=pacletname]`ls paclet/`"
+  - script: echo "##vso[task.setvariable variable=pacletname]`ls paclet/*.paclet`"
     displayName: 'figure out name of paclet'
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: '$(Pipeline.Workspace)/paclet/$(pacletname)'
+      targetPath: '$(Build.SourcesDirectory)/paclet/$(pacletname)'
       artifact: 'Paclet'
       publishLocation: 'pipeline'
 
