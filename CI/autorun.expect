@@ -46,4 +46,4 @@ send "ls -l;mkdir ~/PACLETOUT;cp CZIReader-*.paclet ~/PACLETOUT/;ls -l ~/PACLETO
 
 #poweroff the Guest VM
 expect "pi@raspberrypi:~/wllczi/WolframLibraryLink_libCZI/Mathematica$ "
-send "sync;shutdown -h now\r"
+send "sync ~/PACLETOUT/;shutdown -h now\r"

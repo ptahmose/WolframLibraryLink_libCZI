@@ -123,19 +123,20 @@ jobs:
       chmod +x raspiwllczibuildsystem/autorun.expect
       chmod +x raspiwllczibuildsystem/run_raspi.sh
       cd raspiwllczibuildsystem
+      sleep 10;sync
       expect  autorun.expect
-      echo ****************** QEMU FINISHED ******************
+      echo "****************** QEMU FINISHED ******************""
       sleep 10;sync;cd ..
       #sudo modprobe nbd max_part=8 
-      sudo qemu-nbd --read-only --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
+      sudo qemu-nbd --read-only --connect=/dev/nbd1 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sleep 10
-      sudo mount -o ro,noload /dev/nbd0p2 /mnt/raspi
+      sudo mount -o ro,noload /dev/nbd1p2 /mnt/raspi
       echo "/mnt/raspi/home/pi/";ls -l /mnt/raspi/home/pi/
       echo "/mnt/raspi/home/pi/PACLETOUT/";ls -l /mnt/raspi/home/pi/PACLETOUT/
       mkdir paclet
       cp  /mnt/raspi/home/pi/PACLETOUT/CZIReader-*.paclet paclet/
       sudo umount /mnt/raspi/
-      sudo qemu-nbd --disconnect /dev/nbd0
+      sudo qemu-nbd --disconnect /dev/nbd1
       echo "ls -l paclet/";ls -l paclet/
       echo Add other tasks to build, test, and deploy your project.
       echo See https://aka.ms/yaml
