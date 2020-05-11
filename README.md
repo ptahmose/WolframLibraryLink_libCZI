@@ -45,3 +45,5 @@ See the [wiki](https://github.com/ptahmose/WolframLibraryLink_libCZI/wiki/Usage)
 # Building
 
 The wllczi-shared-library can be built using cmake. [Here](https://asciinema.org/a/326514) is a recording of a build on a Raspberry Pi.
+
+There is a build-pipeline configured [here](https://dev.azure.com/ptahmoseGithub/Github-Projects/_build?definitionId=1&_a=summary).
