@@ -112,7 +112,7 @@ jobs:
       sleep 10;sync
       sudo mount /dev/nbd0p2 /mnt/raspi
       sudo mkdir /mnt/raspi/home/pi/EXTDATA
-      sudo sudo chmod 777 /mnt/raspi/home/pi/EXTDATA
+      sudo chmod 777 /mnt/raspi/home/pi/EXTDATA
       sudo cp -r ~/artifacts /mnt/raspi/home/pi/EXTDATA
       sudo ls -l -R /mnt/raspi/home/pi/EXTDATA
       sudo umount /mnt/raspi/
