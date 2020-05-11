@@ -1,7 +1,5 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Build wllczi for Windows-x86 and Windows-x64, then for Linux-x64,
+# then use QEMU to run an ARM-32bit-build, then package everything into a paclet
 
 trigger:
 - master
@@ -64,6 +62,9 @@ jobs:
   - task: DownloadSecureFile@1
     inputs:
       secureFile: 'C.zip'
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: 'zippw.txt'
   - script: env;mkdir ~/artifacts;mkdir ~/artifacts/Winx86;mkdir ~/artifacts/Winx64;mkdir ~/artifacts/Linuxx64
     displayName: 'Make folders where to put the Windows-binaries'
   - task: DownloadPipelineArtifact@2
@@ -93,6 +94,7 @@ jobs:
       targetPath: $(Build.SourcesDirectory)/build/wllczi/libwllczi.so
       artifactName: wllcziLinuxx64
   - script: |
+      zippw=`cat $(Agent.TempDirectory)/zippw.txt`
       cp  $(Agent.BuildDirectory)/artifacts/Winx64/* ~/artifacts/Winx64
       cp  $(Agent.BuildDirectory)/artifacts/Winx86/* ~/artifacts/Winx86
       #ls -l -R ~/artifacts
@@ -104,7 +106,7 @@ jobs:
       #echo ${HOME}
       sudo modprobe nbd max_part=8   # enable NBD on the host
       wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524673&authkey=ADOgFOWKONZdQK0" -O raspiqemu.zip --no-verbose
-      unzip -P "Xrk7#4Pt" raspiqemu.zip    
+      unzip -P "$zippw" raspiqemu.zip    
       rm raspiqemu.zip
       sudo qemu-nbd --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sudo mkdir /mnt/raspi
