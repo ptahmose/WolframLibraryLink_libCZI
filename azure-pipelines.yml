@@ -108,6 +108,7 @@ jobs:
       wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21524673&authkey=ADOgFOWKONZdQK0" -O raspiqemu.zip --no-verbose
       unzip -P "$zippw" raspiqemu.zip    
       rm raspiqemu.zip
+      # we mount the image, and copy the Windows- and Linux-builds into the image
       sudo qemu-nbd --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sudo mkdir /mnt/raspi
       sudo chmod 777 /mnt/raspi
@@ -116,7 +117,7 @@ jobs:
       sudo mkdir /mnt/raspi/home/pi/EXTDATA
       sudo chmod 777 /mnt/raspi/home/pi/EXTDATA
       sudo cp -r ~/artifacts /mnt/raspi/home/pi/EXTDATA
-      sudo ls -l -R /mnt/raspi/home/pi/EXTDATA
+      #sudo ls -l -R /mnt/raspi/home/pi/EXTDATA
       sudo umount /mnt/raspi/
       sudo qemu-nbd --disconnect /dev/nbd0
       #sudo rmmod nbd
@@ -126,6 +127,9 @@ jobs:
       chmod +x raspiwllczibuildsystem/run_raspi.sh
       mkdir paclet
       cd paclet
+      # In order to get the resulting paclet back from the ARM-guest, we run a minimal web-server on the host,
+      # where the guest will put the result to. I tried to mount the image again, but for unknown reasons it did
+      # not work. Sure, there must be better ways, but this works nicely so far.
       python3 ../CI/SimpleHTTPServerWithUpload.py &
       cd ..
       cd raspiwllczibuildsystem
