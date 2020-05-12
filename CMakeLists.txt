@@ -62,9 +62,11 @@ if (WLLCZI_BUILD_UNITTESTS)
   # GTest
   enable_testing()
 
+  set(GTEST_MSVC_SEARCH "MT") # we want to have the "static runtime library" version
   find_package(GTest QUIET)
   if ("${GTest_FOUND}")
       message(STATUS "Found GTest, using it.")
+      include_directories(${GTEST_INCLUDE_DIRS})
   else()
       message(STATUS "Did not find package GTest, will attempt to fetch it locally.")
 

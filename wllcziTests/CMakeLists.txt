@@ -18,10 +18,14 @@ target_include_directories(wllcziTests PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT
 
 target_include_directories(wllcziTests PRIVATE ${Mathematica_INCLUDE_DIR} ${LIBCZI_INCLUDE_DIR})
 
+target_link_libraries(wllcziTests PRIVATE  wllczi_static)
 
 # Link test executable against gtest & gtest_main
-target_link_libraries(wllcziTests PRIVATE  wllczi_static gtest_main gmock)
-
+if ("${GTest_FOUND}")
+  target_link_libraries(wllcziTests PRIVATE  ${GTEST_BOTH_LIBRARIES})
+else()
+    target_link_libraries(wllcziTests PRIVATE gtest_main gmock)
+endif()
 
 target_compile_definitions(wllcziTests PRIVATE WLLCZITESTSAMPLEFILEDIR=${CMAKE_CURRENT_SOURCE_DIR}/samples)
 
