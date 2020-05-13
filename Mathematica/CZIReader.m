@@ -38,6 +38,11 @@ CZIReader`CZIGetScaling::usage =
 CZIReader`CZIGetSubBlockData::usage =
     "CZIGetSubBlockData[fileobj, n,  options] gets various data from the subblock with index 'n'."
 
+(* Messages *)
+
+LibraryFunction::OpenCZIopenreadfail = "Could not open the specified file.";
+LibraryFunction::CziReaderInstanceDoesNotExist = "No instance exists for the specified id.";
+
 Begin["`Private`"]
 
 (* Implementation section *)

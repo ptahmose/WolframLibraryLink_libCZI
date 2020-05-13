@@ -1,26 +1,69 @@
 #include "errorhelper.h"
+#include "dbgprint.h"
 #include <sstream>
 
 using namespace std;
+
+/*static*/const char* ErrHelper::packageError_OpenCZI_failed = "OpenCZIopenreadfail";
+/*static*/const char* ErrHelper::packageError_CziReaderInstanceDoesNotExist = "CziReaderInstanceDoesNotExist";
+/*static*/const char* ErrHelper::packageError_WrongNumberOfArgument = "CziReaderWrongNumberOfArguments";
+/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeRoiInvalid = "CziReaderGetSingleChannelScalingTileCompositeRoiInvalid";
+
+/*static*/CLastErrorStore ErrHelper::lastError;
+
+// ----------------
+
+/*static*/void ErrHelper::ReportError_WrongNumberOfArguments(WolframLibraryData libData)
+{
+    libData->Message(ErrHelper::packageError_WrongNumberOfArgument);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderOpenException(WolframLibraryData libData, std::exception& excp)
+{
+    CDbg::PrintL(CDbg::Level::Error,
+        [&]()->string
+        {
+            stringstream ss;
+            ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
+            return ss.str();
+        });
+    libData->Message(ErrHelper::packageError_OpenCZI_failed);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderOpenException(WolframLibraryData libData, libCZI::LibCZIException& excp)
+{
+    CDbg::PrintL(CDbg::Level::Error,
+        [&]()->string
+        {
+            stringstream ss;
+            ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
+            return ss.str();
+        });
+    libData->Message(ErrHelper::packageError_OpenCZI_failed);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderInstanceNotExisting(WolframLibraryData libData, mint id)
+{
+    CDbg::PrintL(CDbg::Level::Error,
+        [=]()->string
+        {
+            return ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id);
+        });
+    libData->Message(ErrHelper::packageError_OpenCZI_failed);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid(WolframLibraryData libData)
+{
+    ErrHelper::lastError.SetLastErrorInfo("Error in 'CZIReader_GetSingleChannelScalingTileComposite': Error with ROI-argument");
+    libData->Message(ErrHelper::packageError_GetSingleChannelScalingTileCompositeRoiInvalid);
+}
+
+// ----------------
 
 /*static*/std::string ErrHelper::GetErrorText_CziReaderInstanceNotExisting(mint id)
 {
     stringstream ss;
     ss << "No CziReader-object found for Id=\"" << id << "\"";
-    return ss.str();
-}
-
-/*static*/std::string ErrHelper::GetErrorText_CziReaderOpenException(std::exception& excp)
-{
-    stringstream ss;
-    ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
-    return ss.str();
-}
-
-/*static*/std::string ErrHelper::GetErrorText_CziReaderOpenException(libCZI::LibCZIException& excp)
-{
-    stringstream ss;
-    ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
     return ss.str();
 }
 
