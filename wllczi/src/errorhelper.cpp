@@ -8,6 +8,7 @@ using namespace std;
 /*static*/const char* ErrHelper::packageError_CziReaderInstanceDoesNotExist = "CziReaderInstanceDoesNotExist";
 /*static*/const char* ErrHelper::packageError_WrongNumberOfArgument = "CziReaderWrongNumberOfArguments";
 /*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeRoiInvalid = "CziReaderGetSingleChannelScalingTileCompositeRoiInvalid";
+/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeParseCoordinateException = "CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException";
 
 /*static*/CLastErrorStore ErrHelper::lastError;
 
@@ -58,6 +59,25 @@ using namespace std;
     libData->Message(ErrHelper::packageError_GetSingleChannelScalingTileCompositeRoiInvalid);
 }
 
+/*static*/void ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(WolframLibraryData libData, const char* coordinateString, libCZI::LibCZIStringParseException& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \""
+        << coordinateString << "\" could not be parsed, stopped at character no " <<
+        1 + excp.GetNumberOfCharsParsedOk() << ".";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_GetSingleChannelScalingTileCompositeParseCoordinateException);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(WolframLibraryData libData, const char* coordinateString, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \""
+        << coordinateString << "\" could not be parsed -> " << excp.what() << ".";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_GetSingleChannelScalingTileCompositeParseCoordinateException);
+}
+
 // ----------------
 
 /*static*/std::string ErrHelper::GetErrorText_CziReaderInstanceNotExisting(mint id)
@@ -81,22 +101,22 @@ using namespace std;
     return ss.str();
 }
 
-/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(const char* coordinateString, libCZI::LibCZIStringParseException& excp)
-{
-    stringstream ss;
-    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \""
-        << coordinateString << "\" could not be parsed, stopped at character no " <<
-        1 + excp.GetNumberOfCharsParsedOk() << ".";
-    return ss.str();
-}
-
-/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(const char* coordinateString, std::exception& excp)
-{
-    stringstream ss;
-    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \""
-        << coordinateString << "\" could not be parsed -> " << excp.what() << ".";
-    return ss.str();
-}
+///*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(const char* coordinateString, libCZI::LibCZIStringParseException& excp)
+//{
+//    stringstream ss;
+//    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \""
+//        << coordinateString << "\" could not be parsed, stopped at character no " <<
+//        1 + excp.GetNumberOfCharsParsedOk() << ".";
+//    return ss.str();
+//}
+//
+///*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(const char* coordinateString, std::exception& excp)
+//{
+//    stringstream ss;
+//    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': Coordinate \""
+//        << coordinateString << "\" could not be parsed -> " << excp.what() << ".";
+//    return ss.str();
+//}
 
 /*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid()
 {

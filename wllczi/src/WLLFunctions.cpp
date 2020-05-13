@@ -174,12 +174,14 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     }
     catch (libCZI::LibCZIStringParseException& parseExcp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, parseExcp).c_str());
+        ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, parseExcp);
+        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, parseExcp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
+        ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, excp);
+        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
 
