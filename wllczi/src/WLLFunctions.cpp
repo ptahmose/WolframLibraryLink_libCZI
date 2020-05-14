@@ -195,7 +195,8 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
         bool b = WolframLibLinkUtils::TryGetAsFloat32(rgbFloatValues, sizeof(rgbFloatValues) / sizeof(rgbFloatValues[0]), numArrayBackgndColor, libData->numericarrayLibraryFunctions);
         if (b == false)
         {
-            libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid().c_str());
+            //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid().c_str());
+            ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid(libData);
             return LIBRARY_FUNCTION_ERROR;
         }
 
@@ -226,28 +227,24 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
 
         MArgument_setMImage(res, out);
     }
-    catch (libCZI::LibCZIException& excp)
-    {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
-        return LIBRARY_FUNCTION_ERROR;
-    }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
+        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
+        ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
     return LIBRARY_NO_ERROR;
 }
 
-int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+int CZIReader_GetMultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
     // arguments:
     // 1st: ROI               -> NumericArray of size 4
     // 2nd: plane-coordinate  -> a string (of form "T3C2Z32")
     // 3rd: zoom              -> A float number
     // 4th: display-settings  -> [optional] a string containing JSON
-    VDBGPRINT((CDbg::Level::Trace, "CZIReader_MultiChannelScalingTileComposite: Enter (Argc=%" MINTFMT ")", Argc));
+    VDBGPRINT((CDbg::Level::Trace, "CZIReader_GetMultiChannelScalingTileComposite: Enter (Argc=%" MINTFMT ")", Argc));
     if (Argc < 4)
     {
         return LIBRARY_FUNCTION_ERROR;
@@ -277,13 +274,15 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
     {
         planeCoordinate = CDimCoordinate::Parse(coordinateString);
     }
-    catch (libCZI::LibCZIStringParseException& excp)
+    catch (libCZI::LibCZIStringParseException& libExcp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
+        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
+        ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, libExcp);
         return LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
+        ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -306,7 +305,7 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
     int returnValue = LIBRARY_NO_ERROR;
     try
     {
-        auto out = reader->GetMultiChannelScalingTileComposite(
+        MImage out = reader->GetMultiChannelScalingTileComposite(
             libData,
             IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
             &planeCoordinate,

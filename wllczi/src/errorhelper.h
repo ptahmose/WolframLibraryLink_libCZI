@@ -9,7 +9,11 @@ class CLastErrorStore
 private:
     std::string lastErrorInfo;
 public:
-    void SetLastErrorInfo(const std::string& lastErrorInfo);
+    void SetLastErrorInfo(const std::string& lastErrorInfo)
+    {
+        this->lastErrorInfo = lastErrorInfo;
+    }
+
     void ClearLastError();
 
     bool GetLastErrorInfo(std::string& info);
@@ -26,6 +30,9 @@ private:
     static const char* packageError_WrongNumberOfArgument;
     static const char* packageError_GetSingleChannelScalingTileCompositeRoiInvalid;
     static const char* packageError_GetSingleChannelScalingTileCompositeParseCoordinateException;
+    static const char* packageError_GetSingleChannelScalingTileCompositeBackgroundColorInvalid;
+    static const char* packageError_GetSingleChannelScalingTileCompositeException;
+    static const char* packageError_GetMultiChannelScalingTileCompositeParseCoordinateException;
 public:
     static void ReportError_WrongNumberOfArguments(WolframLibraryData libData);
     static void ReportError_CziReaderOpenException(WolframLibraryData libData,std::exception& excp);
@@ -35,6 +42,12 @@ public:
 
     static void ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(WolframLibraryData libData, const char* coordinateString, libCZI::LibCZIStringParseException& excp);
     static void ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(WolframLibraryData libData, const char* coordinateString, std::exception& excp);
+    static void ReportError_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid(WolframLibraryData libData);
+    static void ReportError_CziReaderGetSingleChannelScalingTileCompositeException(WolframLibraryData libData, std::exception& excp);
+
+    static void ReportError_CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException(WolframLibraryData libData, const char* coordinateString, libCZI::LibCZIStringParseException& excp);
+    static void ReportError_CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException(WolframLibraryData libData, const char* coordinateString, std::exception& excp);
+
 
     static std::string GetErrorText_CziReaderGetSubBlockBitmapException(std::exception& excp);
     static std::string GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(std::exception& excp);

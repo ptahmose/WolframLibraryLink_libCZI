@@ -92,7 +92,7 @@ CziGetSingleChannelScaledBitmap2 = libraryfunctionload[
   LibraryDataType[Image]];
 
 CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
-  "CZIReader_MultiChannelScalingTileComposite",
+  "CZIReader_GetMultiChannelScalingTileComposite",
   {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], UTF8String}, 
   LibraryDataType[Image]];
 
