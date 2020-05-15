@@ -34,6 +34,17 @@ void CDbg::Print(Level lvl, const char* sz)
 #endif
 }
 
+void CDbg::PrintL(Level lvl, std::function<std::string(void)> func)
+{
+    if (static_cast<int>(lvl) < WLLCZI_LOGLEVEL)
+    {
+        return;
+    }
+
+    string txt = func();
+    Print(lvl, txt.c_str());
+}
+
 /*static*/const char* CDbg::LevelToString(Level lvl)
 {
     switch (lvl)
