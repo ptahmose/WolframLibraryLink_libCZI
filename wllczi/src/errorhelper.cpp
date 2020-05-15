@@ -12,6 +12,14 @@ using namespace std;
 /*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeBackgroundColorInvalid = "CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid";
 /*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeException = "CziReaderGetSingleChannelScalingTileCompositeException";
 /*static*/const char* ErrHelper::packageError_GetMultiChannelScalingTileCompositeParseCoordinateException = "CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException";
+/*static*/const char* ErrHelper::packageError_GetMultiChannelScalingTileCompositeException = "CziReaderGetMultiChannelScalingTileCompositeException";
+/*static*/const char* ErrHelper::packageError_GetMetadataXmlException = "CziReaderGetMetadataXmlException";
+/*static*/const char* ErrHelper::packageError_ReadSubBlockException = "CziReaderReadSubBlockException";
+/*static*/const char* ErrHelper::packageError_GetBitmapFromSubBlockException = "CziReaderGetBitmapFromSubBlockException";
+/*static*/const char* ErrHelper::packageError_GetMetadataFromSubBlockException = "CziReaderGetMetadataFromSubBlockException";
+/*static*/const char* ErrHelper::packageError_GetInfoFromSubBlockException = "CziReaderGetInfoFromSubBlockException";
+/*static*/const char* ErrHelper::packageError_ReleaseSubBlockException = "CziReaderReleaseSubBlockException";
+/*static*/const char* ErrHelper::packageError_GetSubBlockBitmapException = "CziReaderGetSubBlockBitmapException";
 
 /*static*/CLastErrorStore ErrHelper::lastError;
 
@@ -24,35 +32,42 @@ using namespace std;
 
 /*static*/void ErrHelper::ReportError_CziReaderOpenException(WolframLibraryData libData, std::exception& excp)
 {
-    CDbg::PrintL(CDbg::Level::Error,
-        [&]()->string
-        {
-            stringstream ss;
-            ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
-            return ss.str();
-        });
+    //CDbg::PrintL(CDbg::Level::Error,
+    //    [&]()->string
+    //    {
+    //        stringstream ss;
+    //        ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
+    //        return ss.str();
+    //    });
+    stringstream ss;
+    ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
     libData->Message(ErrHelper::packageError_OpenCZI_failed);
 }
 
 /*static*/void ErrHelper::ReportError_CziReaderOpenException(WolframLibraryData libData, libCZI::LibCZIException& excp)
 {
-    CDbg::PrintL(CDbg::Level::Error,
-        [&]()->string
-        {
-            stringstream ss;
-            ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
-            return ss.str();
-        });
+    stringstream ss;
+    ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    //CDbg::PrintL(CDbg::Level::Error,
+    //    [&]()->string
+    //    {
+    //        stringstream ss;
+    //        ss << "Error in 'CZIReader_Open': \"" << excp.what() << "\"";
+    //        return ss.str();
+    //    });
     libData->Message(ErrHelper::packageError_OpenCZI_failed);
 }
 
 /*static*/void ErrHelper::ReportError_CziReaderInstanceNotExisting(WolframLibraryData libData, mint id)
 {
-    CDbg::PrintL(CDbg::Level::Error,
-        [=]()->string
-        {
-            return ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id);
-        });
+    ErrHelper::lastError.SetLastErrorInfo(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id));
+    //CDbg::PrintL(CDbg::Level::Error,
+    //    [=]()->string
+    //    {
+    //        return ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id);
+    //    });
     libData->Message(ErrHelper::packageError_OpenCZI_failed);
 }
 
@@ -114,6 +129,70 @@ using namespace std;
     libData->Message(ErrHelper::packageError_GetMultiChannelScalingTileCompositeParseCoordinateException);
 }
 
+/*static*/void ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeException(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetMultiChannelScalingTileComposite': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_GetMultiChannelScalingTileCompositeException);
+}
+
+/*static*/void ErrHelper::ReportError_CziGetMetadataXmlException(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error retrieving XML-metadata: \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_GetMetadataXmlException);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderReadSubBlockException(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_ReadSubBlock': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_ReadSubBlockException);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderGetBitmapFromSubBlock(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetBitmapFromSubBlock': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_GetBitmapFromSubBlockException);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderGetMetadataFromSubBlock(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetMetadataFromSubBlock': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_GetMetadataFromSubBlockException);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderGetInfoFromSubBlock(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetInfoFromSubBlock': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_GetInfoFromSubBlockException);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderReleaseSubBlock(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_ReleaseSubBlock': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_ReleaseSubBlockException);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderGetSubBlockBitmapException(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_GetSubBlockBitmap': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_GetSubBlockBitmapException);
+}
+
 // ----------------
 
 /*static*/std::string ErrHelper::GetErrorText_CziReaderInstanceNotExisting(mint id)
@@ -123,19 +202,19 @@ using namespace std;
     return ss.str();
 }
 
-/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(std::exception& excp)
-{
-    stringstream ss;
-    ss << "Error in 'CZIReader_GetSubBlockBitmap': \"" << excp.what() << "\"";
-    return ss.str();
-}
+///*static*/std::string ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(std::exception& excp)
+//{
+//    stringstream ss;
+//    ss << "Error in 'CZIReader_GetSubBlockBitmap': \"" << excp.what() << "\"";
+//    return ss.str();
+//}
 
-/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(std::exception& excp)
-{
-    stringstream ss;
-    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': \"" << excp.what() << "\"";
-    return ss.str();
-}
+///*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(std::exception& excp)
+//{
+//    stringstream ss;
+//    ss << "Error in 'CZIReader_GetSingleChannelScalingTileComposite': \"" << excp.what() << "\"";
+//    return ss.str();
+//}
 
 ///*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(const char* coordinateString, libCZI::LibCZIStringParseException& excp)
 //{
@@ -154,26 +233,26 @@ using namespace std;
 //    return ss.str();
 //}
 
-/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid()
-{
-    return string("Error in 'CZIReader_GetSingleChannelScalingTileComposite': Error with ROI-argument");
-}
-
-/*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid()
-{
-    return string("Error in 'CZIReader_GetSingleChannelScalingTileComposite': Error with BackgroundColor-argument");
-}
-
-/*static*/std::string ErrHelper::GetErrorText_CziGetMetadataXml(std::exception& excp)
-{
-    stringstream ss;
-    ss << "Error retrieving XML-metadata: \"" << excp.what() << "\"";
-    return ss.str();
-}
-
-/*static*/std::string ErrHelper::GetErrorText_CziGetMetadataXml(libCZI::LibCZIException& excp)
-{
-    stringstream ss;
-    ss << "Error retrieving XML-metadata: \"" << excp.what() << "\"";
-    return ss.str();
-}
+///*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid()
+//{
+//    return string("Error in 'CZIReader_GetSingleChannelScalingTileComposite': Error with ROI-argument");
+//}
+//
+///*static*/std::string ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid()
+//{
+//    return string("Error in 'CZIReader_GetSingleChannelScalingTileComposite': Error with BackgroundColor-argument");
+//}
+//
+///*static*/std::string ErrHelper::GetErrorText_CziGetMetadataXml(std::exception& excp)
+//{
+//    stringstream ss;
+//    ss << "Error retrieving XML-metadata: \"" << excp.what() << "\"";
+//    return ss.str();
+//}
+//
+///*static*/std::string ErrHelper::GetErrorText_CziGetMetadataXml(libCZI::LibCZIException& excp)
+//{
+//    stringstream ss;
+//    ss << "Error retrieving XML-metadata: \"" << excp.what() << "\"";
+//    return ss.str();
+//}
