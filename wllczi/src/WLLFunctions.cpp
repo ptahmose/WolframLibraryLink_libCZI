@@ -20,7 +20,15 @@ int getLibraryInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
     string s = CLibraryInfo::GetAllInfoAsJSON();
     g_stringReturnHelper.StoreString(s);
     MArgument_setUTF8String(Res, g_stringReturnHelper.GetStoredString());
+    ErrHelper::ReportError_Success();
+    return LIBRARY_NO_ERROR;
+}
 
+int CZIReader_GetLastErrorInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument Res)
+{
+    g_stringReturnHelper.StoreString(ErrHelper::GetLastError());
+    MArgument_setUTF8String(Res, g_stringReturnHelper.GetStoredString());
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -29,6 +37,7 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
     DBGPRINT((CDbg::Level::Trace, "CZIReader_Open: Enter"));
     if (Argc != 2)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -45,17 +54,18 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
         VDBGPRINT((CDbg::Level::Trace, "CZIReader_Open: attempt to open file \"%s\".", filename));
         reader->Open(filename);
     }
-    catch (libCZI::LibCZIException& excp)
+    catch (libCZI::LibCZIException& libCziExcp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderOpenException(excp).c_str());
+        ErrHelper::ReportError_CziReaderOpenException(libData, libCziExcp);
         return LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderOpenException(excp).c_str());
+        ErrHelper::ReportError_CziReaderOpenException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -63,6 +73,7 @@ int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MA
 {
     if (Argc != 1)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -75,7 +86,7 @@ int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MA
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -84,6 +95,7 @@ int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MA
     g_stringReturnHelper.StoreString(s);
     MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -91,6 +103,7 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
 {
     if (Argc != 2)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -104,7 +117,7 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -116,10 +129,11 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        ErrHelper::ReportError_CziReaderGetSubBlockBitmapException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -132,6 +146,7 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     // 4th: background-color  -> optional, RgbGFloat (numeric array of size 3)
     if (Argc != 4 && Argc != 5)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -143,7 +158,7 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -153,7 +168,7 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     const bool b = WolframLibLinkUtils::TryGetAsInt32(roiValues, sizeof(roiValues) / sizeof(roiValues[0]), numArrayRegionOfInterest, naFuncs);
     if (!b)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid().c_str());
+        ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -166,12 +181,12 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     }
     catch (libCZI::LibCZIStringParseException& parseExcp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, parseExcp).c_str());
+        ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, parseExcp);
         return LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
+        ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -185,7 +200,7 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
         bool b = WolframLibLinkUtils::TryGetAsFloat32(rgbFloatValues, sizeof(rgbFloatValues) / sizeof(rgbFloatValues[0]), numArrayBackgndColor, libData->numericarrayLibraryFunctions);
         if (b == false)
         {
-            libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid().c_str());
+            ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid(libData);
             return LIBRARY_FUNCTION_ERROR;
         }
 
@@ -216,30 +231,27 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
 
         MArgument_setMImage(res, out);
     }
-    catch (libCZI::LibCZIException& excp)
-    {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
-        return LIBRARY_FUNCTION_ERROR;
-    }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
+        ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
-int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+int CZIReader_GetMultiChannelScalingTileComposite(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
     // arguments:
     // 1st: ROI               -> NumericArray of size 4
     // 2nd: plane-coordinate  -> a string (of form "T3C2Z32")
     // 3rd: zoom              -> A float number
     // 4th: display-settings  -> [optional] a string containing JSON
-    VDBGPRINT((CDbg::Level::Trace, "CZIReader_MultiChannelScalingTileComposite: Enter (Argc=%" MINTFMT ")", Argc));
+    VDBGPRINT((CDbg::Level::Trace, "CZIReader_GetMultiChannelScalingTileComposite: Enter (Argc=%" MINTFMT ")", Argc));
     if (Argc < 4)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -251,7 +263,7 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -267,13 +279,14 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
     {
         planeCoordinate = CDimCoordinate::Parse(coordinateString);
     }
-    catch (libCZI::LibCZIStringParseException& excp)
+    catch (libCZI::LibCZIStringParseException& libExcp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
+        ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, libExcp);
         return LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
+        ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -296,7 +309,7 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
     int returnValue = LIBRARY_NO_ERROR;
     try
     {
-        auto out = reader->GetMultiChannelScalingTileComposite(
+        MImage out = reader->GetMultiChannelScalingTileComposite(
             libData,
             IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
             &planeCoordinate,
@@ -304,17 +317,13 @@ int CZIReader_MultiChannelScalingTileComposite(WolframLibraryData libData, mint 
             displaySettingsString);
         MArgument_setMImage(res, out);
     }
-    catch (libCZI::LibCZIException& excp)
-    {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
-        returnValue = LIBRARY_FUNCTION_ERROR;
-    }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
+        ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeException(libData, excp);
         returnValue = LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return returnValue;
 }
 
@@ -322,6 +331,7 @@ int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* A
 {
     if (Argc != 1)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -334,7 +344,7 @@ int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* A
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -344,17 +354,13 @@ int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* A
         g_stringReturnHelper.StoreString(s);
         MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
     }
-    catch (libCZI::LibCZIException& excp)
-    {
-        libData->Message(ErrHelper::GetErrorText_CziGetMetadataXml(excp).c_str());
-        return LIBRARY_FUNCTION_ERROR;
-    }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziGetMetadataXml(excp).c_str());
+        ErrHelper::ReportError_CziGetMetadataXmlException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -362,6 +368,7 @@ int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args,
 {
     if (Argc != 1)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -374,7 +381,7 @@ int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args,
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -391,6 +398,8 @@ int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args,
     }
 
     MArgument_setMTensor(res, tensor);
+
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -398,6 +407,7 @@ int CZIReader_ReadSubBlock(WolframLibraryData libData, mint Argc, MArgument* Arg
 {
     if (Argc != 2)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -411,7 +421,7 @@ int CZIReader_ReadSubBlock(WolframLibraryData libData, mint Argc, MArgument* Arg
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -423,10 +433,11 @@ int CZIReader_ReadSubBlock(WolframLibraryData libData, mint Argc, MArgument* Arg
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        ErrHelper::ReportError_CziReaderReadSubBlockException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -434,6 +445,7 @@ int CZIReader_GetBitmapFromSubBlock(WolframLibraryData libData, mint Argc, MArgu
 {
     if (Argc != 2)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -447,7 +459,7 @@ int CZIReader_GetBitmapFromSubBlock(WolframLibraryData libData, mint Argc, MArgu
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -458,10 +470,11 @@ int CZIReader_GetBitmapFromSubBlock(WolframLibraryData libData, mint Argc, MArgu
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        ErrHelper::ReportError_CziReaderGetBitmapFromSubBlock(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -469,6 +482,7 @@ int CZIReader_GetMetadataFromSubBlock(WolframLibraryData libData, mint Argc, MAr
 {
     if (Argc != 2)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -482,7 +496,7 @@ int CZIReader_GetMetadataFromSubBlock(WolframLibraryData libData, mint Argc, MAr
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -494,10 +508,11 @@ int CZIReader_GetMetadataFromSubBlock(WolframLibraryData libData, mint Argc, MAr
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        ErrHelper::ReportError_CziReaderGetMetadataFromSubBlock(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -505,6 +520,7 @@ int CZIReader_GetInfoFromSubBlock(WolframLibraryData libData, mint Argc, MArgume
 {
     if (Argc != 2)
     {
+        ErrHelper::ReportError_WrongNumberOfArguments(libData);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -518,7 +534,7 @@ int CZIReader_GetInfoFromSubBlock(WolframLibraryData libData, mint Argc, MArgume
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -530,10 +546,11 @@ int CZIReader_GetInfoFromSubBlock(WolframLibraryData libData, mint Argc, MArgume
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        ErrHelper::ReportError_CziReaderGetInfoFromSubBlock(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -554,7 +571,7 @@ int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* 
     }
     catch (out_of_range&)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderInstanceNotExisting(id).c_str());
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -564,9 +581,10 @@ int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* 
     }
     catch (exception& excp)
     {
-        libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
+        ErrHelper::ReportError_CziReaderReleaseSubBlock(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }

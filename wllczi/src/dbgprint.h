@@ -1,6 +1,8 @@
 #pragma once
 
 #include <inttypes.h>
+#include <string>
+#include <functional>
 #include "wllczi_Config.h"
 
 class CDbg
@@ -18,6 +20,7 @@ public:
 
     static void vPrint(Level lvl, const char* sz, ...);
     static void Print(Level lvl, const char* sz);
+    static void PrintL(Level lvl, std::function<std::string(void)> func);
 
     static const char* LevelToString(Level lvl);
 };

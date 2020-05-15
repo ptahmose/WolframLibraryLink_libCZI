@@ -38,6 +38,26 @@ CZIReader`CZIGetScaling::usage =
 CZIReader`CZIGetSubBlockData::usage =
     "CZIGetSubBlockData[fileobj, n,  options] gets various data from the subblock with index 'n'."
 
+(* Messages *)
+
+LibraryFunction::OpenCZIopenreadfail = "Could not open the specified file.";
+LibraryFunction::CziReaderInstanceDoesNotExist = "No instance exists for the specified id.";
+LibraryFunction::CziReaderWrongNumberOfArguments = "Wrong number of arguments in call to function.";
+LibraryFunction::CziReaderGetSingleChannelScalingTileCompositeRoiInvalid = "Error with parsing the ROI-argument in the function 'CZISingleChannelScaledComposite'.";
+LibraryFunction::CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException = "Error with parsing the coordinate-argument in the function 'CZISingleChannelScaledComposite'.";
+LibraryFunction::CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid = "Error with parsing the background-color-argument in the function 'CZISingleChannelScaledComposite'.";
+LibraryFunction::CziReaderGetSingleChannelScalingTileCompositeException = "Error occurred generating the tile-composite in the function 'CZISingleChannelScaledComposite'.";
+LibraryFunction::CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException = "Error with parsing the coordinate-argument in the function 'CZIMultiChannelScaledComposite'.";
+LibraryFunction::CziReaderGetMultiChannelScalingTileCompositeException = "Error occurred generating the tile-composite in the function 'CZIMultiChannelScaledComposite'.";
+LibraryFunction::CziReaderGetMetadataXmlException = "Error in 'CZIGetMetadataXml'.";
+LibraryFunction::CziReaderReadSubBlockException = "Error in reading subblock.";
+LibraryFunction::CziReaderGetBitmapFromSubBlockException = "Error in 'GetBitmapFromSubBlock'.";
+LibraryFunction::CziReaderGetMetadataFromSubBlockException = "Error in 'GetMetadataFromSubBlock'.";
+LibraryFunction::CziReaderGetInfoFromSubBlockException = "Error in 'GetInfoFromSubBlock'.";
+LibraryFunction::CziReaderReleaseSubBlockException = "Error in 'ReleaseSubBlock'.";
+LibraryFunction::CziReaderGetSubBlockBitmapException = "Error occurred in 'GetSubBlockBitmapException'.";
+
+
 Begin["`Private`"]
 
 (* Implementation section *)
@@ -87,7 +107,7 @@ CziGetSingleChannelScaledBitmap2 = libraryfunctionload[
   LibraryDataType[Image]];
 
 CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
-  "CZIReader_MultiChannelScalingTileComposite",
+  "CZIReader_GetMultiChannelScalingTileComposite",
   {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], UTF8String}, 
   LibraryDataType[Image]];
 
@@ -119,6 +139,12 @@ CziReleaseSubBlockHandle = libraryfunctionload[
   "CZIReader_ReleaseSubBlock",
   {Integer, Integer}, "Void"]; 
 
+CziGetLastError = libraryfunctionload[
+  "CZIReader_GetLastErrorInfo",
+  {}, UTF8String];
+
+RetOrPrintError[x_] :=
+  Return[If[Head[x]===LibraryFunctionError,Print[CziGetLastError[]];$Failed,x]];
 
 CZIReader`GetCZIReaderLibraryInfo[] :=
   Module[{},
@@ -126,10 +152,10 @@ CZIReader`GetCZIReaderLibraryInfo[] :=
   ]
 
 CZIReader`OpenCZI[ x_] :=
-    Module[ {exp,r},
+    Module[ {exp,r, msg},
           exp = CreateManagedLibraryExpression["CZIReader", reader1];
 	        r = CziReaderOpen[ManagedLibraryExpressionID[exp], x];
-	        Return[If[Head[r]===LibraryFunctionError,Message["HELLO WORLD"];$Failed,exp]];
+	        Return[If[Head[r]===LibraryFunctionError,Print[CziGetLastError[]];$Failed,exp]];
     ]
 
 CZIReader`ReleaseCZI[ c_] :=
@@ -139,13 +165,13 @@ CZIReader`ReleaseCZI[ c_] :=
 
 CZIReader`CZIGetInfo[ c_ ] :=
     Module[{},
-      Return[CziReaderInfo[ManagedLibraryExpressionID[c]]];
+      RetOrPrintError[CziReaderInfo[ManagedLibraryExpressionID[c]]];
     ]
 	
 CZIReader`CZIGetSubBlock[c_,n_] :=
     Module[ {bitmap},
       bitmap = CziGetSubBlockBitmap[ManagedLibraryExpressionID[c],n];
-      Return[bitmap];
+      RetOrPrintError[bitmap];
     ]
 
 CZIReader`CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_] := CZISingleChannelScaledComposite[c,x,y,w,h,zoom,coord,{0,0,0}];
@@ -169,7 +195,7 @@ CZIReader`CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,backGround
         coordstr,
         zoom,
         NumericArray[Take[Join[backGroundColor,{Last[backGroundColor],Last[backGroundColor]}],3],"Real32","ClipAndCoerce"]];
-      Return[img];
+      RetOrPrintError[img];
     ]
 
 CZIReader`CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySettings_:""] :=
@@ -186,12 +212,12 @@ CZIReader`CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySett
                 Message("Argument 'displaySettings' must either be a string containing JSON, or a List which can be converted to JSON");
                 $Failed
               ];
-      Return[img];
+      RetOrPrintError[img];
     ]
 
 CZIReader`CZIGetMetadataXml[c_] :=
    Module[{},
-      Return[CziGetMetadataXml[ManagedLibraryExpressionID[c]]];
+      RetOrPrintError[CziGetMetadataXml[ManagedLibraryExpressionID[c]]];
     ]
 
 CZIReader`CZIGetScaling[c_] :=
