@@ -48,15 +48,11 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
     catch (libCZI::LibCZIException& libCziExcp)
     {
         ErrHelper::ReportError_CziReaderOpenException(libData, libCziExcp);
-        //libData->Message("OpenCZIopenreadfail");
-        //libData->Message(ErrHelper::GetErrorText_CziReaderOpenException(excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
         ErrHelper::ReportError_CziReaderOpenException(libData, excp);
-        //libData->Message("OpenCZIopenreadfail");
-        //libData->Message(ErrHelper::GetErrorText_CziReaderOpenException(excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -122,7 +118,6 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
     }
     catch (exception& excp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
         ErrHelper::ReportError_CziReaderGetSubBlockBitmapException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -162,7 +157,6 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     if (!b)
     {
         ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid(libData);
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeRoiInvalid().c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -176,13 +170,11 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     catch (libCZI::LibCZIStringParseException& parseExcp)
     {
         ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, parseExcp);
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, parseExcp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
     catch (exception& excp)
     {
         ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, excp);
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -196,7 +188,6 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
         bool b = WolframLibLinkUtils::TryGetAsFloat32(rgbFloatValues, sizeof(rgbFloatValues) / sizeof(rgbFloatValues[0]), numArrayBackgndColor, libData->numericarrayLibraryFunctions);
         if (b == false)
         {
-            //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid().c_str());
             ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid(libData);
             return LIBRARY_FUNCTION_ERROR;
         }
@@ -230,7 +221,6 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
     }
     catch (exception& excp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
         ErrHelper::ReportError_CziReaderGetSingleChannelScalingTileCompositeException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -278,7 +268,6 @@ int CZIReader_GetMultiChannelScalingTileComposite(WolframLibraryData libData, mi
     }
     catch (libCZI::LibCZIStringParseException& libExcp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException(coordinateString, excp).c_str());
         ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException(libData, coordinateString, libExcp);
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -317,7 +306,6 @@ int CZIReader_GetMultiChannelScalingTileComposite(WolframLibraryData libData, mi
     }
     catch (exception& excp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSingleChannelScalingTileCompositeException(excp).c_str());
         ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeException(libData, excp);
         returnValue = LIBRARY_FUNCTION_ERROR;
     }
@@ -342,7 +330,6 @@ int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* A
     }
     catch (out_of_range&)
     {
-        //ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -353,14 +340,8 @@ int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* A
         g_stringReturnHelper.StoreString(s);
         MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
     }
-    //catch (libCZI::LibCZIException& excp)
-    //{
-    //    libData->Message(ErrHelper::GetErrorText_CziGetMetadataXml(excp).c_str());
-    //    return LIBRARY_FUNCTION_ERROR;
-    //}
     catch (exception& excp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziGetMetadataXml(excp).c_str());
         ErrHelper::ReportError_CziGetMetadataXmlException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -435,7 +416,6 @@ int CZIReader_ReadSubBlock(WolframLibraryData libData, mint Argc, MArgument* Arg
     }
     catch (exception& excp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
         ErrHelper::ReportError_CziReaderReadSubBlockException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -473,7 +453,6 @@ int CZIReader_GetBitmapFromSubBlock(WolframLibraryData libData, mint Argc, MArgu
     catch (exception& excp)
     {
         ErrHelper::ReportError_CziReaderGetBitmapFromSubBlock(libData, excp);
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -510,7 +489,6 @@ int CZIReader_GetMetadataFromSubBlock(WolframLibraryData libData, mint Argc, MAr
     }
     catch (exception& excp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
         ErrHelper::ReportError_CziReaderGetMetadataFromSubBlock(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -549,7 +527,6 @@ int CZIReader_GetInfoFromSubBlock(WolframLibraryData libData, mint Argc, MArgume
     catch (exception& excp)
     {
         ErrHelper::ReportError_CziReaderGetInfoFromSubBlock(libData, excp);
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
         return LIBRARY_FUNCTION_ERROR;
     }
 
@@ -583,7 +560,6 @@ int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* 
     }
     catch (exception& excp)
     {
-        //libData->Message(ErrHelper::GetErrorText_CziReaderGetSubBlockBitmapException(excp).c_str());
         ErrHelper::ReportError_CziReaderReleaseSubBlock(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
