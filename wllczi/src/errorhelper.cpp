@@ -4,22 +4,38 @@
 
 using namespace std;
 
-/*static*/const char* ErrHelper::packageError_OpenCZI_failed = "OpenCZIopenreadfail";
-/*static*/const char* ErrHelper::packageError_CziReaderInstanceDoesNotExist = "CziReaderInstanceDoesNotExist";
-/*static*/const char* ErrHelper::packageError_WrongNumberOfArgument = "CziReaderWrongNumberOfArguments";
-/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeRoiInvalid = "CziReaderGetSingleChannelScalingTileCompositeRoiInvalid";
-/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeParseCoordinateException = "CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException";
-/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeBackgroundColorInvalid = "CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid";
-/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeException = "CziReaderGetSingleChannelScalingTileCompositeException";
-/*static*/const char* ErrHelper::packageError_GetMultiChannelScalingTileCompositeParseCoordinateException = "CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException";
-/*static*/const char* ErrHelper::packageError_GetMultiChannelScalingTileCompositeException = "CziReaderGetMultiChannelScalingTileCompositeException";
-/*static*/const char* ErrHelper::packageError_GetMetadataXmlException = "CziReaderGetMetadataXmlException";
-/*static*/const char* ErrHelper::packageError_ReadSubBlockException = "CziReaderReadSubBlockException";
-/*static*/const char* ErrHelper::packageError_GetBitmapFromSubBlockException = "CziReaderGetBitmapFromSubBlockException";
-/*static*/const char* ErrHelper::packageError_GetMetadataFromSubBlockException = "CziReaderGetMetadataFromSubBlockException";
-/*static*/const char* ErrHelper::packageError_GetInfoFromSubBlockException = "CziReaderGetInfoFromSubBlockException";
-/*static*/const char* ErrHelper::packageError_ReleaseSubBlockException = "CziReaderReleaseSubBlockException";
-/*static*/const char* ErrHelper::packageError_GetSubBlockBitmapException = "CziReaderGetSubBlockBitmapException";
+/*static*/const char* ErrHelper::packageError_OpenCZI_failed
+                                    = "OpenCZIopenreadfail";
+/*static*/const char* ErrHelper::packageError_CziReaderInstanceDoesNotExist
+                                    = "CziReaderInstanceDoesNotExist";
+/*static*/const char* ErrHelper::packageError_WrongNumberOfArgument
+                                    = "CziReaderWrongNumberOfArguments";
+/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeRoiInvalid
+                                    = "CziReaderGetSingleChannelScalingTileCompositeRoiInvalid";
+/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeParseCoordinateException
+                                    = "CziReaderGetSingleChannelScalingTileCompositeParseCoordinateException";
+/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeBackgroundColorInvalid
+                                    = "CziReaderGetSingleChannelScalingTileCompositeBackgroundColorInvalid";
+/*static*/const char* ErrHelper::packageError_GetSingleChannelScalingTileCompositeException
+                                    = "CziReaderGetSingleChannelScalingTileCompositeException";
+/*static*/const char* ErrHelper::packageError_GetMultiChannelScalingTileCompositeParseCoordinateException
+                                    = "CziReaderGetMultiChannelScalingTileCompositeParseCoordinateException";
+/*static*/const char* ErrHelper::packageError_GetMultiChannelScalingTileCompositeException
+                                    = "CziReaderGetMultiChannelScalingTileCompositeException";
+/*static*/const char* ErrHelper::packageError_GetMetadataXmlException
+                                    = "CziReaderGetMetadataXmlException";
+/*static*/const char* ErrHelper::packageError_ReadSubBlockException
+                                    = "CziReaderReadSubBlockException";
+/*static*/const char* ErrHelper::packageError_GetBitmapFromSubBlockException
+                                    = "CziReaderGetBitmapFromSubBlockException";
+/*static*/const char* ErrHelper::packageError_GetMetadataFromSubBlockException
+                                    = "CziReaderGetMetadataFromSubBlockException";
+/*static*/const char* ErrHelper::packageError_GetInfoFromSubBlockException
+                                    = "CziReaderGetInfoFromSubBlockException";
+/*static*/const char* ErrHelper::packageError_ReleaseSubBlockException
+                                    = "CziReaderReleaseSubBlockException";
+/*static*/const char* ErrHelper::packageError_GetSubBlockBitmapException
+                                    = "CziReaderGetSubBlockBitmapException";
 
 /*static*/CLastErrorStore ErrHelper::lastError;
 
@@ -181,4 +197,36 @@ using namespace std;
     stringstream ss;
     ss << "No CziReader-object found for Id=\"" << id << "\"";
     return ss.str();
+}
+
+/*static*/void ErrHelper::ReportError_Success()
+{
+    ErrHelper::lastError.ClearLastError();
+}
+
+/*static*/ std::string ErrHelper::GetLastError()
+{
+    return ErrHelper::lastError.GetLastErrorInfo();
+}
+
+//*************************************************************************************************
+
+void CLastErrorStore::SetLastErrorInfo(const std::string& lastErrorInfo)
+{
+    this->lastErrorInfo = lastErrorInfo;
+}
+
+void CLastErrorStore::ClearLastError()
+{
+    this->lastErrorInfo.clear();
+};
+
+std::string CLastErrorStore::GetLastErrorInfo() const
+{
+    return this->lastErrorInfo;
+}
+
+bool CLastErrorStore::HasLastErrorInfo() const
+{
+    return !this->lastErrorInfo.empty();
 }

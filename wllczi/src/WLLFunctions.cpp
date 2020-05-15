@@ -20,6 +20,15 @@ int getLibraryInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
     string s = CLibraryInfo::GetAllInfoAsJSON();
     g_stringReturnHelper.StoreString(s);
     MArgument_setUTF8String(Res, g_stringReturnHelper.GetStoredString());
+    ErrHelper::ReportError_Success();
+    return LIBRARY_NO_ERROR;
+}
+
+int CZIReader_GetLastErrorInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument Res)
+{
+    g_stringReturnHelper.StoreString(ErrHelper::GetLastError());
+    MArgument_setUTF8String(Res, g_stringReturnHelper.GetStoredString());
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -56,6 +65,7 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -85,6 +95,7 @@ int CZIReader_GetInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MA
     g_stringReturnHelper.StoreString(s);
     MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -122,6 +133,7 @@ int CZIReader_GetSubBlockBitmap(WolframLibraryData libData, mint Argc, MArgument
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -225,6 +237,7 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -309,7 +322,8 @@ int CZIReader_GetMultiChannelScalingTileComposite(WolframLibraryData libData, mi
         ErrHelper::ReportError_CziReaderGetMultiChannelScalingTileCompositeException(libData, excp);
         returnValue = LIBRARY_FUNCTION_ERROR;
     }
-   
+
+    ErrHelper::ReportError_Success();
     return returnValue;
 }
 
@@ -346,6 +360,7 @@ int CZIReader_GetMetadataXml(WolframLibraryData libData, mint Argc, MArgument* A
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -383,6 +398,8 @@ int CZIReader_GetScaling(WolframLibraryData libData, mint Argc, MArgument* Args,
     }
 
     MArgument_setMTensor(res, tensor);
+
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -420,6 +437,7 @@ int CZIReader_ReadSubBlock(WolframLibraryData libData, mint Argc, MArgument* Arg
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -456,6 +474,7 @@ int CZIReader_GetBitmapFromSubBlock(WolframLibraryData libData, mint Argc, MArgu
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -493,6 +512,7 @@ int CZIReader_GetMetadataFromSubBlock(WolframLibraryData libData, mint Argc, MAr
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -530,6 +550,7 @@ int CZIReader_GetInfoFromSubBlock(WolframLibraryData libData, mint Argc, MArgume
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
 
@@ -564,5 +585,6 @@ int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* 
         return LIBRARY_FUNCTION_ERROR;
     }
 
+    ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
