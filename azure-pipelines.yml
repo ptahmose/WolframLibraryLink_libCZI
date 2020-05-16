@@ -98,6 +98,7 @@ jobs:
       cp  $(Agent.BuildDirectory)/artifacts/Winx64/* ~/artifacts/Winx64
       cp  $(Agent.BuildDirectory)/artifacts/Winx86/* ~/artifacts/Winx86
       #ls -l -R ~/artifacts
+      sudo apt-get -qq update 
       sudo apt-get -qq install qemu-system-arm expect
       #qemu-system-arm --version
       #uname -a
