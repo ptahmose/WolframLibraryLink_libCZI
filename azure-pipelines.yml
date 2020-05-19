@@ -99,7 +99,7 @@ jobs:
       cp  $(Agent.BuildDirectory)/artifacts/Winx86/* ~/artifacts/Winx86
       #ls -l -R ~/artifacts
       sudo apt-get -qq install qemu-system-arm expect
-      #qemu-system-arm --version
+      qemu-system-arm --version
       #uname -a
       #lscpu
       #pwd
@@ -112,7 +112,7 @@ jobs:
       sudo qemu-nbd --connect=/dev/nbd0 raspiwllczibuildsystem/2020-02-13-raspbian-buster.qcow
       sudo mkdir /mnt/raspi
       sudo chmod 777 /mnt/raspi
-      sleep 10;sync
+      sleep 1;sync
       sudo mount /dev/nbd0p2 /mnt/raspi
       sudo mkdir /mnt/raspi/home/pi/EXTDATA
       sudo chmod 777 /mnt/raspi/home/pi/EXTDATA
@@ -133,10 +133,10 @@ jobs:
       python3 ../CI/SimpleHTTPServerWithUpload.py &
       cd ..
       cd raspiwllczibuildsystem
-      sleep 10;sync
+      sleep 1;sync
       expect  autorun.expect
       echo "****************** QEMU FINISHED ******************"
-      sleep 10;sync;cd ..
+      sleep 1;sync;cd ..
       kill %1         # stop the web-server
       echo "ls -l paclet/";ls -l paclet/
       countofiles=$(ls 2>/dev/null -Ubad1 -- paclet/*.paclet | wc -l) # check that we have more than one file 
