@@ -23,7 +23,6 @@ project ("WolframLibraryLink_libCZI")
 
 # include RapidJSON -> https://www.jibbow.com/posts/rapidjson-cmake/
 include("${CMAKE_SOURCE_DIR}/modules/rapidJSON.cmake")
-#include_directories(${RAPIDJSON_INCLUDE_DIR})
 
 message(STATUS ${CMAKE_MODULE_PATH} )
 
@@ -35,10 +34,6 @@ endif(WLLCZI_MATHEMATICAHEADERS)
 
 message(STATUS "Mathematica_INCLUDE_DIR: ${Mathematica_INCLUDE_DIR}")
 message(STATUS "Mathematica_WolframLibrary_LIBRARIES: ${Mathematica_WolframLibrary_LIBRARIES}")
-
-#include_directories("C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/IncludeFiles/C")
-#include_directories("C:/Program Files/Wolfram Research/Mathematica/12.0/SystemFiles/Links/WSTP/DeveloperKit/Windows-x86-64/CompilerAdditions")
-
 
 include("${CMAKE_SOURCE_DIR}/modules/libCZI.cmake")
 FetchContent_GetProperties(libCZI)
