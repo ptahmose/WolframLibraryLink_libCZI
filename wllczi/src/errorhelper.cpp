@@ -219,7 +219,7 @@ void CLastErrorStore::SetLastErrorInfo(const std::string& lastErrorInfo)
 void CLastErrorStore::ClearLastError()
 {
     this->lastErrorInfo.clear();
-};
+}
 
 std::string CLastErrorStore::GetLastErrorInfo() const
 {
