@@ -10,7 +10,7 @@ See the module in action -> [here](https://youtu.be/ApOlKVpkWD0) and [here](http
 
 # Installing
 
-A Paclet is provided which includes binaries for ARM (e.g. Raspberry Pi), Windows x86 & x64 and Linux x64 on the [release-page](https://github.com/ptahmose/WolframLibraryLink_libCZI/releases) here on GitHub.
+A Paclet is provided which includes binaries for ARM (e.g. Raspberry Pi), Windows x86 & x64 and Linux x64 on the [release-page](https://github.com/ptahmose/WolframLibraryLink_libCZI/releases) here on GitHub. Please check this page for the latest version.
 
 ![Paclet installation](./doc/content/pacletinstall.png "paclet_installation")
 
