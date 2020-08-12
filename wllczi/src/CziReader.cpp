@@ -34,8 +34,8 @@ std::array<double, 3> CziReader::GetScaling()
     return std::array<double, 3>
     {
         scaling.IsScaleXValid() ? scaling.scaleX : -1,
-            scaling.IsScaleYValid() ? scaling.scaleY : -1,
-            scaling.IsScaleZValid() ? scaling.scaleZ : -1
+        scaling.IsScaleYValid() ? scaling.scaleY : -1,
+        scaling.IsScaleZValid() ? scaling.scaleZ : -1
     };
 }
 
