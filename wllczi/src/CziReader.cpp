@@ -206,7 +206,7 @@ MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData
 {
     std::vector<int> activeChannels = libCZI::CDisplaySettingsHelper::GetActiveChannels(displaySettings);
 
-    // we need to deal with the pathologic case that all channels are disabled
+    // we need to deal with the pathological case that all channels are disabled
     if (activeChannels.empty())
     {
         return CziReader::GetMultiChannelScalingTileCompositeAllChannelsDisabled(libData, roi, zoom);
