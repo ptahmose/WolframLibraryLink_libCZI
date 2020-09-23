@@ -58,4 +58,4 @@ EXTERN_C WLLCZI_API int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mi
 
 EXTERN_C WLLCZI_API int CZIReader_GetLastErrorInfo(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);
 
-
+EXTERN_C WLLCZI_API int CZIReader_QuerySubblocks(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res);

@@ -488,6 +488,15 @@ bool CziReader::ReleaseSubBlock(mint handle)
     return this->sbBlkStore.RemoveSubBlock(handle);
 }
 
+std::vector<int> CziReader::QuerySubblocks(const char* querystring)
+{
+    auto query = CQueryParser::ParseQueryString(querystring);
+
+    auto result = CQueryParser::GetSubBlocksMatching(this->reader.get(), query, -1);
+
+    return result;
+}
+
 std::string CziReader::SubblockInfoToJson(const libCZI::SubBlockInfo& subblockInfo)
 {
     StringBuffer buffer;

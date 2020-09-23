@@ -588,3 +588,56 @@ int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* 
     ErrHelper::ReportError_Success();
     return LIBRARY_NO_ERROR;
 }
+
+int CZIReader_QuerySubblocks(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
+{
+    if (Argc < 2)
+    {
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    const mint id = MArgument_getInteger(Args[0]);
+    char* querystring = MArgument_getUTF8String(Args[1]);
+    auto _ = finally([querystring, libData]()->void
+        {
+            libData->UTF8String_disown(querystring);
+        });
+
+    std::shared_ptr<CziReader> reader;
+    try
+    {
+        reader = CziReaderManager::Instance.GetInstance(id);
+    }
+    catch (out_of_range&)
+    {
+        ErrHelper::ReportError_CziReaderInstanceNotExisting(libData, id);
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    vector<int> results;
+    try
+    {
+        results = reader->QuerySubblocks(querystring);
+    }
+    catch (exception& excp)
+    {
+        ErrHelper::ReportError_CziReaderReleaseSubBlock(libData, excp);
+        return LIBRARY_FUNCTION_ERROR;
+    }
+
+    ErrHelper::ReportError_Success();
+
+    MNumericArray numericArray;
+    mint dims[1];
+    dims[0] = (int)results.size();
+    libData->numericarrayLibraryFunctions->MNumericArray_new(MNumericArray_Type_Bit32,/*rank*/1, dims, &numericArray);
+    int* ptr = (int*)libData->numericarrayLibraryFunctions->MNumericArray_getData(numericArray);
+    for (size_t i=0;i<results.size();++i)
+    {
+        *(ptr + i) = results[i];
+    }
+
+    MArgument_setMNumericArray(res, numericArray);
+    
+    return LIBRARY_NO_ERROR;
+}
