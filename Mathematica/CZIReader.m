@@ -55,7 +55,8 @@ LibraryFunction::CziReaderGetBitmapFromSubBlockException = "Error in 'GetBitmapF
 LibraryFunction::CziReaderGetMetadataFromSubBlockException = "Error in 'GetMetadataFromSubBlock'.";
 LibraryFunction::CziReaderGetInfoFromSubBlockException = "Error in 'GetInfoFromSubBlock'.";
 LibraryFunction::CziReaderReleaseSubBlockException = "Error in 'ReleaseSubBlock'.";
-LibraryFunction::CziReaderGetSubBlockBitmapException = "Error occurred in 'GetSubBlockBitmapException'.";
+LibraryFunction::CziReaderGetSubBlockBitmapException = "Error occurred in 'GetSubBlockBitmap'.";
+LibraryFunction::CziQuerySubblocksException = "Error occurred in 'QuerySubblocs'.";
 
 
 Begin["`Private`"]
@@ -103,12 +104,12 @@ CziGetSubBlockBitmap = libraryfunctionload[
 
 CziGetSingleChannelScaledBitmap2 = libraryfunctionload[
   "CZIReader_GetSingleChannelScalingTileComposite",
-  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], LibraryDataType[MNumericArray]}, 
+  {Integer, {LibraryDataType[MNumericArray],"Constant"}, UTF8String, LibraryDataType[Real], {LibraryDataType[MNumericArray],"Constant"}}, 
   LibraryDataType[Image]];
 
 CziGetMultiChannelScalingTileCompositeBitmap = libraryfunctionload[
   "CZIReader_GetMultiChannelScalingTileComposite",
-  {Integer, LibraryDataType[MNumericArray], UTF8String, LibraryDataType[Real], UTF8String}, 
+  {Integer, {LibraryDataType[MNumericArray],"Constant"}, UTF8String, LibraryDataType[Real], UTF8String}, 
   LibraryDataType[Image]];
 
 CziGetMetadataXml = libraryfunctionload[
@@ -133,7 +134,7 @@ CziGetMetadataXmlForSubBlockHandle = libraryfunctionload[
 
 CziGetBitmapForSubBlockHandle = libraryfunctionload[
   "CZIReader_GetBitmapFromSubBlock",
-   {Integer, Integer}, LibraryDataType[Image]];
+  {Integer, Integer}, LibraryDataType[Image]];
 
 CziReleaseSubBlockHandle = libraryfunctionload[
   "CZIReader_ReleaseSubBlock",
@@ -142,6 +143,10 @@ CziReleaseSubBlockHandle = libraryfunctionload[
 CziGetLastError = libraryfunctionload[
   "CZIReader_GetLastErrorInfo",
   {}, UTF8String];
+
+CziQuerySubblocks = libraryfunctionload[
+  "CZIReader_QuerySubblocks",
+  {Integer, UTF8String, Integer}, LibraryDataType[MNumericArray]]
 
 RetOrPrintError[x_] :=
   Return[If[Head[x]===LibraryFunctionError,Print[CziGetLastError[]];$Failed,x]];
@@ -250,6 +255,15 @@ CZIReader`CZIGetSubBlockData[c_, no_, options_] :=
     ]
 
 CZIReader`CZIGetSubBlockData[c_, no_] := CZIGetSubBlockData[c,no,{"XML"->True,"Info"->True,"Image"->True}];
+
+CZIReader`CZIQuerySubblocks[c_,querystring_,maxreturnedids:-1] :=
+    Module[{ids},
+      ids =  CziQuerySubblocks[
+                ManagedLibraryExpressionID[c],
+                querystring,
+                maxreturnedids];
+      Return[ids];
+    ]
 
   (* All functions which are not public, and are only used in the 
    internal implementation of the package, go into this section.

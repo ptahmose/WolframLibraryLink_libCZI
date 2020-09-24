@@ -34,8 +34,8 @@ std::array<double, 3> CziReader::GetScaling()
     return std::array<double, 3>
     {
         scaling.IsScaleXValid() ? scaling.scaleX : -1,
-        scaling.IsScaleYValid() ? scaling.scaleY : -1,
-        scaling.IsScaleZValid() ? scaling.scaleZ : -1
+            scaling.IsScaleYValid() ? scaling.scaleY : -1,
+            scaling.IsScaleZValid() ? scaling.scaleZ : -1
     };
 }
 
@@ -75,17 +75,17 @@ std::string CziReader::StatisticsToJson(const libCZI::SubBlockStatistics& statis
     writer.StartObject();
     statistics.dimBounds.EnumValidDimensions(
         [&](libCZI::DimensionIndex dim, int start, int size) -> bool
-    {
-        char dimensionStr[2];
-        dimensionStr[0] = libCZI::Utils::DimensionToChar(dim);
-        dimensionStr[1] = '\0';
-        writer.Key(dimensionStr);
-        writer.StartArray();
-        writer.Int(start);
-        writer.Int(size);
-        writer.EndArray();
-        return true;
-    });
+        {
+            char dimensionStr[2];
+            dimensionStr[0] = libCZI::Utils::DimensionToChar(dim);
+            dimensionStr[1] = '\0';
+            writer.Key(dimensionStr);
+            writer.StartArray();
+            writer.Int(start);
+            writer.Int(size);
+            writer.EndArray();
+            return true;
+        });
     writer.EndObject();
 
     if (!statistics.sceneBoundingBoxes.empty())
@@ -222,15 +222,15 @@ MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData
             roi,
             zoom,
             [&](int idx, int& chNo)->bool
-        {
-            if (idx < (int)activeChannels.size())
             {
-                chNo = activeChannels.at(idx);
-                return true;
-            }
+                if (idx < (int)activeChannels.size())
+                {
+                    chNo = activeChannels.at(idx);
+                    return true;
+                }
 
-            return false;
-        },
+                return false;
+            },
             &sizeResult);
     }
     catch (LibCZIInvalidPlaneCoordinateException& /*invalidCoordExcp*/)
@@ -240,10 +240,10 @@ MImage CziReader::GetMultiChannelScalingTileComposite(WolframLibraryData libData
 
     libCZI::CDisplaySettingsHelper dsplHlp;
     dsplHlp.Initialize(displaySettings, [&](int chIndx)->libCZI::PixelType
-    {
-        const auto idx = std::distance(activeChannels.cbegin(), std::find(activeChannels.cbegin(), activeChannels.cend(), chIndx));
-        return channelBitmaps[idx]->GetPixelType();
-    });
+        {
+            const auto idx = std::distance(activeChannels.cbegin(), std::find(activeChannels.cbegin(), activeChannels.cend(), chIndx));
+            return channelBitmaps[idx]->GetPixelType();
+        });
 
     std::vector<IBitmapData*> vecBm; vecBm.reserve(channelBitmaps.size());
     for (int i = 0; i < channelBitmaps.size(); ++i)
@@ -292,13 +292,13 @@ void CziReader::InitializeInfoFromCzi()
     std::call_once(
         this->flagInfoFromCziMetadata,
         [this]()
-    {
-        auto mds = this->reader->ReadMetadataSegment();
-        auto md = mds->CreateMetaFromMetadataSegment();
-        const auto docInfo = md->GetDocumentInfo();
-        this->displaySettingsFromCzi = docInfo->GetDisplaySettings();
-        this->scalingInfoFromCzi = docInfo->GetScalingInfoEx();
-    });
+        {
+            auto mds = this->reader->ReadMetadataSegment();
+            auto md = mds->CreateMetaFromMetadataSegment();
+            const auto docInfo = md->GetDocumentInfo();
+            this->displaySettingsFromCzi = docInfo->GetDisplaySettings();
+            this->scalingInfoFromCzi = docInfo->GetScalingInfoEx();
+        });
 }
 
 std::shared_ptr<libCZI::IDisplaySettings> CziReader::GetDisplaySettingsFromCzi()
@@ -482,17 +482,17 @@ std::string CziReader::GetInfoFromSubBlock(mint handle)
     auto sbInfo = sbBlk->GetSubBlockInfo();
     return this->SubblockInfoToJson(sbInfo);
 }
- 
+
 bool CziReader::ReleaseSubBlock(mint handle)
 {
     return this->sbBlkStore.RemoveSubBlock(handle);
 }
 
-std::vector<int> CziReader::QuerySubblocks(const char* querystring)
+std::vector<int> CziReader::QuerySubblocks(const char* querystring, int maxNumberOfResults)
 {
     auto query = CQueryParser::ParseQueryString(querystring);
 
-    auto result = CQueryParser::GetSubBlocksMatching(this->reader.get(), query, -1);
+    auto result = CQueryParser::GetSubBlocksMatching(this->reader.get(), query, maxNumberOfResults);
 
     return result;
 }
@@ -511,14 +511,14 @@ std::string CziReader::SubblockInfoToJson(const libCZI::SubBlockInfo& subblockIn
     writer.StartObject();
     subblockInfo.coordinate.EnumValidDimensions(
         [&](DimensionIndex dim, int v)->bool
-    {
-        char dimensionStr[2];
-        dimensionStr[0] = libCZI::Utils::DimensionToChar(dim);
-        dimensionStr[1] = '\0';
-        writer.Key(dimensionStr);
-        writer.Int(v);
-        return true;
-    });
+        {
+            char dimensionStr[2];
+            dimensionStr[0] = libCZI::Utils::DimensionToChar(dim);
+            dimensionStr[1] = '\0';
+            writer.Key(dimensionStr);
+            writer.Int(v);
+            return true;
+        });
 
     writer.EndObject();
 

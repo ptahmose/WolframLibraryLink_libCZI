@@ -41,7 +41,7 @@ public:
     std::string GetMetadataFromSubBlock(mint handle);
     std::string GetInfoFromSubBlock(mint handle);
     bool    ReleaseSubBlock(mint handle);
-    std::vector<int> QuerySubblocks(const char* querystring);
+    std::vector<int> QuerySubblocks(const char* querystring, int maxNumberOfResults);
 
 private:
     /// Initializes the members "displaySettingsFromCzi" and "scalingInfoFromCzi".

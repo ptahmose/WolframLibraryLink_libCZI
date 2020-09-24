@@ -37,6 +37,7 @@ private:
     static const char* packageError_GetInfoFromSubBlockException;
     static const char* packageError_ReleaseSubBlockException;
     static const char* packageError_GetSubBlockBitmapException;
+    static const char* packageError_QuerySubblocksException;
 public:
     static void ReportError_Success();
     static  std::string GetLastError();
@@ -60,6 +61,7 @@ public:
     static void ReportError_CziReaderGetInfoFromSubBlock(WolframLibraryData libData, std::exception& excp);
     static void ReportError_CziReaderReleaseSubBlock(WolframLibraryData libData, std::exception& excp);
     static void ReportError_CziReaderGetSubBlockBitmapException(WolframLibraryData libData, std::exception& excp);
+    static void ReportError_CziReaderQuerySubblocksException(WolframLibraryData libData, std::exception& excp);
 private:
     static std::string GetErrorText_CziReaderInstanceNotExisting(mint id);
 };

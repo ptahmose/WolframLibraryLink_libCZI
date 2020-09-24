@@ -36,6 +36,8 @@ using namespace std;
                                     = "CziReaderReleaseSubBlockException";
 /*static*/const char* ErrHelper::packageError_GetSubBlockBitmapException
                                     = "CziReaderGetSubBlockBitmapException";
+/*static*/const char* ErrHelper::packageError_QuerySubblocksException
+                                    = "CziQuerySubblocksException";
 
 /*static*/CLastErrorStore ErrHelper::lastError;
 
@@ -188,6 +190,14 @@ using namespace std;
     ss << "Error in 'CZIReader_GetSubBlockBitmap': \"" << excp.what() << "\"";
     ErrHelper::lastError.SetLastErrorInfo(ss.str());
     libData->Message(ErrHelper::packageError_GetSubBlockBitmapException);
+}
+
+/*static*/void ErrHelper::ReportError_CziReaderQuerySubblocksException(WolframLibraryData libData, std::exception& excp)
+{
+    stringstream ss;
+    ss << "Error in 'CZIReader_QuerySubblocks': \"" << excp.what() << "\"";
+    ErrHelper::lastError.SetLastErrorInfo(ss.str());
+    libData->Message(ErrHelper::packageError_QuerySubblocksException);
 }
 
 // ----------------

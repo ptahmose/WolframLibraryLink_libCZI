@@ -11,6 +11,7 @@
 #include "finally.h"
 #include "dbgprint.h"
 #include "inc_libCzi.h"
+#include "utils.h"
 
 using namespace std;
 using namespace libCZI;
@@ -591,13 +592,14 @@ int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* 
 
 int CZIReader_QuerySubblocks(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
-    if (Argc < 2)
+    if (Argc < 3)
     {
         return LIBRARY_FUNCTION_ERROR;
     }
 
     const mint id = MArgument_getInteger(Args[0]);
     char* querystring = MArgument_getUTF8String(Args[1]);
+    const mint maxnumberofids = MArgument_getInteger(Args[2]);
     auto _ = finally([querystring, libData]()->void
         {
             libData->UTF8String_disown(querystring);
@@ -617,11 +619,11 @@ int CZIReader_QuerySubblocks(WolframLibraryData libData, mint Argc, MArgument* A
     vector<int> results;
     try
     {
-        results = reader->QuerySubblocks(querystring);
+        results = reader->QuerySubblocks(querystring, ::Utils::ConvertToInt32Clamp(maxnumberofids));
     }
     catch (exception& excp)
     {
-        ErrHelper::ReportError_CziReaderReleaseSubBlock(libData, excp);
+        ErrHelper::ReportError_CziReaderQuerySubblocksException(libData, excp);
         return LIBRARY_FUNCTION_ERROR;
     }
 
