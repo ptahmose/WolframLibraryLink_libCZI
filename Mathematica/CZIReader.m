@@ -217,7 +217,7 @@ CZIReader`CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySett
                 Message("Argument 'displaySettings' must either be a string containing JSON, or a List which can be converted to JSON");
                 $Failed
               ];
-      Return[RetOrPrintError[img]};
+      Return[RetOrPrintError[img]];
     ]
 
 CZIReader`CZIGetMetadataXml[c_] :=
