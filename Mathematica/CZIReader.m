@@ -170,13 +170,13 @@ CZIReader`ReleaseCZI[ c_] :=
 
 CZIReader`CZIGetInfo[ c_ ] :=
     Module[{},
-      RetOrPrintError[CziReaderInfo[ManagedLibraryExpressionID[c]]];
+      Return[RetOrPrintError[CziReaderInfo[ManagedLibraryExpressionID[c]]]];
     ]
 	
 CZIReader`CZIGetSubBlock[c_,n_] :=
     Module[ {bitmap},
       bitmap = CziGetSubBlockBitmap[ManagedLibraryExpressionID[c],n];
-      RetOrPrintError[bitmap];
+      Return[RetOrPrintError[bitmap]];
     ]
 
 CZIReader`CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_] := CZISingleChannelScaledComposite[c,x,y,w,h,zoom,coord,{0,0,0}];
@@ -200,7 +200,7 @@ CZIReader`CZISingleChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,backGround
         coordstr,
         zoom,
         NumericArray[Take[Join[backGroundColor,{Last[backGroundColor],Last[backGroundColor]}],3],"Real32","ClipAndCoerce"]];
-      RetOrPrintError[img];
+      Return[RetOrPrintError[img]];
     ]
 
 CZIReader`CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySettings_:""] :=
@@ -217,12 +217,12 @@ CZIReader`CZIMultiChannelScaledComposite[c_,x_,y_,w_,h_,zoom_,coord_,displaySett
                 Message("Argument 'displaySettings' must either be a string containing JSON, or a List which can be converted to JSON");
                 $Failed
               ];
-      RetOrPrintError[img];
+      Return[RetOrPrintError[img]};
     ]
 
 CZIReader`CZIGetMetadataXml[c_] :=
    Module[{},
-      RetOrPrintError[CziGetMetadataXml[ManagedLibraryExpressionID[c]]];
+      Return[RetOrPrintError[CziGetMetadataXml[ManagedLibraryExpressionID[c]]]];
     ]
 
 CZIReader`CZIGetScaling[c_] :=
@@ -262,7 +262,7 @@ CZIReader`CZIQuerySubblocks[c_,querystring_,maxreturnedids_:-1] :=
                 ManagedLibraryExpressionID[c],
                 querystring,
                 maxreturnedids];
-      Return[ids];
+      Return[RetOrPrintError[ids]];
     ]
 
   (* All functions which are not public, and are only used in the 
