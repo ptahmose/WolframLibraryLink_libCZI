@@ -256,7 +256,7 @@ CZIReader`CZIGetSubBlockData[c_, no_, options_] :=
 
 CZIReader`CZIGetSubBlockData[c_, no_] := CZIGetSubBlockData[c,no,{"XML"->True,"Info"->True,"Image"->True}];
 
-CZIReader`CZIQuerySubblocks[c_,querystring_,maxreturnedids:-1] :=
+CZIReader`CZIQuerySubblocks[c_,querystring_,maxreturnedids_:-1] :=
     Module[{ids},
       ids =  CziQuerySubblocks[
                 ManagedLibraryExpressionID[c],
