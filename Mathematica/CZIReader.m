@@ -58,7 +58,6 @@ LibraryFunction::CziReaderReleaseSubBlockException = "Error in 'ReleaseSubBlock'
 LibraryFunction::CziReaderGetSubBlockBitmapException = "Error occurred in 'GetSubBlockBitmap'.";
 LibraryFunction::CziQuerySubblocksException = "Error occurred in 'QuerySubblocs'.";
 
-
 Begin["`Private`"]
 
 (* Implementation section *)
@@ -67,6 +66,7 @@ $wllczilibrary = $Failed
 
 libraryfunctionload[func_,argtype_,rettype_] :=
     Module[{},
+(*  
         If[
          FailureQ[$wllczilibrary],
          $wllczilibrary = FindLibrary["D:\\Dev\\GitHub\\WolframLibraryLink_libCZI\\out\\build\\x64-Debug\\wllczi\\wllczi.dll"]
@@ -76,6 +76,7 @@ libraryfunctionload[func_,argtype_,rettype_] :=
          FailureQ[$wllczilibrary],
          $wllczilibrary = FindLibrary["/home/pi/dev/BuildWolframLibraryLink_libCZI/wllczi/libwllczi.so"]
 	    ];
+*)
 
         Return[
           LibraryFunctionLoad[$wllczilibrary, func,  argtype, rettype]
