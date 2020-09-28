@@ -252,6 +252,56 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
     return make_tuple(chNo, cds);
 }
 
+/*static*/libCZI::QueryOptions CziUtilities::ParseQueryOptions(const char* sz)
+{
+    QueryOptions queryOptions;
+    queryOptions.SetDefault();
+    rapidjson::Document document;
+    document.Parse(sz);
+    if (document.HasParseError())
+    {
+        throw std::invalid_argument("Invalid JSON, document could not be parsed.");
+    }
+
+    const bool isObj = document.IsObject();
+    if (!isObj)
+    {
+        throw std::invalid_argument("No root object.");
+    }
+
+    const bool hasHandlingOfNonExistentDimensions = document.HasMember("HandlingOfNonExistentDimensions");
+    if (!hasHandlingOfNonExistentDimensions)
+    {
+        return queryOptions;
+    }
+
+    const auto& handlingOfNonExistentDimensionsNode = document["HandlingOfNonExistentDimensions"];
+    if (!handlingOfNonExistentDimensionsNode.IsString())
+    {
+        throw std::invalid_argument("Invalid JSON, document could not be parsed.");
+    }
+
+    const auto& value = handlingOfNonExistentDimensionsNode.GetString();
+    if (strcmp(value, "EvaluateToTrue") == 0)
+    {
+        queryOptions.handlingNonExistentDimensions = QueryOptions::HandlingOfNonExistentDimensions::EvaluateToTrue;
+    }
+    else if (strcmp(value, "EvaluateToFalse") == 0)
+    {
+        queryOptions.handlingNonExistentDimensions = QueryOptions::HandlingOfNonExistentDimensions::EvaluateToFalse;
+    }
+    else if (strcmp(value, "Error") == 0)
+    {
+        queryOptions.handlingNonExistentDimensions = QueryOptions::HandlingOfNonExistentDimensions::Error;
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid JSON, document could not be parsed.");
+    }
+
+    return queryOptions;
+}
+
 /*static*/bool CziUtilities::TryParseColor(const std::string& str, libCZI::Rgb8Color* ptrRgbColor)
 {
     // the rules are:

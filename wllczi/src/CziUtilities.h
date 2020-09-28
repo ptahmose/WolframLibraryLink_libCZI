@@ -50,6 +50,8 @@ public:
 
     static std::shared_ptr<libCZI::IDisplaySettings> CombineDisplaySettings(const libCZI::IDisplaySettings* display_settings, const std::map<int, ChannelDisplaySettingsAndValidity>& partialDs);
     static std::shared_ptr<libCZI::IDisplaySettings> ConvertToDisplaySettings(const std::map<int, ChannelDisplaySettingsAndValidity>& partialDs);
+
+    static libCZI::QueryOptions ParseQueryOptions(const char* sz);
 private:
     static const char* JsonKey_Channels;
     static const char* JsonKey_Ch;

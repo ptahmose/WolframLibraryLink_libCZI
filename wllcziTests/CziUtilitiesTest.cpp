@@ -185,3 +185,42 @@ TEST(CziUtilitiesTests, ParseDisplaySettingsTest5)
     EXPECT_EQ(chds.channel_display_settings.tintingColor.g, 0x34);
     EXPECT_EQ(chds.channel_display_settings.tintingColor.b, 0x56);
 }
+
+TEST(CziUtilitiesTests, ParseQueryOptions1)
+{
+    static const char* sz =
+        R"(
+            {
+                "HandlingOfNonExistentDimensions": "EvaluateToTrue"
+            }
+         )";
+
+    auto opts = CziUtilities::ParseQueryOptions(sz);
+    EXPECT_EQ(opts.handlingNonExistentDimensions, QueryOptions::HandlingOfNonExistentDimensions::EvaluateToTrue) << "Expected to find the value 'EvaluateToTrue' here";
+}
+
+TEST(CziUtilitiesTests, ParseQueryOptions2)
+{
+    static const char* sz =
+        R"(
+            {
+                "HandlingOfNonExistentDimensions": "EvaluateToFalse"
+            }
+         )";
+
+    auto opts = CziUtilities::ParseQueryOptions(sz);
+    EXPECT_EQ(opts.handlingNonExistentDimensions, QueryOptions::HandlingOfNonExistentDimensions::EvaluateToFalse) << "Expected to find the value 'EvaluateToFalse' here";
+}
+
+TEST(CziUtilitiesTests, ParseQueryOptions3)
+{
+    static const char* sz =
+        R"(
+            {
+                "HandlingOfNonExistentDimensions": "Error"
+            }
+         )";
+
+    auto opts = CziUtilities::ParseQueryOptions(sz);
+    EXPECT_EQ(opts.handlingNonExistentDimensions, QueryOptions::HandlingOfNonExistentDimensions::Error) << "Expected to find the value 'Error' here";
+}

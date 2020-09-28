@@ -592,7 +592,7 @@ int CZIReader_ReleaseSubBlock(WolframLibraryData libData, mint Argc, MArgument* 
 
 int CZIReader_QuerySubblocks(WolframLibraryData libData, mint Argc, MArgument* Args, MArgument res)
 {
-    if (Argc < 3)
+    if (Argc < 4)
     {
         return LIBRARY_FUNCTION_ERROR;
     }
@@ -600,9 +600,11 @@ int CZIReader_QuerySubblocks(WolframLibraryData libData, mint Argc, MArgument* A
     const mint id = MArgument_getInteger(Args[0]);
     char* querystring = MArgument_getUTF8String(Args[1]);
     const mint maxnumberofids = MArgument_getInteger(Args[2]);
-    auto _ = finally([querystring, libData]()->void
+    char* options = MArgument_getUTF8String(Args[3]);
+    auto _ = finally([querystring, options, libData]()->void
         {
             libData->UTF8String_disown(querystring);
+            libData->UTF8String_disown(options);
         });
 
     std::shared_ptr<CziReader> reader;

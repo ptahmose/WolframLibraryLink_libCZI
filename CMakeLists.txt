@@ -57,22 +57,30 @@ if (WLLCZI_BUILD_UNITTESTS)
   # GTest
   enable_testing()
 
+  #[[
   set(GTEST_MSVC_SEARCH "MT") # we want to have the "static runtime library" version
   find_package(GTest QUIET)
   if ("${GTest_FOUND}")
       message(STATUS "Found GTest, using it.")
       include_directories(${GTEST_INCLUDE_DIRS})
   else()
-      message(STATUS "Did not find package GTest, will attempt to fetch it locally.")
+  ]]
 
-      include(FetchContent)
+      
+  #message(STATUS "Did not find package GTest, will attempt to fetch it locally.")
 
-      FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG        release-1.10.0
-        CMAKE_ARGS     "DUSE_STATIC_RT=ON"
-      )
+    
+    include(FetchContent)
+
+    # Note: it seems that we need version 1.7 or better of GTest (->https://github.com/google/googletest/issues/2299),
+    #        so we download it here (since there does not seem to be an easy way to check the version of GTest found by "find_package"
+    #        that I am aware of)
+    FetchContent_Declare(
+      googletest
+      GIT_REPOSITORY https://github.com/google/googletest.git
+      GIT_TAG        release-1.10.0
+      CMAKE_ARGS     "DUSE_STATIC_RT=ON"
+    )
 
   #[[    FetchContent_MakeAvailable(googletest)     #Requires CMake 3.16+ ]]
 
@@ -81,7 +89,7 @@ if (WLLCZI_BUILD_UNITTESTS)
         FetchContent_Populate(googletest)
         add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
       endif()
-  endif()
+  #endif()
 
   add_subdirectory("wllcziTests")
 endif(WLLCZI_BUILD_UNITTESTS)
