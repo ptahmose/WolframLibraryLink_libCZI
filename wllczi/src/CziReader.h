@@ -29,7 +29,7 @@ public:
     std::string GetInfo();
     std::string GetMetadataXml();
 
-    MImage GetSubBlockImage(WolframLibraryData libData,int no);
+    MImage GetSubBlockImage(WolframLibraryData libData, int no);
     MImage GetSingleChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom);
     MImage GetSingleChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom, const libCZI::RgbFloatColor& backgroundColor);
     MImage GetMultiChannelScalingTileComposite(WolframLibraryData libData, const libCZI::IntRect& roi, const libCZI::IDimCoordinate* planeCoordinate, float zoom, const char* displaySettingsJson);
@@ -41,7 +41,7 @@ public:
     std::string GetMetadataFromSubBlock(mint handle);
     std::string GetInfoFromSubBlock(mint handle);
     bool    ReleaseSubBlock(mint handle);
-    std::vector<int> QuerySubblocks(const char* querystring, int maxNumberOfResults);
+    std::vector<int> QuerySubblocks(const char* querystring, int maxNumberOfResults, const char* queryoptionsjson);
 
 private:
     /// Initializes the members "displaySettingsFromCzi" and "scalingInfoFromCzi".

@@ -479,7 +479,7 @@ std::string CziReader::GetInfoFromSubBlock(mint handle)
         throw invalid_argument(ss.str());
     }
 
-    auto sbInfo = sbBlk->GetSubBlockInfo();
+    const auto& sbInfo = sbBlk->GetSubBlockInfo();
     return this->SubblockInfoToJson(sbInfo);
 }
 
@@ -488,9 +488,19 @@ bool CziReader::ReleaseSubBlock(mint handle)
     return this->sbBlkStore.RemoveSubBlock(handle);
 }
 
-std::vector<int> CziReader::QuerySubblocks(const char* querystring, int maxNumberOfResults)
+std::vector<int> CziReader::QuerySubblocks(const char* querystring, int maxNumberOfResults, const char* queryoptionsjson)
 {
-    auto query = CQueryParser::ParseQueryString(querystring);
+    QueryOptions queryoptions;
+    if (queryoptionsjson == nullptr || *queryoptionsjson == '\0')
+    {
+        queryoptions.SetDefault();
+    }
+    else
+    {
+        queryoptions = CziUtilities::ParseQueryOptions(queryoptionsjson);
+    }
+
+    auto query = CQueryParser::ParseQueryString(querystring, &queryoptions);
 
     auto result = CQueryParser::GetSubBlocksMatching(this->reader.get(), query, maxNumberOfResults);
 

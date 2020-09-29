@@ -46,9 +46,9 @@ int CZIReader_Open(WolframLibraryData libData, mint Argc, MArgument* Args, MArgu
     auto reader = CziReaderManager::Instance.GetInstance(id);
     char* filename = MArgument_getUTF8String(Args[1]);
     auto _ = finally([filename, libData]()->void
-    {
-        libData->UTF8String_disown(filename);
-    });
+        {
+            libData->UTF8String_disown(filename);
+        });
 
     try
     {
@@ -300,12 +300,12 @@ int CZIReader_GetMultiChannelScalingTileComposite(WolframLibraryData libData, mi
     }
 
     auto _2 = finally([displaySettingsString, libData]()->void
-    {
-        if (displaySettingsString != nullptr)
         {
-            libData->UTF8String_disown(displaySettingsString);
-        }
-    });
+            if (displaySettingsString != nullptr)
+            {
+                libData->UTF8String_disown(displaySettingsString);
+            }
+        });
 
     int returnValue = LIBRARY_NO_ERROR;
     try
@@ -621,7 +621,7 @@ int CZIReader_QuerySubblocks(WolframLibraryData libData, mint Argc, MArgument* A
     vector<int> results;
     try
     {
-        results = reader->QuerySubblocks(querystring, ::Utils::ConvertToInt32Clamp(maxnumberofids));
+        results = reader->QuerySubblocks(querystring, ::Utils::ConvertToInt32Clamp(maxnumberofids), options);
     }
     catch (exception& excp)
     {
@@ -636,12 +636,12 @@ int CZIReader_QuerySubblocks(WolframLibraryData libData, mint Argc, MArgument* A
     dims[0] = (int)results.size();
     libData->numericarrayLibraryFunctions->MNumericArray_new(MNumericArray_Type_Bit32,/*rank*/1, dims, &numericArray);
     int* ptr = (int*)libData->numericarrayLibraryFunctions->MNumericArray_getData(numericArray);
-    for (size_t i=0;i<results.size();++i)
+    for (size_t i = 0; i < results.size(); ++i)
     {
         *(ptr + i) = results[i];
     }
 
     MArgument_setMNumericArray(res, numericArray);
-    
+
     return LIBRARY_NO_ERROR;
 }

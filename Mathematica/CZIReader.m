@@ -66,7 +66,7 @@ $wllczilibrary = $Failed
 
 libraryfunctionload[func_,argtype_,rettype_] :=
     Module[{},
-(*  
+  
         If[
          FailureQ[$wllczilibrary],
          $wllczilibrary = FindLibrary["D:\\Dev\\GitHub\\WolframLibraryLink_libCZI\\out\\build\\x64-Debug\\wllczi\\wllczi.dll"]
@@ -76,7 +76,7 @@ libraryfunctionload[func_,argtype_,rettype_] :=
          FailureQ[$wllczilibrary],
          $wllczilibrary = FindLibrary["/home/pi/dev/BuildWolframLibraryLink_libCZI/wllczi/libwllczi.so"]
 	    ];
-*)
+
 
         Return[
           LibraryFunctionLoad[$wllczilibrary, func,  argtype, rettype]
@@ -147,7 +147,7 @@ CziGetLastError = libraryfunctionload[
 
 CziQuerySubblocks = libraryfunctionload[
   "CZIReader_QuerySubblocks",
-  {Integer, UTF8String, Integer}, LibraryDataType[MNumericArray]]
+  {Integer, UTF8String, Integer,UTF8String}, LibraryDataType[MNumericArray]]
 
 RetOrPrintError[x_] :=
   Return[If[Head[x]===LibraryFunctionError,Print[CziGetLastError[]];$Failed,x]];
@@ -257,12 +257,19 @@ CZIReader`CZIGetSubBlockData[c_, no_, options_] :=
 
 CZIReader`CZIGetSubBlockData[c_, no_] := CZIGetSubBlockData[c,no,{"XML"->True,"Info"->True,"Image"->True}];
 
-CZIReader`CZIQuerySubblocks[c_,querystring_,maxreturnedids_:-1] :=
-    Module[{ids},
+CZIReader`CZIQuerySubblocks[c_,querystring_,options_,maxreturnedids_:-1] :=
+    Module[{ids,handlingofnonexistentdims,optionsjson},
+      handlingofnonexistentdims = "HandlingOfNonExistentDimensions" /. options;
+      optionsjson = If[
+                        StringMatchQ[handlingofnonexistentdims, "EvaluateToTrue"] ||  StringMatchQ[handlingofnonexistentdims, "EvaluateToFalse"] || StringMatchQ[handlingofnonexistentdims, "Error"],
+                        StringJoin["{\"HandlingOfNonExistentDimensions\":\"",handlingofnonexistentdims,"\"}"],
+                        ""];
+
       ids =  CziQuerySubblocks[
                 ManagedLibraryExpressionID[c],
                 querystring,
-                maxreturnedids];
+                maxreturnedids,
+                optionsjson];
       Return[RetOrPrintError[ids]];
     ]
 
