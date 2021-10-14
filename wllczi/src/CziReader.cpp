@@ -494,7 +494,7 @@ std::string CziReader::SubblockInfoToJson(const libCZI::SubBlockInfo& subblockIn
     Writer<StringBuffer> writer(buffer);
     writer.StartObject();
     writer.Key("CompressionMode");
-    writer.String(libCZI::Utils::CompressionModeToInformalString(subblockInfo.mode));
+    writer.String(libCZI::Utils::CompressionModeToInformalString(subblockInfo.GetCompressionMode()));
     writer.Key("Pixeltype");
     writer.String(libCZI::Utils::PixelTypeToInformalString(subblockInfo.pixelType));
 
