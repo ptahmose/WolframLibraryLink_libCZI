@@ -1,6 +1,5 @@
 #include "stringReturnHelper.h"
-#include <string.h>
-#include <malloc.h>
+#include <cstring>
 
 CStringReturnHelper g_stringReturnHelper;
 
