@@ -15,10 +15,10 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
     return this->flags.test(static_cast<size_t>(prop) - 1);
 }
 
-/*static*/std::vector<std::shared_ptr<libCZI::IBitmapData>> CziUtilities::GetBitmapsFromSpecifiedChannels(libCZI::ICZIReader* reader, const libCZI::CDimCoordinate& planeCoordinate, const libCZI::IntRect& roi, float zoom, std::function<bool(int index, int& channelNo)> getChannelNo, libCZI::IntSize* ptrPixelSize)
+/*static*/std::vector<std::shared_ptr<libCZI::IBitmapData>> CziUtilities::GetBitmapsFromSpecifiedChannels(libCZI::ICZIReader* reader, const libCZI::IDimCoordinate* planeCoordinate, const libCZI::IntRect& roi, float zoom, std::function<bool(int index, int& channelNo)> getChannelNo, libCZI::IntSize* ptrPixelSize)
 {
     std::vector<std::shared_ptr<IBitmapData>> chBitmaps;
-    libCZI::CDimCoordinate coordinate = planeCoordinate;
+    libCZI::CDimCoordinate coordinate{ planeCoordinate };
 
     const auto subBlockStatistics = reader->GetStatistics();
 
@@ -26,7 +26,7 @@ bool ChannelDisplaySettingsValidity::Get(Property prop) const
     sctaOptions.Clear();
     sctaOptions.backGroundColor = RgbFloatColor{ 0,0,0 };
 
-    auto accessor = reader->CreateSingleChannelScalingTileAccessor();
+    const auto accessor = reader->CreateSingleChannelScalingTileAccessor();
 
     for (int i = 0;; ++i)
     {

@@ -155,7 +155,7 @@ using namespace libCZI;
         uint8_t* ptrLine = ((uint8_t*)ptr) + y * (size_t)stride;
         for (decltype(w) x = 0; x < w; ++x)
         {
-            uint8_t t = ptrLine[0];
+            const uint8_t t = ptrLine[0];
             ptrLine[0] = ptrLine[2];
             ptrLine[2] = t;
             ptrLine += 3;
@@ -170,7 +170,7 @@ using namespace libCZI;
         uint16_t* ptrLine = ((uint16_t*)ptr) + y * (size_t)stride;
         for (decltype(w) x = 0; x < w; ++x)
         {
-            uint16_t t = ptrLine[0];
+            const uint16_t t = ptrLine[0];
             ptrLine[0] = ptrLine[2];
             ptrLine[2] = t;
             ptrLine += 3;
