@@ -161,7 +161,7 @@ using namespace libCZI;
 {
     for (decltype(h) y = 0; y < h; ++y)
     {
-        uint8_t* ptrLine = ((uint8_t*)ptr) + y * (size_t)stride;
+        uint8_t* ptrLine = static_cast<uint8_t*>(ptr) + y * static_cast<size_t>(stride);
         for (decltype(w) x = 0; x < w; ++x)
         {
             const uint8_t t = ptrLine[0];
@@ -176,7 +176,7 @@ using namespace libCZI;
 {
     for (decltype(h) y = 0; y < h; ++y)
     {
-        uint16_t* ptrLine = ((uint16_t*)ptr) + y * (size_t)stride;
+        uint16_t* ptrLine = static_cast<uint16_t*>(ptr) + y * static_cast<size_t>(stride);
         for (decltype(w) x = 0; x < w; ++x)
         {
             const uint16_t t = ptrLine[0];

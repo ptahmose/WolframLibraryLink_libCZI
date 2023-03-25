@@ -164,7 +164,7 @@ int CZIReader_GetSingleChannelScalingTileComposite(WolframLibraryData libData, m
 
     int roiValues[4];
     WolframNumericArrayLibrary_Functions naFuncs = libData->numericarrayLibraryFunctions;
-    MNumericArray numArrayRegionOfInterest = MArgument_getMNumericArray(Args[1]);
+    const MNumericArray numArrayRegionOfInterest = MArgument_getMNumericArray(Args[1]);
     const bool b = WolframLibLinkUtils::TryGetAsInt32(roiValues, sizeof(roiValues) / sizeof(roiValues[0]), numArrayRegionOfInterest, naFuncs);
     if (!b)
     {
@@ -269,7 +269,7 @@ int CZIReader_GetMultiChannelScalingTileComposite(WolframLibraryData libData, mi
 
     int roiValues[4];
     WolframNumericArrayLibrary_Functions naFuncs = libData->numericarrayLibraryFunctions;
-    MNumericArray numArrayRegionOfInterest = MArgument_getMNumericArray(Args[1]);
+    const MNumericArray numArrayRegionOfInterest = MArgument_getMNumericArray(Args[1]);
     WolframLibLinkUtils::TryGetAsInt32(roiValues, sizeof(roiValues) / sizeof(roiValues[0]), numArrayRegionOfInterest, naFuncs);
 
     char* coordinateString = MArgument_getUTF8String(Args[2]);
@@ -313,7 +313,7 @@ int CZIReader_GetMultiChannelScalingTileComposite(WolframLibraryData libData, mi
             libData,
             IntRect{ roiValues[0],roiValues[1],roiValues[2],roiValues[3] },
             &planeCoordinate,
-            (float)zoom,
+            static_cast<float>(zoom),
             displaySettingsString);
         MArgument_setMImage(res, out);
     }
@@ -540,7 +540,7 @@ int CZIReader_GetInfoFromSubBlock(WolframLibraryData libData, mint Argc, MArgume
 
     try
     {
-        auto xml = reader->GetInfoFromSubBlock(handle);
+        const auto xml = reader->GetInfoFromSubBlock(handle);
         g_stringReturnHelper.StoreString(xml);
         MArgument_setUTF8String(res, g_stringReturnHelper.GetStoredString());
     }

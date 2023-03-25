@@ -29,138 +29,138 @@ using namespace std;
 
     switch (type)
     {
-    case MNumericArray_Type_Bit8:
-    {
-        const std::int8_t* p = (const std::int8_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+        case MNumericArray_Type_Bit8:
         {
-            out[i] = p[i];
-        }
-
-        break;
-    }
-    case MNumericArray_Type_UBit8:
-    {
-        const std::uint8_t* p = (const std::uint8_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
-        {
-            out[i] = p[i];
-        }
-
-        break;
-    }
-    case MNumericArray_Type_Bit16:
-    {
-        const std::int16_t* p = (const std::int16_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
-        {
-            out[i] = p[i];
-        }
-
-        break;
-    }
-    case MNumericArray_Type_UBit16:
-    {
-        const std::uint16_t* p = (const std::uint16_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
-        {
-            out[i] = p[i];
-        }
-
-        break;
-    }
-    case MNumericArray_Type_Bit32:
-    {
-        const std::int32_t* p = (const std::int32_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
-        {
-            out[i] = p[i];
-        }
-
-        break;
-    }
-    case MNumericArray_Type_UBit32:
-    {
-        const std::uint32_t* p = (const std::uint32_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
-        {
-            auto v = p[i];
-            if (v > static_cast<uint32_t>(std::numeric_limits<int32_t>::max()))
+            const std::int8_t* p = static_cast<const std::int8_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
             {
-                return false;
+                out[i] = p[i];
             }
 
-            out[i] = p[i];
+            break;
         }
-
-        break;
-    }
-    case MNumericArray_Type_Bit64:
-    {
-        const std::int64_t* p = (const std::int64_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+        case MNumericArray_Type_UBit8:
         {
-            auto v = p[i];
-            if (v > std::numeric_limits<int32_t>::max() || v < std::numeric_limits<int32_t>::min())
+            const std::uint8_t* p = static_cast<const std::uint8_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
             {
-                return false;
+                out[i] = p[i];
             }
 
-            out[i] = static_cast<int>(p[i]);
+            break;
         }
-
-        break;
-    }
-    case MNumericArray_Type_UBit64:
-    {
-        const std::uint64_t* p = (const std::uint64_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+        case MNumericArray_Type_Bit16:
         {
-            auto v = p[i];
-            if (v > std::numeric_limits<int32_t>::max())
+            const std::int16_t* p = static_cast<const std::int16_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
             {
-                return false;
+                out[i] = p[i];
             }
 
-            out[i] = (int)p[i];
+            break;
         }
-
-        break;
-    }
-    case MNumericArray_Type_Real32:
-    {
-        const float* p = (const float*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+        case MNumericArray_Type_UBit16:
         {
-            auto v = nearbyint(p[i]);
-            if (v > std::numeric_limits<int32_t>::max() || v < std::numeric_limits<int32_t>::min())
+            const std::uint16_t* p = static_cast<const std::uint16_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
             {
-                return false;
+                out[i] = p[i];
             }
 
-            out[i] = (int)p[i];
+            break;
         }
-
-        break;
-    }
-    case MNumericArray_Type_Real64:
-    {
-        const double* p = (const double*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+        case MNumericArray_Type_Bit32:
         {
-            auto v = nearbyint(p[i]);
-            if (v > std::numeric_limits<int32_t>::max() || v < std::numeric_limits<int32_t>::min())
+            const std::int32_t* p = static_cast<const std::int32_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
             {
-                return false;
+                out[i] = p[i];
             }
 
-            out[i] = (int)p[i];
+            break;
         }
+        case MNumericArray_Type_UBit32:
+        {
+            const std::uint32_t* p = static_cast<const std::uint32_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                auto v = p[i];
+                if (v > static_cast<uint32_t>(std::numeric_limits<int32_t>::max()))
+                {
+                    return false;
+                }
 
-        break;
-    }
-    default:
-        return false;
+                out[i] = p[i];
+            }
+
+            break;
+        }
+        case MNumericArray_Type_Bit64:
+        {
+            const std::int64_t* p = static_cast<const std::int64_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                auto v = p[i];
+                if (v > std::numeric_limits<int32_t>::max() || v < std::numeric_limits<int32_t>::min())
+                {
+                    return false;
+                }
+
+                out[i] = static_cast<int>(p[i]);
+            }
+
+            break;
+        }
+        case MNumericArray_Type_UBit64:
+        {
+            const std::uint64_t* p = static_cast<const std::uint64_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                auto v = p[i];
+                if (v > std::numeric_limits<int32_t>::max())
+                {
+                    return false;
+                }
+
+                out[i] = (int)p[i];
+            }
+
+            break;
+        }
+        case MNumericArray_Type_Real32:
+        {
+            const float* p = static_cast<const float*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                auto v = nearbyint(p[i]);
+                if (v > std::numeric_limits<int32_t>::max() || v < std::numeric_limits<int32_t>::min())
+                {
+                    return false;
+                }
+
+                out[i] = (int)p[i];
+            }
+
+            break;
+        }
+        case MNumericArray_Type_Real64:
+        {
+            const double* p = static_cast<const double*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                auto v = nearbyint(p[i]);
+                if (v > std::numeric_limits<int32_t>::max() || v < std::numeric_limits<int32_t>::min())
+                {
+                    return false;
+                }
+
+                out[i] = (int)p[i];
+            }
+
+            break;
+        }
+        default:
+            return false;
     }
 
     return true;
@@ -185,112 +185,112 @@ using namespace std;
         return false;
     }
 
-    auto type = naFuns->MNumericArray_getType(numArray);
+    const auto type = naFuns->MNumericArray_getType(numArray);
 
     switch (type)
     {
-    case MNumericArray_Type_Bit8:
-    {
-        const std::int8_t* p = (const std::int8_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+        case MNumericArray_Type_Bit8:
         {
-            out[i] = p[i];
-        }
+            const std::int8_t* p = static_cast<const std::int8_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = p[i];
+            }
 
-        break;
-    }
-    case MNumericArray_Type_UBit8:
-    {
-        const std::uint8_t* p = (const std::uint8_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_UBit8:
         {
-            out[i] = p[i];
-        }
+            const std::uint8_t* p = static_cast<const std::uint8_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = p[i];
+            }
 
-        break;
-    }
-    case MNumericArray_Type_Bit16:
-    {
-        const std::int16_t* p = (const std::int16_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_Bit16:
         {
-            out[i] = p[i];
-        }
+            const std::int16_t* p = static_cast<const std::int16_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = p[i];
+            }
 
-        break;
-    }
-    case MNumericArray_Type_UBit16:
-    {
-        const std::uint16_t* p = (const std::uint16_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_UBit16:
         {
-            out[i] = p[i];
-        }
+            const std::uint16_t* p = static_cast<const std::uint16_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = p[i];
+            }
 
-        break;
-    }
-    case MNumericArray_Type_Bit32:
-    {
-        const std::int32_t* p = (const std::int32_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_Bit32:
         {
-            out[i] = static_cast<float>(p[i]);
-        }
+            const std::int32_t* p = static_cast<const std::int32_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = static_cast<float>(p[i]);
+            }
 
-        break;
-    }
-    case MNumericArray_Type_UBit32:
-    {
-        const std::uint32_t* p = (const std::uint32_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_UBit32:
         {
-            out[i] = static_cast<float>(p[i]);
-        }
+            const std::uint32_t* p = static_cast<const std::uint32_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = static_cast<float>(p[i]);
+            }
 
-        break;
-    }
-    case MNumericArray_Type_Bit64:
-    {
-        const std::int64_t* p = (const std::int64_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_Bit64:
         {
-            out[i] = static_cast<float>(p[i]);
-        }
+            const std::int64_t* p = static_cast<const std::int64_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = static_cast<float>(p[i]);
+            }
 
-        break;
-    }
-    case MNumericArray_Type_UBit64:
-    {
-        const std::uint64_t* p = (const std::uint64_t*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_UBit64:
         {
-            out[i] = static_cast<float>(p[i]);
-        }
+            const std::uint64_t* p = static_cast<const std::uint64_t*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = static_cast<float>(p[i]);
+            }
 
-        break;
-    }
-    case MNumericArray_Type_Real32:
-    {
-        const float* p = (const float*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_Real32:
         {
-            out[i] = p[i];
-        }
+            const float* p = static_cast<const float*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = p[i];
+            }
 
-        break;
-    }
-    case MNumericArray_Type_Real64:
-    {
-        const double* p = (const double*)naFuns->MNumericArray_getData(numArray);
-        for (size_t i = 0; i < outCount; ++i)
+            break;
+        }
+        case MNumericArray_Type_Real64:
         {
-            out[i] = static_cast<float>(p[i]);
-        }
+            const double* p = static_cast<const double*>(naFuns->MNumericArray_getData(numArray));
+            for (size_t i = 0; i < outCount; ++i)
+            {
+                out[i] = static_cast<float>(p[i]);
+            }
 
-        break;
-    }
-    default:
-        return false;
+            break;
+        }
+        default:
+            return false;
     }
 
     return true;
@@ -298,7 +298,7 @@ using namespace std;
 
 /*static*/void WolframLibLinkUtils::ThrowIfValueIsNotInt32OrNegative(mint i)
 {
-    if (i<0 || i>numeric_limits<int>::max())
+    if (i < 0 || i > numeric_limits<int>::max())
     {
         throw invalid_argument("Argument is not a non-negative int32");
     }

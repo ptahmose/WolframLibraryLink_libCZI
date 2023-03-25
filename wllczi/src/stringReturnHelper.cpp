@@ -5,7 +5,7 @@ CStringReturnHelper g_stringReturnHelper;
 
 void CStringReturnHelper::StoreString(const char* sz)
 {
-    size_t size = strlen(sz) + 1;
+    const size_t size = strlen(sz) + 1;
     if (size > this->sizeOfString)
     {
         this->returnedString = (char*)realloc(this->returnedString, size);
