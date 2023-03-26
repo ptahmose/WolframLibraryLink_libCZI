@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 3.11)
 
 set(WLLCZI_MAJOR 0)
 set(WLLCZI_MINOR 1)
-set(WLLCZI_PATCH 5)
+set(WLLCZI_PATCH 6)
 set(WLLCZI_EXT "alpha")
 
 configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/Mathematica/CZIReader/PacletInfo.wl.in"  "${CMAKE_CURRENT_SOURCE_DIR}/Mathematica/CZIReader/PacletInfo.wl")
