@@ -73,10 +73,10 @@ using namespace libCZI;
 
     if (key == CLibraryInfo::KeyLibCZIVersion)
     {
-        int major, minor;
-        libCZI::GetLibCZIVersion(&major, &minor);
+        int major, minor, patch;
+        libCZI::GetLibCZIVersion(&major, &minor, &patch);
         stringstream ss;
-        ss << major << "." << minor;
+        ss << major << "." << minor << "." << patch;
         value = ss.str();
         return true;
     }
@@ -116,16 +116,16 @@ using namespace libCZI;
 
     CLibraryInfo::EnumKeys(
         [&](const char* key)->bool
-    {
-        string value;
-        if (CLibraryInfo::GetValue(key, value))
         {
-            writer.Key(key);
-            writer.String(value.c_str());
-        }
+            string value;
+            if (CLibraryInfo::GetValue(key, value))
+            {
+                writer.Key(key);
+                writer.String(value.c_str());
+            }
 
-        return true;
-    }
+            return true;
+        }
     );
 
     writer.EndObject();
