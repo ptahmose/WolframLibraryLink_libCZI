@@ -103,7 +103,7 @@ jobs:
       uname -a
       lscpu
       sudo modprobe nbd max_part=8   # enable NBD on the host
-      wget "https://cdn.matix-media.net/dd/373a7436" -O raspiqemu.zip --no-verbose
+      wget "https://onedrive.live.com/download?cid=A78BEB4649B27A1A&resid=A78BEB4649B27A1A%21551162&authkey=ADrKCXxToYnCyPU" -O raspiqemu.zip --no-verbose
       unzip -P "$zippw" raspiqemu.zip    
       rm raspiqemu.zip
       # we mount the image, and copy the Windows- and Linux-builds into the image
